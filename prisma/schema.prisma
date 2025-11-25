@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Privacity {
+  public
+  private
+}
+
+enum FollowRequestStatus {
+  pending
+  approved
+  rejected
+}
+
+model User {
+  id         String    @id @default(uuid())
+  firstName  String
+  lastName   String
+
+  email      String    @unique
+  password   String
+
+  privacity  Privacity
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  playlists              UserPlaylist[]
+  comments               PlaylistComment[]
+  followRequestsSent     FollowRequest[] @relation("FollowRequestsSent")
+  followRequestsReceived FollowRequest[] @relation("FollowRequestsReceived")
+  followers              Follow[] @relation("Followers")
+  following              Follow[] @relation("Following")
+}
+
+
+model UserPlaylist {
+  id         String    @id @default(uuid())
+  privacity  Privacity
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // FK
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+
+  // Relations
+  musics     MusicPlaylist[]
+  comments   PlaylistComment[]
+}
+
+model Music {
+  id          String    @id @default(uuid())
+  externalId  String
+  createdAt   DateTime  @default(now())
+
+  playlists   MusicPlaylist[]
+}
+
+model MusicPlaylist {
+  id         String    @id @default(uuid())
+  createdAt  DateTime  @default(now())
+
+  // FK
+  musicId    String
+  playlistId String
+
+  music      Music        @relation(fields: [musicId], references: [id])
+  playlist   UserPlaylist @relation(fields: [playlistId], references: [id])
+}
+
+model PlaylistComment {
+  id         Int       @id @default(autoincrement())
+  content    String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // FK
+  playlistId String
+  userId     String
+
+  playlist   UserPlaylist @relation(fields: [playlistId], references: [id])
+  user       User         @relation(fields: [userId], references: [id])
+}
+
+model FollowRequest {
+  id         Int                  @id @default(autoincrement())
+  status     FollowRequestStatus
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+
+  followerId String
+  followedId String
+
+  follower  User @relation("FollowRequestsSent", fields: [followerId], references: [id])
+  followed  User @relation("FollowRequestsReceived", fields: [followedId], references: [id])
+}
+
+model Follow {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  followerId String
+  followedId String
+
+  follower  User @relation("Followers", fields: [followerId], references: [id])
+  followed  User @relation("Following", fields: [followedId], references: [id])
+}
