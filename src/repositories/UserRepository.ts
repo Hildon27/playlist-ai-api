@@ -1,7 +1,4 @@
-import {
-  User,
-  Privacity as PrismaPrivacity,
-} from '../../generated/prisma';
+import { User, Privacity as PrismaPrivacity } from '../../generated/prisma';
 import {
   CreateUserDTO,
   UpdateUserDTO,
@@ -71,6 +68,7 @@ export class UserRepository {
   }
 
   private toModel(data: Partial<CreateUserDTO & UpdateUserDTO>) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const model: any = { ...data };
 
     Object.keys(model).forEach(key => {

@@ -26,6 +26,15 @@
     "allowUnreachableCode": false,
     "exactOptionalPropertyTypes": true
   },
-  "include": ["src/**/*", "*.ts", "*.js"],
-  "exclude": ["node_modules", "dist", "prisma/migrations"]
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "prisma/migrations",
+    "generated",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "coverage"
+  ]
 }
