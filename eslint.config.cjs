@@ -64,6 +64,8 @@ module.exports = [
       },
       parserOptions: {
         project: './tsconfig.json',
+        tsconfigRootDir: __dirname,
+        createDefaultProgram: true,
       },
     },
     plugins: {
@@ -104,8 +106,14 @@ module.exports = [
       '*.log',
       '.env*',
       'prisma/migrations/',
+      'generated/',
       'coverage/',
       '.nyc_output/',
+      '**/*.d.ts',
+      '**/*.min.js',
+      '*.config.js',
+      '*.config.cjs',
+      'postman-*.json',
     ],
   },
 ];
