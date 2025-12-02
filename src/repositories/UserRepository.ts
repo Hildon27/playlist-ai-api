@@ -1,13 +1,12 @@
 import { User, Privacity as PrismaPrivacity } from '../../generated/prisma';
-import { UserResponse } from '@/models/UserTypes';
 import { Privacity } from '@/models/Enums';
 import prisma from '../lib/prisma';
-import { CreateUserDTO, UpdateUserDTO } from '@/models/users';
+import { CreateUserDTO, UpdateUserDTO, UserResponseDTO } from '@/models/users';
 
 export class UserRepository {
   private readonly prisma = prisma;
 
-  public async create(data: CreateUserDTO): Promise<UserResponse> {
+  public async create(data: CreateUserDTO): Promise<UserResponseDTO> {
     const user = await this.prisma.user.create({
       data: this.toModel(data),
     });
@@ -18,7 +17,7 @@ export class UserRepository {
   public async update(
     id: string,
     data: UpdateUserDTO
-  ): Promise<UserResponse | null> {
+  ): Promise<UserResponseDTO | null> {
     try {
       const user = await this.prisma.user.update({
         where: { id },
@@ -56,7 +55,7 @@ export class UserRepository {
     return user ? this.toResponse(user) : null;
   }
 
-  public async findAll(): Promise<UserResponse[]> {
+  public async findAll(): Promise<UserResponseDTO[]> {
     const users = await this.prisma.user.findMany({
       orderBy: { createdAt: 'desc' },
     });
@@ -79,7 +78,7 @@ export class UserRepository {
     return model;
   }
 
-  private toResponse(user: User): UserResponse {
+  private toResponse(user: User): UserResponseDTO {
     return {
       id: user.id,
       firstName: user.firstName,
