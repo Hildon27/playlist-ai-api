@@ -1,12 +1,12 @@
 import { UserService } from './UserService';
-import { UserRepository } from '../../repositories/UserRepository';
-import { UserResponse, CreateUserDTO } from '../../models/UserTypes';
-import { ApiError, ErrorCode } from '../../models/Errors';
+import { UserRepository } from '@/repositories/UserRepository';
+import { ApiError, ErrorCode } from '@/models/Errors';
+import { CreateUserDTO, UpdateUserDTO, UserResponseDTO } from '@/models/users';
 
 export class UserServiceImpl implements UserService {
   private readonly userRepository = new UserRepository();
 
-  public async create(data: CreateUserDTO): Promise<UserResponse> {
+  public async create(data: CreateUserDTO): Promise<UserResponseDTO> {
     // Verificar se já existe um usuário com este email
     const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
@@ -18,7 +18,7 @@ export class UserServiceImpl implements UserService {
     return user;
   }
 
-  public async findById(id: string): Promise<UserResponse | null> {
+  public async findById(id: string): Promise<UserResponseDTO | null> {
     if (!id || id.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
     }
@@ -27,15 +27,15 @@ export class UserServiceImpl implements UserService {
     return user;
   }
 
-  public async findAll(): Promise<UserResponse[]> {
+  public async findAll(): Promise<UserResponseDTO[]> {
     const users = await this.userRepository.findAll();
     return users;
   }
 
   public async update(
     id: string,
-    data: Partial<CreateUserDTO>
-  ): Promise<UserResponse | null> {
+    data: UpdateUserDTO
+  ): Promise<UserResponseDTO | null> {
     if (!id || id.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
     }

@@ -1,5 +1,6 @@
 import express from 'express';
-import userRoutes from './routes/userRoutes';
+import userRoutes from '@/routes/userRoutes';
+import { globalErrorHandler } from '@/middleware/global-error-handling';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -12,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/users', userRoutes);
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'API is running',
@@ -21,7 +22,7 @@ app.get('/health', (req, res) => {
 });
 
 // Root route
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Welcome to Playlist AI API',
@@ -35,30 +36,17 @@ app.get('/', (req, res) => {
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-    error: 'Route not found',
+    message: 'Route not found',
   });
 });
 
-// Error handler
-app.use(
-  (
-    err: Error,
-    req: express.Request,
-    res: express.Response,
-    _next: express.NextFunction
-  ) => {
-    console.error(err.stack);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-    });
-  }
-);
+// Global error handler
+app.use(globalErrorHandler);
 
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📋 Health check: http://localhost:${PORT}/health`);
+  console.log(`📋 Health check: http://localhost:${PORT}/api/health`);
   console.log(`👥 Users API: http://localhost:${PORT}/api/users`);
   console.log(`\n📡 Available endpoints for Postman testing:`);
   console.log(

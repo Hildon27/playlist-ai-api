@@ -24,7 +24,16 @@
     "noImplicitOverride": true,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@/controllers/*": ["controllers/*"],
+      "@/middleware/*": ["middleware/*"],
+      "@/models/*": ["models/*"],
+      "@/repositories/*": ["repositories/*"],
+      "@/routes/*": ["routes/*"],
+      "@/services/*": ["services/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": [
