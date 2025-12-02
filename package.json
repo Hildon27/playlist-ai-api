@@ -10,7 +10,14 @@
     "lint": "eslint src/**/*.{ts,js} --cache",
     "lint:fix": "eslint src/**/*.{ts,js} --cache --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:status": "prisma migrate status",
+    "db:push": "prisma db push",
+    "db:reset": "prisma migrate reset -f"
   },
   "keywords": [],
   "author": "",
