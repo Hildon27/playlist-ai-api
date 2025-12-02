@@ -1,5 +1,6 @@
 import express from 'express';
 import userRoutes from './routes/userRoutes';
+import { globalErrorHandler } from './middleware/global-error-handling';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -35,25 +36,12 @@ app.get('/', (req, res) => {
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-    error: 'Route not found',
+    message: 'Route not found',
   });
 });
 
-// Error handler
-app.use(
-  (
-    err: Error,
-    req: express.Request,
-    res: express.Response,
-    _next: express.NextFunction
-  ) => {
-    console.error(err.stack);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-    });
-  }
-);
+// Global error handler
+app.use(globalErrorHandler);
 
 // Start server
 app.listen(PORT, () => {
