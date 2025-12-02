@@ -1,7 +1,8 @@
 import { UserService } from './UserService';
 import { UserRepository } from '../../repositories/UserRepository';
-import { UserResponse, CreateUserDTO } from '../../models/UserTypes';
+import { UserResponse } from '../../models/UserTypes';
 import { ApiError, ErrorCode } from '../../models/Errors';
+import { CreateUserDTO } from '../../models/users';
 
 export class UserServiceImpl implements UserService {
   private readonly userRepository = new UserRepository();

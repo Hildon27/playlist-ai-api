@@ -1,11 +1,8 @@
 import { User, Privacity as PrismaPrivacity } from '../../generated/prisma';
-import {
-  CreateUserDTO,
-  UpdateUserDTO,
-  UserResponse,
-} from '../models/UserTypes';
+import { UpdateUserDTO, UserResponse } from '../models/UserTypes';
 import { Privacity } from '../models/Enums';
 import prisma from '../lib/prisma';
+import { CreateUserDTO } from '../models/users';
 
 export class UserRepository {
   private readonly prisma = prisma;

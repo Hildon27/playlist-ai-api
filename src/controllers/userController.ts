@@ -1,56 +1,20 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { UserServiceImpl } from '../services/UserService/UserServiceImpl';
-import { CreateUserDTO } from '../models/UserTypes';
 import { ApiError, ErrorCode } from '../models/Errors';
+import { CreateUserDTO, createUserSchema } from '../models/users';
 
 const userService = new UserServiceImpl();
 
 /**
  * Create a new user
  */
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const userData: CreateUserDTO = req.body;
-
-    if (!userData) {
-      throw new ApiError(ErrorCode.VALIDATION_MISSING_FIELDS);
-    }
-
-    if (!userData.firstName || userData.firstName.trim() === '') {
-      throw new ApiError(
-        ErrorCode.VALIDATION_MISSING_FIELDS,
-        'First name is required'
-      );
-    }
-
-    if (!userData.lastName || userData.lastName.trim() === '') {
-      throw new ApiError(
-        ErrorCode.VALIDATION_MISSING_FIELDS,
-        'Last name is required'
-      );
-    }
-
-    if (!userData.email || userData.email.trim() === '') {
-      throw new ApiError(
-        ErrorCode.VALIDATION_MISSING_FIELDS,
-        'Email is required'
-      );
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)) {
-      throw new ApiError(ErrorCode.VALIDATION_EMAIL_INVALID);
-    }
-
-    if (!userData.password || userData.password.length < 6) {
-      throw new ApiError(ErrorCode.VALIDATION_PASSWORD_TOO_SHORT);
-    }
-
-    if (!userData.privacity) {
-      throw new ApiError(
-        ErrorCode.VALIDATION_MISSING_FIELDS,
-        'Privacy setting is required'
-      );
-    }
+    const userData = createUserSchema.parse(req.body);
 
     const user = await userService.create(userData);
 
@@ -59,18 +23,7 @@ export const createUser = async (req: Request, res: Response) => {
       data: user,
     });
   } catch (error) {
-    if (error instanceof ApiError) {
-      res.status(error.status).json({
-        success: false,
-        error: error.message,
-        code: error.code,
-      });
-    } else {
-      res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-      });
-    }
+    next(error);
   }
 };
 
