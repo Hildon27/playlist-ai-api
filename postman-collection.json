@@ -167,7 +167,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"replace-with-user-id\",\n  \"privacity\": \"public\"\n}"
+              "raw": "{\n  \"name\": \"My Awesome Playlist\",\n  \"userId\": \"replace-with-user-id\",\n  \"privacity\": \"public\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/playlists",
@@ -236,7 +236,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"privacity\": \"private\"\n}"
+              "raw": "{\n  \"name\": \"Updated Playlist Name\",\n  \"privacity\": \"private\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/playlists/:playlistId",
@@ -484,7 +484,7 @@
       "name": "Test Cases - Playlists",
       "item": [
         {
-          "name": "Test Create Playlist - Missing Fields",
+          "name": "Test Create Playlist - Missing Name Field",
           "request": {
             "method": "POST",
             "header": [
@@ -495,7 +495,29 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"privacity\": \"public\"\n}"
+              "raw": "{\n  \"userId\": \"replace-with-user-id\",\n  \"privacity\": \"public\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Create Playlist - Missing User ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Playlist\",\n  \"privacity\": \"public\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/playlists",

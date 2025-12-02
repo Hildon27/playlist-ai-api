@@ -190,6 +190,7 @@ export class UserPlaylistRepository {
   private toResponse(playlist: UserPlaylist): UserPlaylistDTO {
     return {
       id: playlist.id,
+      name: playlist.name,
       privacity: playlist.privacity as Privacity,
       userId: playlist.userId,
       createdAt: playlist.createdAt,

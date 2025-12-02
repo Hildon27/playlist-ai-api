@@ -43,6 +43,7 @@ model User {
 
 model UserPlaylist {
   id         String    @id @default(uuid())
+  name       String
   privacity  Privacity
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt

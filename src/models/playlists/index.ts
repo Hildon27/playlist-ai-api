@@ -18,6 +18,7 @@ export const musicPlaylistSchema = z.object({
 
 export const userPlaylistSchema = z.object({
   id: z.string().min(1),
+  name: z.string().min(1, 'Nome da playlist é obrigatório'),
   privacity: z.enum(Privacity),
   userId: z.string().min(1, 'ID do usuário é obrigatório'),
   createdAt: z.date(),
@@ -29,12 +30,14 @@ export const playlistWithMusicsSchema = userPlaylistSchema.extend({
 });
 
 export const createUserPlaylistSchema = userPlaylistSchema.pick({
+  name: true,
   privacity: true,
   userId: true,
 });
 
 export const updateUserPlaylistSchema = userPlaylistSchema
   .pick({
+    name: true,
     privacity: true,
   })
   .partial();
