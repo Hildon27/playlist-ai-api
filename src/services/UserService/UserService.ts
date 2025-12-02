@@ -1,5 +1,5 @@
 import { CreateUserDTO } from '@/models/users';
-import { UserResponse } from '../../models/UserTypes';
+import { UserResponse } from '@/models/UserTypes';
 
 export interface UserService {
   create(data: CreateUserDTO): Promise<UserResponse>;

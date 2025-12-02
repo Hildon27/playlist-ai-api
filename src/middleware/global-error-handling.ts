@@ -1,6 +1,6 @@
+import { ApiError } from '@/models/Errors';
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
-import { ApiError } from '../models/Errors';
 
 export const globalErrorHandler = (
   err: unknown,

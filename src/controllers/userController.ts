@@ -1,7 +1,7 @@
+import { ApiError, ErrorCode } from '@/models/Errors';
+import { CreateUserDTO, createUserSchema } from '@/models/users';
+import { UserServiceImpl } from '@/services/UserService/UserServiceImpl';
 import { NextFunction, Request, Response } from 'express';
-import { UserServiceImpl } from '../services/UserService/UserServiceImpl';
-import { ApiError, ErrorCode } from '../models/Errors';
-import { CreateUserDTO, createUserSchema } from '../models/users';
 
 const userService = new UserServiceImpl();
 
