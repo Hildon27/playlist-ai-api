@@ -2,7 +2,7 @@ import { UserService } from './UserService';
 import { UserRepository } from '@/repositories/UserRepository';
 import { UserResponse } from '@/models/UserTypes';
 import { ApiError, ErrorCode } from '@/models/Errors';
-import { CreateUserDTO } from '@/models/users';
+import { CreateUserDTO, UpdateUserDTO } from '@/models/users';
 
 export class UserServiceImpl implements UserService {
   private readonly userRepository = new UserRepository();
@@ -35,7 +35,7 @@ export class UserServiceImpl implements UserService {
 
   public async update(
     id: string,
-    data: Partial<CreateUserDTO>
+    data: UpdateUserDTO
   ): Promise<UserResponse | null> {
     if (!id || id.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);

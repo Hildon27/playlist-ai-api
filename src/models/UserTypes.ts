@@ -8,12 +8,12 @@ import { Privacity } from './Enums';
 //   privacity: Privacity;
 // }
 
-export interface UpdateUserDTO {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  privacity?: Privacity;
-}
+// export interface UpdateUserDTO {
+//   firstName?: string;
+//   lastName?: string;
+//   email?: string;
+//   privacity?: Privacity;
+// }
 
 export interface UserResponse {
   id: string;

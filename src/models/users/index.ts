@@ -16,6 +16,14 @@ export const createUserSchema = userSchema.omit({
   id: true,
 });
 
+export const updateUserSchema = userSchema
+  .omit({
+    id: true,
+    password: true,
+  })
+  .partial();
+
 // Types
 
 export type CreateUserDTO = z.infer<typeof createUserSchema>;
+export type UpdateUserDTO = z.infer<typeof updateUserSchema>;

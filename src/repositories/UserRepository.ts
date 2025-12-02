@@ -1,8 +1,8 @@
 import { User, Privacity as PrismaPrivacity } from '../../generated/prisma';
-import { UpdateUserDTO, UserResponse } from '@/models/UserTypes';
+import { UserResponse } from '@/models/UserTypes';
 import { Privacity } from '@/models/Enums';
 import prisma from '../lib/prisma';
-import { CreateUserDTO } from '@/models/users';
+import { CreateUserDTO, UpdateUserDTO } from '@/models/users';
 
 export class UserRepository {
   private readonly prisma = prisma;
@@ -64,7 +64,7 @@ export class UserRepository {
     return users.map((u: User) => this.toResponse(u));
   }
 
-  private toModel(data: Partial<CreateUserDTO & UpdateUserDTO>) {
+  private toModel(data: CreateUserDTO | UpdateUserDTO) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const model: any = { ...data };
 

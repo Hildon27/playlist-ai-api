@@ -1,5 +1,9 @@
 import { ApiError, ErrorCode } from '@/models/Errors';
-import { CreateUserDTO, createUserSchema } from '@/models/users';
+import {
+  CreateUserDTO,
+  createUserSchema,
+  updateUserSchema,
+} from '@/models/users';
 import { UserServiceImpl } from '@/services/UserService/UserServiceImpl';
 import { NextFunction, Request, Response } from 'express';
 
@@ -97,43 +101,12 @@ export const getAllUsers = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const userData: Partial<CreateUserDTO> = req.body;
 
     if (!id || id.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
     }
 
-    if (!userData || Object.keys(userData).length === 0) {
-      throw new ApiError(
-        ErrorCode.VALIDATION_MISSING_FIELDS,
-        'At least one field must be provided for update'
-      );
-    }
-
-    if (userData.firstName !== undefined && userData.firstName.trim() === '') {
-      throw new ApiError(
-        ErrorCode.VALIDATION_INVALID_FIELDS,
-        'First name cannot be empty'
-      );
-    }
-
-    if (userData.lastName !== undefined && userData.lastName.trim() === '') {
-      throw new ApiError(
-        ErrorCode.VALIDATION_INVALID_FIELDS,
-        'Last name cannot be empty'
-      );
-    }
-
-    if (
-      userData.email !== undefined &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)
-    ) {
-      throw new ApiError(ErrorCode.VALIDATION_EMAIL_INVALID);
-    }
-
-    if (userData.password !== undefined && userData.password.length < 6) {
-      throw new ApiError(ErrorCode.VALIDATION_PASSWORD_TOO_SHORT);
-    }
+    const userData = updateUserSchema.parse(req.body);
 
     const user = await userService.update(id, userData);
 
