@@ -1,5 +1,5 @@
 import z from 'zod';
-import { FollowRequestStatus } from '../Enums';
+import { FollowRequestProcessingAction, FollowRequestStatus } from '../Enums';
 
 // Schemas
 
@@ -24,6 +24,14 @@ export const followRequestBaseSchema = z.object({
 export const cancelFollowRequestSchema = followRequestSchema.pick({
   followerId: true,
 });
+
+export const proccessFollowRequestSchema = followRequestSchema
+  .pick({
+    followedId: true,
+  })
+  .extend({
+    action: z.enum(FollowRequestProcessingAction),
+  });
 
 // Type
 

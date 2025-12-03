@@ -1,3 +1,4 @@
+import { FollowRequestProcessingAction } from '@/models/Enums';
 import { FollowRequestDto } from '@/models/followRequests';
 
 export interface FollowRequestService {
@@ -11,4 +12,9 @@ export interface FollowRequestService {
     followRequestId: string,
     followerId: string
   ): Promise<void>;
+  processFollowRequest(
+    followRequestId: string,
+    followedId: string,
+    action: FollowRequestProcessingAction
+  ): Promise<FollowRequestDto>;
 }

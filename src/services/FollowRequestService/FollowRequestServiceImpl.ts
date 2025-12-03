@@ -3,7 +3,11 @@ import { FollowRequestDto } from '@/models/followRequests';
 import { FollowRequestService } from './FollowRequestService';
 import { ApiError, ErrorCode } from '@/models/Errors';
 import { FollowRequestRepository } from '@/repositories/FollowRequestRepository';
-import { FollowRequestStatus, Privacity } from '@/models/Enums';
+import {
+  FollowRequestProcessingAction,
+  FollowRequestStatus,
+  Privacity,
+} from '@/models/Enums';
 
 export class FollowRequestServiceImpl implements FollowRequestService {
   private readonly followRequestRepository = new FollowRequestRepository();
@@ -73,5 +77,31 @@ export class FollowRequestServiceImpl implements FollowRequestService {
     }
 
     await this.followRequestRepository.delete(followRequestId);
+  }
+
+  public async processFollowRequest(
+    followRequestId: string,
+    followedId: string,
+    action: FollowRequestProcessingAction
+  ): Promise<FollowRequestDto> {
+    const followRequest =
+      await this.followRequestRepository.findById(followRequestId);
+
+    if (!followRequest || followRequest.followedId !== followedId) {
+      throw new ApiError(ErrorCode.FOLLOW_REQUEST_NOT_FOUND);
+    }
+    if (followRequest.status !== FollowRequestStatus.PENDING) {
+      throw new ApiError(ErrorCode.FOLLOW_REQUEST_NOT_PENDING);
+    }
+
+    const newStatus =
+      action === FollowRequestProcessingAction.ACCEPT
+        ? FollowRequestStatus.APPROVED
+        : FollowRequestStatus.REJECTED;
+
+    return await this.followRequestRepository.updateFollowRequestStatus(
+      followRequestId,
+      newStatus
+    );
   }
 }
