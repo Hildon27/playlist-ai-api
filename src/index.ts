@@ -1,5 +1,6 @@
 import express from 'express';
 import userRoutes from '@/routes/userRoutes';
+import followRequestRoutes from '@/routes/followRequestRoutes';
 import { globalErrorHandler } from '@/middleware/global-error-handling';
 
 const app = express();
@@ -11,6 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/follow-requests', followRequestRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
