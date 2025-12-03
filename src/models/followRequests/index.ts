@@ -5,19 +5,19 @@ import { FollowRequestProcessingAction, FollowRequestStatus } from '../Enums';
 
 export const followRequestSchema = z.object({
   id: z.string().nonempty(),
-  followerId: z.string().nonempty('Id de quem segue não pode ser vazio'),
+  followerId: z.string().nonempty('Follower ID can not be empty'),
   followedId: z
     .string()
-    .nonempty('Id de usuário a ser seguido não pode ser vazio'),
+    .nonempty('Followed ID can not be empty'),
   status: z.enum(FollowRequestStatus),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
 
 export const followRequestBaseSchema = z.object({
-  followerId: z.string().nonempty('Id de quem está seguindo não pode ser nulo'),
+  followerId: z.string().nonempty('Follower ID can not be empty'),
   followedUserEmail: z.email(
-    'Email do usuário a ser seguido deve ser um email válido'
+    'Followed user email bust be a valid email'
   ),
 });
 

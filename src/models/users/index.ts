@@ -5,10 +5,10 @@ import { Privacity } from '../Enums';
 
 export const userSchema = z.object({
   id: z.string().nonempty(),
-  firstName: z.string().nonempty('Primeiro nome não pode ser vazio'),
-  lastName: z.string().nonempty('Segundo nome não pode ser vazio'),
-  email: z.email('Email deve ser um email válido'),
-  password: z.string().min(8, 'Senha deve ter pelo menos 8 caracteres'),
+  firstName: z.string().nonempty('First name can not be empty'),
+  lastName: z.string().nonempty('Last name can not be empty'),
+  email: z.email('Email must be a valid email'),
+  password: z.string().min(8, 'Password must be at least 8 characters long.'),
   privacity: z.enum(Privacity),
   createdAt: z.date(),
   updatedAt: z.date(),

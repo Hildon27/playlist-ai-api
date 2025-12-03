@@ -61,6 +61,7 @@ export class FollowRequestRepository {
     const updatedFollowRequest = await this.prisma.followRequest.update({
       data: {
         status: newStatus,
+        updatedAt: new Date()
       },
       where: {
         id: followRequestId,
