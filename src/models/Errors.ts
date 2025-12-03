@@ -25,6 +25,11 @@ export enum ErrorCode {
   VALIDATION_INVALID_PRIVACY = 2004,
   VALIDATION_INVALID_FIELDS = 2005,
 
+  // Follow Request errors (3000)
+  FOLLOW_REQUEST_NOT_FOUND = 3000,
+  FOLLOW_REQUEST_ALREADY_EXISTS = 3001,
+  FOLLOW_REQUEST_PUBLIC_FOLLOWED_USER_NOT_FOUND = 3002,
+
   // System errors (9000-9999)
   SYSTEM_ERROR = 9000,
   DATABASE_ERROR = 9001,
@@ -102,6 +107,23 @@ export const errorDictionary: Record<ErrorCode, ErrorResponse> = {
     code: ErrorCode.VALIDATION_INVALID_FIELDS,
     message: 'Invalid field values provided',
     status: 400,
+  },
+
+  // Follow requests errors
+  [ErrorCode.FOLLOW_REQUEST_NOT_FOUND]: {
+    code: ErrorCode.FOLLOW_REQUEST_NOT_FOUND,
+    message: 'Follow request not found',
+    status: 404,
+  },
+  [ErrorCode.FOLLOW_REQUEST_ALREADY_EXISTS]: {
+    code: ErrorCode.FOLLOW_REQUEST_ALREADY_EXISTS,
+    message: 'Follow request already exists',
+    status: 409,
+  },
+  [ErrorCode.FOLLOW_REQUEST_PUBLIC_FOLLOWED_USER_NOT_FOUND]: {
+    code: ErrorCode.FOLLOW_REQUEST_PUBLIC_FOLLOWED_USER_NOT_FOUND,
+    message: 'Public user to follow not found',
+    status: 404,
   },
 
   // System errors
