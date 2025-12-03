@@ -53,20 +53,11 @@ export class UserPlaylistController {
 
       const validatedData = updateUserPlaylistSchema.parse(req.body);
 
-      // Verificar se a playlist existe
       const existingPlaylist =
         await this.userPlaylistService.getPlaylistById(id);
       if (!existingPlaylist) {
         throw new NotFoundError('Playlist não encontrada');
       }
-
-      // Verificar se o usuário é o dono da playlist
-      // Note: Aqui você precisaria implementar autenticação para pegar o userId
-      // const userId = req.user?.id; // Assumindo que você tem middleware de auth
-      // const isOwner = await this.userPlaylistService.validatePlaylistOwnership(id, userId);
-      // if (!isOwner) {
-      //   throw new ForbiddenError('Você não tem permissão para atualizar esta playlist');
-      // }
 
       const playlist = await this.userPlaylistService.updatePlaylist(
         id,
@@ -96,19 +87,11 @@ export class UserPlaylistController {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
 
-      // Verificar se a playlist existe
       const existingPlaylist =
         await this.userPlaylistService.getPlaylistById(id);
       if (!existingPlaylist) {
         throw new NotFoundError('Playlist não encontrada');
       }
-
-      // Verificar se o usuário é o dono da playlist
-      // const userId = req.user?.id;
-      // const isOwner = await this.userPlaylistService.validatePlaylistOwnership(id, userId);
-      // if (!isOwner) {
-      //   throw new ForbiddenError('Você não tem permissão para excluir esta playlist');
-      // }
 
       const deleted = await this.userPlaylistService.deletePlaylist(id);
 
@@ -138,14 +121,6 @@ export class UserPlaylistController {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
       const { includeMusics } = req.query;
-
-      // const userId = req.user?.id; // Para verificar permissões
-
-      // Verificar se o usuário pode acessar a playlist
-      // const canAccess = await this.userPlaylistService.canAccessPlaylist(id, userId);
-      // if (!canAccess) {
-      //   throw new ForbiddenError('Você não tem permissão para acessar esta playlist');
-      // }
 
       let playlist;
       if (includeMusics === 'true') {
@@ -218,19 +193,11 @@ export class UserPlaylistController {
       }
       const validatedData = addMusicToPlaylistSchema.parse(req.body);
 
-      // Verificar se a playlist existe
       const existingPlaylist =
         await this.userPlaylistService.getPlaylistById(id);
       if (!existingPlaylist) {
         throw new NotFoundError('Playlist não encontrada');
       }
-
-      // Verificar se o usuário é o dono da playlist
-      // const userId = req.user?.id;
-      // const isOwner = await this.userPlaylistService.validatePlaylistOwnership(id, userId);
-      // if (!isOwner) {
-      //   throw new ForbiddenError('Você não tem permissão para adicionar músicas a esta playlist');
-      // }
 
       const added = await this.userPlaylistService.addMusicToPlaylist(
         id,
@@ -266,19 +233,11 @@ export class UserPlaylistController {
       }
       const validatedData = removeMusicFromPlaylistSchema.parse(req.body);
 
-      // Verificar se a playlist existe
       const existingPlaylist =
         await this.userPlaylistService.getPlaylistById(id);
       if (!existingPlaylist) {
         throw new NotFoundError('Playlist não encontrada');
       }
-
-      // Verificar se o usuário é o dono da playlist
-      // const userId = req.user?.id;
-      // const isOwner = await this.userPlaylistService.validatePlaylistOwnership(id, userId);
-      // if (!isOwner) {
-      //   throw new ForbiddenError('Você não tem permissão para remover músicas desta playlist');
-      // }
 
       const removed = await this.userPlaylistService.removeMusicFromPlaylist(
         id,
@@ -310,13 +269,6 @@ export class UserPlaylistController {
       if (!id) {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
-
-      // Verificar se a playlist existe e se o usuário pode acessá-la
-      // const userId = req.user?.id;
-      // const canAccess = await this.userPlaylistService.canAccessPlaylist(id, userId);
-      // if (!canAccess) {
-      //   throw new ForbiddenError('Você não tem permissão para acessar as músicas desta playlist');
-      // }
 
       const musics = await this.userPlaylistService.getPlaylistMusics(id);
 

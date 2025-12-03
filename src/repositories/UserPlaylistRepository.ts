@@ -43,12 +43,10 @@ export class UserPlaylistRepository {
 
   public async delete(id: string): Promise<boolean> {
     try {
-      // Remove todas as músicas da playlist primeiro
       await this.prisma.musicPlaylist.deleteMany({
         where: { playlistId: id },
       });
 
-      // Remove a playlist
       await this.prisma.userPlaylist.delete({ where: { id } });
       return true;
     } catch {
@@ -110,7 +108,6 @@ export class UserPlaylistRepository {
     musicData: AddMusicToPlaylistDTO
   ): Promise<boolean> {
     try {
-      // Primeiro, procura ou cria a música
       let music = await this.prisma.music.findFirst({
         where: { externalId: musicData.externalId },
       });
@@ -119,7 +116,6 @@ export class UserPlaylistRepository {
         data: { externalId: musicData.externalId },
       });
 
-      // Verifica se a música já está na playlist
       const existingMusicPlaylist = await this.prisma.musicPlaylist.findFirst({
         where: {
           musicId: music.id,
@@ -128,10 +124,9 @@ export class UserPlaylistRepository {
       });
 
       if (existingMusicPlaylist) {
-        return false; // Música já está na playlist
+        return false;
       }
 
-      // Adiciona a música à playlist
       await this.prisma.musicPlaylist.create({
         data: {
           musicId: music.id,
@@ -173,7 +168,6 @@ export class UserPlaylistRepository {
   }
 
   private toModel(data: CreateUserPlaylistDTO | UpdateUserPlaylistDTO) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const model: any = { ...data };
 
     Object.keys(model).forEach(key => {
