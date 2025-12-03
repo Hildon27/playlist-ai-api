@@ -5,4 +5,6 @@ export interface FollowRequestService {
     followerId: string,
     followedUserEmail: string
   ): Promise<FollowRequestDto>;
+  findAllByFollowerId(followerId: string): Promise<FollowRequestDto[]>;
+  findAllByFollowedId(followedId: string): Promise<FollowRequestDto[]>;
 }

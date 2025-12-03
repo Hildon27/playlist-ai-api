@@ -46,10 +46,14 @@ app.use((req, res) => {
 app.use(globalErrorHandler);
 
 // Start server
+// ...existing code...
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📋 Health check: http://localhost:${PORT}/api/health`);
   console.log(`👥 Users API: http://localhost:${PORT}/api/users`);
+  console.log(
+    `🔗 Follow Requests API: http://localhost:${PORT}/api/follow-requests`
+  );
   console.log(`\n📡 Available endpoints for Postman testing:`);
   console.log(
     `   GET    http://localhost:${PORT}/api/users        - Get all users`
@@ -65,5 +69,14 @@ app.listen(PORT, () => {
   );
   console.log(
     `   DELETE http://localhost:${PORT}/api/users/:id    - Delete user`
+  );
+  console.log(
+    `   POST   http://localhost:${PORT}/api/follow-requests/register         - Request to follow user`
+  );
+  console.log(
+    `   GET    http://localhost:${PORT}/api/follow-requests/by-follower/:id  - Get follow requests by follower`
+  );
+  console.log(
+    `   GET    http://localhost:${PORT}/api/follow-requests/by-followed/:id  - Get follow requests by followed`
   );
 });

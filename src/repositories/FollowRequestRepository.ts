@@ -32,6 +32,26 @@ export class FollowRequestRepository {
     return followRequest ? this.toResponse(followRequest) : null;
   }
 
+  public async findAllByFollowerId(
+    followerId: string
+  ): Promise<FollowRequestDto[]> {
+    const followRequests = await this.prisma.followRequest.findMany({
+      where: { followerId },
+    });
+
+    return followRequests.map(v => this.toResponse(v));
+  }
+
+  public async findAllByFollowedId(
+    followedId: string
+  ): Promise<FollowRequestDto[]> {
+    const followRequests = await this.prisma.followRequest.findMany({
+      where: { followedId },
+    });
+
+    return followRequests.map(v => this.toResponse(v));
+  }
+
   private toResponse(followRequest: FollowRequest): FollowRequestDto {
     return {
       id: followRequest.id,
