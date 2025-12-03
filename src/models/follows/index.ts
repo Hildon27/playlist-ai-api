@@ -13,4 +13,4 @@ export const followSchema = z.object({
 
 // Types
 
-export type Follow = z.infer<typeof followSchema>;
+export type FollowDto = z.infer<typeof followSchema>;

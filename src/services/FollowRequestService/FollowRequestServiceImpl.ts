@@ -8,10 +8,12 @@ import {
   FollowRequestStatus,
   Privacity,
 } from '@/models/Enums';
+import { FollowRepository } from '@/repositories/FollowRepository';
 
 export class FollowRequestServiceImpl implements FollowRequestService {
   private readonly followRequestRepository = new FollowRequestRepository();
   private readonly userRepository = new UserRepository();
+  private readonly followRepository = new FollowRepository();
 
   async requestToFollowUser(
     followerId: string,
@@ -98,6 +100,11 @@ export class FollowRequestServiceImpl implements FollowRequestService {
       action === FollowRequestProcessingAction.ACCEPT
         ? FollowRequestStatus.APPROVED
         : FollowRequestStatus.REJECTED;
+
+        
+    if (action === FollowRequestProcessingAction.ACCEPT) {
+      await this.followRepository.create(followRequest.followerId, followRequest.followedId);
+    }
 
     return await this.followRequestRepository.updateFollowRequestStatus(
       followRequestId,

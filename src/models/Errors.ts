@@ -25,12 +25,16 @@ export enum ErrorCode {
   VALIDATION_INVALID_PRIVACY = 2004,
   VALIDATION_INVALID_FIELDS = 2005,
 
-  // Follow Request errors (3000)
+  // Follow Request errors (3000 - 3999)
   FOLLOW_REQUEST_NOT_FOUND = 3000,
   FOLLOW_REQUEST_ALREADY_EXISTS = 3001,
   FOLLOW_REQUEST_PUBLIC_FOLLOWED_USER_NOT_FOUND = 3002,
   FOLLOW_REQUEST_NOT_PENDING = 3003,
   FOLLOWER_ID_AND_FOLLOWED_ID_CAN_NOT_BE_EQUALS = 3004,
+
+  // Follow errors (4000-4999)
+  FOLLOWER_NOT_FOUND = 4000,
+  FOLLOWED_NOT_FOUND = 4001,
 
   // System errors (9000-9999)
   SYSTEM_ERROR = 9000,
@@ -136,6 +140,18 @@ export const errorDictionary: Record<ErrorCode, ErrorResponse> = {
     code: ErrorCode.FOLLOWER_ID_AND_FOLLOWED_ID_CAN_NOT_BE_EQUALS,
     message: 'Follower ID and Followed ID can not be equals',
     status: 400,
+  },
+
+  // Follow errors
+  [ErrorCode.FOLLOWER_NOT_FOUND]: {
+    code: ErrorCode.FOLLOWER_NOT_FOUND,
+    message: 'Follower not found',
+    status: 404,
+  },
+  [ErrorCode.FOLLOWED_NOT_FOUND]: {
+    code: ErrorCode.FOLLOWED_NOT_FOUND,
+    message: 'Followed not found',
+    status: 404,
   },
 
   // System errors
