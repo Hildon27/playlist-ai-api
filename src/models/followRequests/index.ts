@@ -21,6 +21,10 @@ export const followRequestBaseSchema = z.object({
   ),
 });
 
+export const cancelFollowRequestSchema = followRequestSchema.pick({
+  followerId: true,
+});
+
 // Type
 
 export type FollowRequestDto = z.infer<typeof followRequestSchema>;

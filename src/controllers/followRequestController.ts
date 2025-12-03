@@ -1,5 +1,8 @@
 import { ApiError, ErrorCode } from '@/models/Errors';
-import { followRequestBaseSchema } from '@/models/followRequests';
+import {
+  cancelFollowRequestSchema,
+  followRequestBaseSchema,
+} from '@/models/followRequests';
 import { FollowRequestServiceImpl } from '@/services/FollowRequestService/FollowRequestServiceImpl';
 import { NextFunction, Request, Response } from 'express';
 
@@ -77,6 +80,36 @@ export const findAllByFollowedId = async (
       await followRequestService.findAllByFollowedId(followedId);
 
     res.status(200).json({
+      success: true,
+      data: followRequests,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Cancel a follow requests by ID
+ */
+export const cancelFollowRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id: followRequestId } = req.params;
+    const { followerId } = cancelFollowRequestSchema.parse(req.body);
+
+    if (!followRequestId || followRequestId.trim() === '') {
+      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
+    }
+
+    const followRequests = await followRequestService.cancelFollowRequest(
+      followRequestId,
+      followerId
+    );
+
+    res.status(204).json({
       success: true,
       data: followRequests,
     });

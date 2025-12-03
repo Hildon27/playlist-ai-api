@@ -21,6 +21,18 @@ export class FollowRequestRepository {
     return this.toResponse(followRequest);
   }
 
+  public async findById(
+    followRequestId: string
+  ): Promise<FollowRequestDto | null> {
+    const followRequest = await this.prisma.followRequest.findFirst({
+      where: {
+        id: followRequestId,
+      },
+    });
+
+    return followRequest ? this.toResponse(followRequest) : null;
+  }
+
   public async findByFollowerAndFollowedId(
     followerId: string,
     followedId: string
@@ -42,6 +54,22 @@ export class FollowRequestRepository {
     return followRequests.map(v => this.toResponse(v));
   }
 
+  public async updateFollowRequestStatus(
+    followRequestId: string,
+    newStatus: FollowRequestStatus
+  ): Promise<FollowRequestDto> {
+    const updatedFollowRequest = await this.prisma.followRequest.update({
+      data: {
+        status: newStatus,
+      },
+      where: {
+        id: followRequestId,
+      },
+    });
+
+    return this.toResponse(updatedFollowRequest);
+  }
+
   public async findAllByFollowedId(
     followedId: string
   ): Promise<FollowRequestDto[]> {
@@ -50,6 +78,14 @@ export class FollowRequestRepository {
     });
 
     return followRequests.map(v => this.toResponse(v));
+  }
+
+  public async delete(followRequestId: string): Promise<void> {
+    await this.prisma.followRequest.delete({
+      where: {
+        id: followRequestId,
+      },
+    });
   }
 
   private toResponse(followRequest: FollowRequest): FollowRequestDto {

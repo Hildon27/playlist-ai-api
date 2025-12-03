@@ -24,6 +24,12 @@ export class FollowRequestServiceImpl implements FollowRequestService {
 
     const followedId = existentUser.id;
 
+    if (followerId === followedId) {
+      throw new ApiError(
+        ErrorCode.FOLLOWER_ID_AND_FOLLOWED_ID_CAN_NOT_BE_EQUALS
+      );
+    }
+
     const exitentfollowRequest =
       await this.followRequestRepository.findByFollowerAndFollowedId(
         followerId,
@@ -50,5 +56,22 @@ export class FollowRequestServiceImpl implements FollowRequestService {
     followedId: string
   ): Promise<FollowRequestDto[]> {
     return await this.followRequestRepository.findAllByFollowedId(followedId);
+  }
+
+  public async cancelFollowRequest(
+    followRequestId: string,
+    followerId: string
+  ): Promise<void> {
+    const followRequest =
+      await this.followRequestRepository.findById(followRequestId);
+
+    if (!followRequest || followRequest.followerId !== followerId) {
+      throw new ApiError(ErrorCode.FOLLOW_REQUEST_NOT_FOUND);
+    }
+    if (followRequest.status !== FollowRequestStatus.PENDING) {
+      throw new ApiError(ErrorCode.FOLLOW_REQUEST_NOT_PENDING);
+    }
+
+    await this.followRequestRepository.delete(followRequestId);
   }
 }

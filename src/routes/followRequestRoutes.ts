@@ -1,4 +1,5 @@
 import {
+  cancelFollowRequest,
   findAllByFollowedId,
   findAllByFollowerId,
   requestToFollowUser,
@@ -15,5 +16,8 @@ router.get('/by-follower/:id', findAllByFollowerId);
 
 // Find all requests by follower ID
 router.get('/by-followed/:id', findAllByFollowedId);
+
+// Cancel a follow request by ID
+router.delete('/:id', cancelFollowRequest);
 
 export default router;

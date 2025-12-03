@@ -29,6 +29,8 @@ export enum ErrorCode {
   FOLLOW_REQUEST_NOT_FOUND = 3000,
   FOLLOW_REQUEST_ALREADY_EXISTS = 3001,
   FOLLOW_REQUEST_PUBLIC_FOLLOWED_USER_NOT_FOUND = 3002,
+  FOLLOW_REQUEST_NOT_PENDING = 3003,
+  FOLLOWER_ID_AND_FOLLOWED_ID_CAN_NOT_BE_EQUALS = 3004,
 
   // System errors (9000-9999)
   SYSTEM_ERROR = 9000,
@@ -124,6 +126,16 @@ export const errorDictionary: Record<ErrorCode, ErrorResponse> = {
     code: ErrorCode.FOLLOW_REQUEST_PUBLIC_FOLLOWED_USER_NOT_FOUND,
     message: 'Public user to follow not found',
     status: 404,
+  },
+  [ErrorCode.FOLLOW_REQUEST_NOT_PENDING]: {
+    code: ErrorCode.FOLLOW_REQUEST_NOT_PENDING,
+    message: 'Follow request is not pending',
+    status: 400,
+  },
+  [ErrorCode.FOLLOWER_ID_AND_FOLLOWED_ID_CAN_NOT_BE_EQUALS]: {
+    code: ErrorCode.FOLLOWER_ID_AND_FOLLOWED_ID_CAN_NOT_BE_EQUALS,
+    message: 'Follower ID and Followed ID can not be equals',
+    status: 400,
   },
 
   // System errors
