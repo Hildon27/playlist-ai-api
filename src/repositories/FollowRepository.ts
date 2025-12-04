@@ -17,4 +17,12 @@ export class FollowRepository {
 
     return follow;
   }
+
+  public async findAllByFollowedId(followedId: string): Promise<FollowDto[]> {
+    return await this.prisma.follow.findMany({
+      where: {
+        followedId,
+      },
+    });
+  }
 }
