@@ -29,3 +29,53 @@ export const findAllUserFollowers = async (
     next(error);
   }
 };
+
+/**
+ * Unfollow user by follow ID
+ */
+export const unfollowUserByFollowId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id: followId } = req.params;
+
+    if (!followId || followId.trim() === '') {
+      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
+    }
+
+    await followService.deleteFollowById(followId);
+
+    res.status(204).json({
+      success: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Remove follower by follow ID
+ */
+export const removeFollowerByFollowId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id: followId } = req.params;
+
+    if (!followId || followId.trim() === '') {
+      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
+    }
+
+    await followService.deleteFollowById(followId);
+
+    res.status(204).json({
+      success: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
