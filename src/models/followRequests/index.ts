@@ -6,9 +6,7 @@ import { FollowRequestProcessingAction, FollowRequestStatus } from '../Enums';
 export const followRequestSchema = z.object({
   id: z.string().nonempty(),
   followerId: z.string().nonempty('Follower ID can not be empty'),
-  followedId: z
-    .string()
-    .nonempty('Followed ID can not be empty'),
+  followedId: z.string().nonempty('Followed ID can not be empty'),
   status: z.enum(FollowRequestStatus),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -16,9 +14,7 @@ export const followRequestSchema = z.object({
 
 export const followRequestBaseSchema = z.object({
   followerId: z.string().nonempty('Follower ID can not be empty'),
-  followedUserEmail: z.email(
-    'Followed user email bust be a valid email'
-  ),
+  followedUserEmail: z.email('Followed user email bust be a valid email'),
 });
 
 export const cancelFollowRequestSchema = followRequestSchema.pick({

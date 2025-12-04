@@ -1,4 +1,3 @@
-import { UserRepository } from '@/repositories/UserRepository';
 import { FollowRequestDto } from '@/models/followRequests';
 import { FollowRequestService } from './FollowRequestService';
 import { ApiError, ErrorCode } from '@/models/Errors';
@@ -8,19 +7,19 @@ import {
   FollowRequestStatus,
   Privacity,
 } from '@/models/Enums';
-import { FollowRepository } from '@/repositories/FollowRepository';
+import { FollowServiceImpl } from '../Follow/FollowServiceImpl';
+import { UserServiceImpl } from '../UserService/UserServiceImpl';
 
 export class FollowRequestServiceImpl implements FollowRequestService {
   private readonly followRequestRepository = new FollowRequestRepository();
-  private readonly userRepository = new UserRepository();
-  private readonly followRepository = new FollowRepository();
+  private readonly userService = new UserServiceImpl();
+  private readonly followService = new FollowServiceImpl();
 
   async requestToFollowUser(
     followerId: string,
     followedUserEmail: string
   ): Promise<FollowRequestDto> {
-    const existentUser =
-      await this.userRepository.findByEmail(followedUserEmail);
+    const existentUser = await this.userService.findByEmail(followedUserEmail);
 
     if (!existentUser || existentUser.privacity === Privacity.PRIVATE) {
       throw new ApiError(
@@ -101,9 +100,11 @@ export class FollowRequestServiceImpl implements FollowRequestService {
         ? FollowRequestStatus.APPROVED
         : FollowRequestStatus.REJECTED;
 
-        
     if (action === FollowRequestProcessingAction.ACCEPT) {
-      await this.followRepository.create(followRequest.followerId, followRequest.followedId);
+      await this.followService.create(
+        followRequest.followerId,
+        followRequest.followedId
+      );
     }
 
     return await this.followRequestRepository.updateFollowRequestStatus(
