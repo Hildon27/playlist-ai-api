@@ -35,6 +35,15 @@ export class FollowRequestServiceImpl implements FollowRequestService {
       );
     }
 
+    const existentFollow = await this.followService.findByFollowerAndFollowedId(
+      followerId,
+      followedId
+    );
+
+    if (existentFollow) {
+      throw new ApiError(ErrorCode.FOLLOW_ALREADY_EXISTS);
+    }
+
     const exitentfollowRequest =
       await this.followRequestRepository.findByFollowerAndFollowedId(
         followerId,
@@ -43,7 +52,7 @@ export class FollowRequestServiceImpl implements FollowRequestService {
 
     if (
       exitentfollowRequest &&
-      exitentfollowRequest.status !== FollowRequestStatus.REJECTED
+      exitentfollowRequest.status === FollowRequestStatus.PENDING
     ) {
       throw new ApiError(ErrorCode.FOLLOW_REQUEST_ALREADY_EXISTS);
     }
