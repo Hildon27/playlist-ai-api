@@ -35,6 +35,8 @@ export enum ErrorCode {
   // Follow errors (4000-4999)
   FOLLOWER_NOT_FOUND = 4000,
   FOLLOWED_NOT_FOUND = 4001,
+  FOLLOW_NOT_FOUND = 4002,
+  FOLLOW_ALREADY_EXISTS = 4003,
 
   // System errors (9000-9999)
   SYSTEM_ERROR = 9000,
@@ -151,6 +153,16 @@ export const errorDictionary: Record<ErrorCode, ErrorResponse> = {
   [ErrorCode.FOLLOWED_NOT_FOUND]: {
     code: ErrorCode.FOLLOWED_NOT_FOUND,
     message: 'Followed not found',
+    status: 404,
+  },
+  [ErrorCode.FOLLOW_NOT_FOUND]: {
+    code: ErrorCode.FOLLOW_NOT_FOUND,
+    message: 'Follow not found',
+    status: 404,
+  },
+  [ErrorCode.FOLLOW_ALREADY_EXISTS]: {
+    code: ErrorCode.FOLLOW_ALREADY_EXISTS,
+    message: 'Follow already exists',
     status: 404,
   },
 
