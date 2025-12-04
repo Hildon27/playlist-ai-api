@@ -48,37 +48,59 @@ app.use((req, res) => {
 app.use(globalErrorHandler);
 
 // Start server
-// ...existing code...
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📋 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`👥 Users API: http://localhost:${PORT}/api/users`);
+  console.log('\n📋 Endpoints disponíveis:');
+  console.log('──────────────────────────────────────────────');
+  console.log('🔎 Health');
   console.log(
-    `🔗 Follow Requests API: http://localhost:${PORT}/api/follow-requests`
+    `   GET    /api/health                         → Verificar saúde da API`
   );
-  console.log(`\n📡 Available endpoints for Postman testing:`);
+  console.log('──────────────────────────────────────────────');
+  console.log('👤 Users');
   console.log(
-    `   GET    http://localhost:${PORT}/api/users        - Get all users`
-  );
-  console.log(
-    `   GET    http://localhost:${PORT}/api/users/:id    - Get user by ID`
-  );
-  console.log(
-    `   POST   http://localhost:${PORT}/api/users        - Create user`
+    `   GET    /api/users                          → Listar todos usuários`
   );
   console.log(
-    `   PUT    http://localhost:${PORT}/api/users/:id    - Update user`
+    `   GET    /api/users/:id                      → Buscar usuário por ID`
+  );
+  console.log(`   POST   /api/users                          → Criar usuário`);
+  console.log(
+    `   PUT    /api/users/:id                      → Atualizar usuário`
   );
   console.log(
-    `   DELETE http://localhost:${PORT}/api/users/:id    - Delete user`
+    `   DELETE /api/users/:id                      → Remover usuário`
+  );
+  console.log('──────────────────────────────────────────────');
+  console.log('🔗 Follow Requests');
+  console.log(
+    `   POST   /api/follow-requests/register       → Solicitar seguir usuário`
   );
   console.log(
-    `   POST   http://localhost:${PORT}/api/follow-requests/register         - Request to follow user`
+    `   GET    /api/follow-requests/by-follower/:id→ Listar solicitações por seguidor`
   );
   console.log(
-    `   GET    http://localhost:${PORT}/api/follow-requests/by-follower/:id  - Get follow requests by follower`
+    `   GET    /api/follow-requests/by-followed/:id→ Listar solicitações por seguido`
   );
   console.log(
-    `   GET    http://localhost:${PORT}/api/follow-requests/by-followed/:id  - Get follow requests by followed`
+    `   DELETE /api/follow-requests/:id            → Cancelar solicitação de seguir`
+  );
+  console.log(
+    `   PATCH  /api/follow-requests/:id/process    → Processar solicitação (aprovar/rejeitar)`
+  );
+  console.log('──────────────────────────────────────────────');
+  console.log('👥 Follows');
+  console.log(
+    `   GET    /api/follows/:userId/followers      → Listar seguidores do usuário`
+  );
+  console.log(
+    `   DELETE /api/follows/:id/unfollow           → Deixar de seguir usuário`
+  );
+  console.log(
+    `   DELETE /api/follows/:id/remove             → Remover seguidor`
+  );
+  console.log('──────────────────────────────────────────────');
+  console.log(
+    '\n💡 Utilize o arquivo postman-collection.json para testar todos os endpoints!'
   );
 });
