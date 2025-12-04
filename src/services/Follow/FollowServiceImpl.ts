@@ -23,6 +23,16 @@ export class FollowServiceImpl implements FollowService {
     return await this.followRepository.create(followerId, followedId);
   }
 
+  public async findByFollowerAndFollowedId(
+    followerId: string,
+    followedId: string
+  ): Promise<FollowDto | null> {
+    return await this.followRepository.findByFollowerAndFollowedId(
+      followerId,
+      followedId
+    );
+  }
+
   public async findAllUserFollowers(userId: string): Promise<FollowDto[]> {
     return await this.followRepository.findAllByFollowedId(userId);
   }
