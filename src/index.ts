@@ -2,6 +2,8 @@ import express from 'express';
 import userRoutes from '@/routes/userRoutes';
 import followRequestRoutes from '@/routes/followRequestRoutes';
 import followRoutes from '@/routes/followRoutes';
+import playlistRoutes from '@/routes/playlistRoutes';
+import commentRoutes from '@/routes/commentRoutes';
 import { globalErrorHandler } from '@/middleware/global-error-handling';
 
 const app = express();
@@ -15,6 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/users', userRoutes);
 app.use('/api/follow-requests', followRequestRoutes);
 app.use('/api/follows', followRoutes);
+app.use('/api/playlists', playlistRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -33,6 +37,7 @@ app.get('/api', (req, res) => {
     endpoints: {
       health: '/health',
       users: '/api/users',
+      playlists: '/api/playlists',
     },
   });
 });
@@ -102,5 +107,33 @@ app.listen(PORT, () => {
   console.log('──────────────────────────────────────────────');
   console.log(
     '\n💡 Utilize o arquivo postman-collection.json para testar todos os endpoints!'
+  );
+  console.log(`\n🎵 Playlist endpoints:`);
+  console.log(
+    `   GET    http://localhost:${PORT}/api/playlists/:id              - Get playlist by ID`
+  );
+  console.log(
+    `   GET    http://localhost:${PORT}/api/playlists/user/:userId     - Get playlists by user`
+  );
+  console.log(
+    `   GET    http://localhost:${PORT}/api/playlists/public/all       - Get all public playlists`
+  );
+  console.log(
+    `   POST   http://localhost:${PORT}/api/playlists                  - Create playlist`
+  );
+  console.log(
+    `   PUT    http://localhost:${PORT}/api/playlists/:id              - Update playlist`
+  );
+  console.log(
+    `   DELETE http://localhost:${PORT}/api/playlists/:id              - Delete playlist`
+  );
+  console.log(
+    `   POST   http://localhost:${PORT}/api/playlists/:id/musics       - Add music to playlist`
+  );
+  console.log(
+    `   DELETE http://localhost:${PORT}/api/playlists/:id/musics       - Remove music from playlist`
+  );
+  console.log(
+    `   GET    http://localhost:${PORT}/api/playlists/:id/musics       - Get playlist musics`
   );
 });

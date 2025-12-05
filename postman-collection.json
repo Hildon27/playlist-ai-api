@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Playlist AI API",
-    "description": "Coleção organizada para testar os endpoints da Playlist AI API",
+    "description": "Collection for testing User, Playlist and Comment CRUD operations",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -10,8 +10,7 @@
   ],
   "item": [
     {
-      "name": "Health",
-      "description": "Endpoints de verificação de saúde da API",
+      "name": "Health & Info",
       "item": [
         {
           "name": "Health Check",
@@ -25,21 +24,38 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "API Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api",
+              "host": ["{{baseUrl}}"],
+              "path": ["api"]
+            }
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "Users",
-      "description": "Endpoints de gerenciamento de usuários",
       "item": [
         {
           "name": "Create User",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"privacity\": \"PUBLIC\"\n}"
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"privacity\": \"public\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/users",
@@ -68,9 +84,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "raw": "{{baseUrl}}/api/users/:userId",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "{{userId}}"]
+              "path": ["api", "users", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "replace-with-actual-id",
+                  "description": "User ID to retrieve"
+                }
+              ]
             }
           },
           "response": []
@@ -79,15 +102,27 @@
           "name": "Update User",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"privacity\": \"PRIVATE\"\n}"
+              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"privacity\": \"private\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "raw": "{{baseUrl}}/api/users/:userId",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "{{userId}}"]
+              "path": ["api", "users", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "replace-with-actual-id",
+                  "description": "User ID to update"
+                }
+              ]
             }
           },
           "response": []
@@ -98,18 +133,440 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "raw": "{{baseUrl}}/api/users/:userId",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "{{userId}}"]
+              "path": ["api", "users", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "replace-with-actual-id",
+                  "description": "User ID to delete"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Playlists - CRUD",
+      "item": [
+        {
+          "name": "Create Playlist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"My Awesome Playlist\",\n  \"userId\": \"replace-with-user-id\",\n  \"privacity\": \"public\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists"]
             }
           },
           "response": []
         },
         {
+          "name": "Get Playlist by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists/:playlistId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists", ":playlistId"],
+              "variable": [
+                {
+                  "key": "playlistId",
+                  "value": "replace-with-playlist-id",
+                  "description": "Playlist ID to retrieve"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Playlist with Musics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists/:playlistId?includeMusics=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists", ":playlistId"],
+              "query": [
+                {
+                  "key": "includeMusics",
+                  "value": "true",
+                  "description": "Include musics in response"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "playlistId",
+                  "value": "replace-with-playlist-id",
+                  "description": "Playlist ID to retrieve"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Playlist",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Playlist Name\",\n  \"privacity\": \"private\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists/:playlistId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists", ":playlistId"],
+              "variable": [
+                {
+                  "key": "playlistId",
+                  "value": "replace-with-playlist-id",
+                  "description": "Playlist ID to update"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Playlist",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists/:playlistId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists", ":playlistId"],
+              "variable": [
+                {
+                  "key": "playlistId",
+                  "value": "replace-with-playlist-id",
+                  "description": "Playlist ID to delete"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Playlists - Search",
+      "item": [
+        {
+          "name": "Get Playlists by User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists/user/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists", "user", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "replace-with-user-id",
+                  "description": "User ID to get playlists from"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Public Playlists",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists/public/all",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists", "public", "all"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Playlist Musics",
+      "item": [
+        {
+          "name": "Add Music to Playlist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"externalId\": \"spotify-track-id-example\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists/:playlistId/musics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists", ":playlistId", "musics"],
+              "variable": [
+                {
+                  "key": "playlistId",
+                  "value": "replace-with-playlist-id",
+                  "description": "Playlist ID to add music to"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Music from Playlist",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"musicId\": \"replace-with-music-id\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists/:playlistId/musics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists", ":playlistId", "musics"],
+              "variable": [
+                {
+                  "key": "playlistId",
+                  "value": "replace-with-playlist-id",
+                  "description": "Playlist ID to remove music from"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Playlist Musics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists/:playlistId/musics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists", ":playlistId", "musics"],
+              "variable": [
+                {
+                  "key": "playlistId",
+                  "value": "replace-with-playlist-id",
+                  "description": "Playlist ID to get musics from"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comments - CRUD",
+      "item": [
+        {
+          "name": "Create Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "user-id",
+                "value": "replace-with-user-id",
+                "description": "User ID for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Great playlist! Love the song selection.\",\n  \"playlistId\": \"replace-with-playlist-id\",\n  \"userId\": \"replace-with-user-id\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Comment by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/:commentId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", ":commentId"],
+              "variable": [
+                {
+                  "key": "commentId",
+                  "value": "1",
+                  "description": "Comment ID to retrieve"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Comment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "user-id",
+                "value": "replace-with-user-id",
+                "description": "User ID for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Updated comment: This playlist is absolutely amazing!\",\n  \"userId\": \"replace-with-user-id\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/:commentId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", ":commentId"],
+              "variable": [
+                {
+                  "key": "commentId",
+                  "value": "1",
+                  "description": "Comment ID to update"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "user-id",
+                "value": "replace-with-user-id",
+                "description": "User ID for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"replace-with-user-id\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/:commentId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", ":commentId"],
+              "variable": [
+                {
+                  "key": "commentId",
+                  "value": "1",
+                  "description": "Comment ID to delete"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comments - Search",
+      "item": [
+        {
+          "name": "Get Comments by Playlist",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/playlist/:playlistId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", "playlist", ":playlistId"],
+              "variable": [
+                {
+                  "key": "playlistId",
+                  "value": "replace-with-playlist-id",
+                  "description": "Playlist ID to get comments from"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Comments by User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/user/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", "user", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "replace-with-user-id",
+                  "description": "User ID to get comments from"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Test Cases - Users",
+      "item": [
+        {
           "name": "Test Validation - Missing Fields",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"firstName\": \"John\"\n}"
@@ -126,10 +583,15 @@
           "name": "Test Validation - Invalid Email",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"invalid-email\",\n  \"password\": \"password123\",\n  \"privacity\": \"PUBLIC\"\n}"
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"invalid-email\",\n  \"password\": \"password123\",\n  \"privacity\": \"public\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/users",
@@ -143,10 +605,15 @@
           "name": "Test Validation - Short Password",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"123\",\n  \"privacity\": \"PUBLIC\"\n}"
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"123\",\n  \"privacity\": \"public\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/users",
@@ -155,136 +622,107 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Test Get User - Non-existent ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/non-existent-id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "non-existent-id"]
+            }
+          },
+          "response": []
         }
       ]
     },
     {
-      "name": "Follow Requests",
-      "description": "Endpoints para solicitações de seguir usuários",
+      "name": "Test Cases - Playlists",
       "item": [
         {
-          "name": "Request to Follow User",
+          "name": "Test Create Playlist - Missing Name Field",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"followerId\": \"{{userId}}\",\n  \"followedUserEmail\": \"john.doe@example.com\"\n}"
+              "raw": "{\n  \"userId\": \"replace-with-user-id\",\n  \"privacity\": \"public\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/follow-requests/register",
+              "raw": "{{baseUrl}}/api/playlists",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follow-requests", "register"]
+              "path": ["api", "playlists"]
             }
           },
           "response": []
         },
         {
-          "name": "Find All Follow Requests by Follower ID",
+          "name": "Test Create Playlist - Missing User ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Playlist\",\n  \"privacity\": \"public\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/playlists",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "playlists"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Get Playlist - Non-existent ID",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/follow-requests/by-follower/{{userId}}",
+              "raw": "{{baseUrl}}/api/playlists/non-existent-id",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follow-requests", "by-follower", "{{userId}}"]
+              "path": ["api", "playlists", "non-existent-id"]
             }
           },
           "response": []
         },
         {
-          "name": "Find All Follow Requests by Followed ID",
+          "name": "Test Add Music - Invalid External ID",
           "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/follow-requests/by-followed/{{userId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "follow-requests", "by-followed", "{{userId}}"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Cancel Follow Request",
-          "request": {
-            "method": "DELETE",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"followerId\": \"{{userId}}\"\n}"
+              "raw": "{\n  \"externalId\": \"\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/follow-requests/{{followRequestId}}",
+              "raw": "{{baseUrl}}/api/playlists/:playlistId/musics",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follow-requests", "{{followRequestId}}"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Process Follow Request (Approve/Reject)",
-          "request": {
-            "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"followedId\": \"{{userId}}\",\n  \"action\": \"accept\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/follow-requests/{{followRequestId}}/process",
-              "host": ["{{baseUrl}}"],
-              "path": [
-                "api",
-                "follow-requests",
-                "{{followRequestId}}",
-                "process"
+              "path": ["api", "playlists", ":playlistId", "musics"],
+              "variable": [
+                {
+                  "key": "playlistId",
+                  "value": "replace-with-playlist-id",
+                  "description": "Playlist ID to test with"
+                }
               ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Follows",
-      "description": "Endpoints para gerenciamento de seguidores",
-      "item": [
-        {
-          "name": "Find All User Followers",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/follows/{{userId}}/followers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "follows", "{{userId}}", "followers"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Unfollow User by Follow ID",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/follows/{{followId}}/unfollow",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "follows", "{{followId}}", "unfollow"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Remove Follower by Follow ID",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/follows/{{followId}}/remove",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "follows", "{{followId}}", "remove"]
             }
           },
           "response": []

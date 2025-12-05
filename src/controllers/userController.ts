@@ -1,9 +1,5 @@
 import { ApiError, ErrorCode } from '@/models/Errors';
-import {
-  CreateUserDTO,
-  createUserSchema,
-  updateUserSchema,
-} from '@/models/users';
+import { createUserSchema, updateUserSchema } from '@/models/users';
 import { UserServiceImpl } from '@/services/UserService/UserServiceImpl';
 import { NextFunction, Request, Response } from 'express';
 
