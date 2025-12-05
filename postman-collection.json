@@ -451,31 +451,47 @@
           }
         },
         {
-          "name": "Unfollow User by Follow ID",
+          "name": "Unfollow User",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"followerId\": \"replace-with-follower-id\"\n}"
+            },
             "url": {
-              "raw": "{{baseUrl}}/api/follows/:id/unfollow",
+              "raw": "{{baseUrl}}/api/follows/:followedId/unfollow",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follows", ":id", "unfollow"],
+              "path": ["api", "follows", ":followedId", "unfollow"],
               "variable": [
-                { "key": "id", "value": "", "description": "Follow ID" }
+                {
+                  "key": "followedId",
+                  "value": "",
+                  "description": "User being unfollowed"
+                }
               ]
             }
           }
         },
         {
-          "name": "Remove Follower by Follow ID",
+          "name": "Remove Follower",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"followedId\": \"replace-with-followed-id\"\n}"
+            },
             "url": {
-              "raw": "{{baseUrl}}/api/follows/:id/remove",
+              "raw": "{{baseUrl}}/api/follows/:followerId/remove",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follows", ":id", "remove"],
+              "path": ["api", "follows", ":followerId", "remove"],
               "variable": [
-                { "key": "id", "value": "", "description": "Follow ID" }
+                {
+                  "key": "followerId",
+                  "value": "",
+                  "description": "Follower being removed"
+                }
               ]
             }
           }
