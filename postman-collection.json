@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Playlist AI API",
-    "description": "Collection for testing User and Playlist CRUD operations",
+    "description": "Collection for testing User, Playlist and Comment CRUD operations",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -388,6 +388,167 @@
                   "key": "playlistId",
                   "value": "replace-with-playlist-id",
                   "description": "Playlist ID to get musics from"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comments - CRUD",
+      "item": [
+        {
+          "name": "Create Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "user-id",
+                "value": "replace-with-user-id",
+                "description": "User ID for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Great playlist! Love the song selection.\",\n  \"playlistId\": \"replace-with-playlist-id\",\n  \"userId\": \"replace-with-user-id\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Comment by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/:commentId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", ":commentId"],
+              "variable": [
+                {
+                  "key": "commentId",
+                  "value": "1",
+                  "description": "Comment ID to retrieve"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Comment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "user-id",
+                "value": "replace-with-user-id",
+                "description": "User ID for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Updated comment: This playlist is absolutely amazing!\",\n  \"userId\": \"replace-with-user-id\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/:commentId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", ":commentId"],
+              "variable": [
+                {
+                  "key": "commentId",
+                  "value": "1",
+                  "description": "Comment ID to update"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "user-id",
+                "value": "replace-with-user-id",
+                "description": "User ID for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"replace-with-user-id\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/:commentId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", ":commentId"],
+              "variable": [
+                {
+                  "key": "commentId",
+                  "value": "1",
+                  "description": "Comment ID to delete"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comments - Search",
+      "item": [
+        {
+          "name": "Get Comments by Playlist",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/playlist/:playlistId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", "playlist", ":playlistId"],
+              "variable": [
+                {
+                  "key": "playlistId",
+                  "value": "replace-with-playlist-id",
+                  "description": "Playlist ID to get comments from"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Comments by User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/user/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", "user", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "replace-with-user-id",
+                  "description": "User ID to get comments from"
                 }
               ]
             }

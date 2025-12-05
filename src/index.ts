@@ -1,6 +1,7 @@
 import express from 'express';
 import userRoutes from '@/routes/userRoutes';
 import playlistRoutes from '@/routes/playlistRoutes';
+import commentRoutes from '@/routes/commentRoutes';
 import { globalErrorHandler } from '@/middleware/global-error-handling';
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/playlists', playlistRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
