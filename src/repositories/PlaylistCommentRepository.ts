@@ -21,7 +21,7 @@ export class PlaylistCommentRepository {
     return this.mapToDTO(comment);
   }
 
-  public async findById(id: number): Promise<PlaylistCommentDTO | null> {
+  public async findById(id: string): Promise<PlaylistCommentDTO | null> {
     const comment = await this.prisma.playlistComment.findUnique({
       where: { id },
     });
@@ -34,7 +34,7 @@ export class PlaylistCommentRepository {
   }
 
   public async findByIdWithUser(
-    id: number
+    id: string
   ): Promise<PlaylistCommentWithUserDTO | null> {
     const comment = await this.prisma.playlistComment.findUnique({
       where: { id },
@@ -57,7 +57,7 @@ export class PlaylistCommentRepository {
   }
 
   public async findByIdWithUserAndPlaylist(
-    id: number
+    id: string
   ): Promise<PlaylistCommentWithUserAndPlaylistDTO | null> {
     const comment = await this.prisma.playlistComment.findUnique({
       where: { id },
@@ -136,7 +136,7 @@ export class PlaylistCommentRepository {
   }
 
   public async update(
-    id: number,
+    id: string,
     data: UpdatePlaylistCommentDTO
   ): Promise<PlaylistCommentDTO | null> {
     try {
@@ -152,7 +152,7 @@ export class PlaylistCommentRepository {
     }
   }
 
-  public async delete(id: number): Promise<boolean> {
+  public async delete(id: string): Promise<boolean> {
     try {
       await this.prisma.playlistComment.delete({
         where: { id },
@@ -163,7 +163,7 @@ export class PlaylistCommentRepository {
     }
   }
 
-  public async exists(id: number): Promise<boolean> {
+  public async exists(id: string): Promise<boolean> {
     const comment = await this.prisma.playlistComment.findUnique({
       where: { id },
       select: { id: true },
@@ -172,7 +172,7 @@ export class PlaylistCommentRepository {
     return !!comment;
   }
 
-  public async isCommentOwner(id: number, userId: string): Promise<boolean> {
+  public async isCommentOwner(id: string, userId: string): Promise<boolean> {
     const comment = await this.prisma.playlistComment.findUnique({
       where: { id },
       select: { userId: true },

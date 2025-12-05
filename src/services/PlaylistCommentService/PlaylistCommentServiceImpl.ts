@@ -31,7 +31,7 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
   }
 
   public async updateComment(
-    id: number,
+    id: string,
     data: UpdatePlaylistCommentDTO,
     userId: string
   ): Promise<PlaylistCommentDTO | null> {
@@ -55,7 +55,7 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
     return await this.playlistCommentRepository.update(id, data);
   }
 
-  public async deleteComment(id: number, userId: string): Promise<boolean> {
+  public async deleteComment(id: string, userId: string): Promise<boolean> {
     // Verify if comment exists
     const commentExists = await this.playlistCommentRepository.exists(id);
     if (!commentExists) {
@@ -77,7 +77,7 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
   }
 
   public async getCommentById(
-    id: number
+    id: string
   ): Promise<PlaylistCommentWithUserDTO | null> {
     return await this.playlistCommentRepository.findByIdWithUser(id);
   }
@@ -100,7 +100,7 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
     return await this.playlistCommentRepository.findByUserId(userId);
   }
 
-  public async isCommentOwner(id: number, userId: string): Promise<boolean> {
+  public async isCommentOwner(id: string, userId: string): Promise<boolean> {
     return await this.playlistCommentRepository.isCommentOwner(id, userId);
   }
 }

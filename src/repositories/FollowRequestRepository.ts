@@ -39,6 +39,7 @@ export class FollowRequestRepository {
   ): Promise<FollowRequestDto | null> {
     const followRequest = await this.prisma.followRequest.findFirst({
       where: { followerId, followedId },
+      orderBy: { createdAt: 'desc' },
     });
 
     return followRequest ? this.toResponse(followRequest) : null;

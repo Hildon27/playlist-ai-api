@@ -4,20 +4,20 @@ import { Privacity } from '../Enums';
 // Schemas
 
 export const musicSchema = z.object({
-  id: z.string().min(1),
+  id: z.string().nonempty(),
   externalId: z.string().min(1, 'ID externo da música é obrigatório'),
   createdAt: z.date(),
 });
 
 export const musicPlaylistSchema = z.object({
-  id: z.string().min(1),
+  id: z.string().nonempty(),
   musicId: z.string().min(1),
   playlistId: z.string().min(1),
   createdAt: z.date(),
 });
 
 export const userPlaylistSchema = z.object({
-  id: z.string().min(1),
+  id: z.string().nonempty(),
   name: z.string().min(1, 'Nome da playlist é obrigatório'),
   privacity: z.enum(Privacity),
   userId: z.string().min(1, 'ID do usuário é obrigatório'),
