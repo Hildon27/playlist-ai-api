@@ -1,6 +1,7 @@
 import {
   findAllUserFollowers,
-  unfollowUserByFollowId,
+  removeFollowerById,
+  unfollowUserByFollowedId,
 } from '@/controllers/followController';
 import express from 'express';
 
@@ -10,9 +11,9 @@ const router = express.Router();
 router.get('/:userId/followers', findAllUserFollowers);
 
 // Unfollow user by follow ID
-router.delete('/:id/unfollow', unfollowUserByFollowId);
+router.delete('/:followedId/unfollow', unfollowUserByFollowedId);
 
 // Remove follower by follow ID
-router.delete('/:id/remove', unfollowUserByFollowId);
+router.delete('/:followerId/remove', removeFollowerById);
 
 export default router;

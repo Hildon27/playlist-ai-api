@@ -9,6 +9,14 @@ export const followSchema = z.object({
   createdAt: z.date(),
 });
 
+export const unfollowBodySchema = z.object({
+  followerId: z.string().nonempty('Followed ID can not be empty'),
+});
+
+export const removeFollowerBodySchema = z.object({
+  followedId: z.string().nonempty('Followed ID can not be empty'),
+});
+
 // Types
 
 export type FollowDto = z.infer<typeof followSchema>;
