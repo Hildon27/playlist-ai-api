@@ -30,8 +30,8 @@ export const endpoints = {
   },
   follows: {
     followers: '/api/follows/:userId/followers',
-    unfollow: '/api/follows/:id/unfollow',
-    removeFollower: '/api/follows/:id/remove',
+    unfollow: '/api/follows/:followedId/unfollow',
+    removeFollower: '/api/follows/:followerId/remove',
   },
   followRequests: {
     register: '/api/follow-requests/register',

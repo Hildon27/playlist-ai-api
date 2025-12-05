@@ -96,10 +96,10 @@ app.listen(PORT, () => {
     `   GET    /api/follows/:userId/followers      → Listar seguidores do usuário`
   );
   console.log(
-    `   DELETE /api/follows/:id/unfollow           → Deixar de seguir usuário`
+    `   DELETE /api/follows/:followed/unfollow           → Deixar de seguir usuário`
   );
   console.log(
-    `   DELETE /api/follows/:id/remove             → Remover seguidor`
+    `   DELETE /api/follows/:follower/remove             → Remover seguidor`
   );
   console.log('──────────────────────────────────────────────');
   console.log(
