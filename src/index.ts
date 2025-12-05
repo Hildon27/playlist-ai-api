@@ -5,6 +5,7 @@ import followRoutes from '@/routes/followRoutes';
 import playlistRoutes from '@/routes/playlistRoutes';
 import commentRoutes from '@/routes/commentRoutes';
 import { globalErrorHandler } from '@/middleware/global-error-handling';
+import { endpoints } from 'endpoints';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -34,11 +35,7 @@ app.get('/api', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Welcome to Playlist AI API',
-    endpoints: {
-      health: '/health',
-      users: '/api/users',
-      playlists: '/api/playlists',
-    },
+    endpoints,
   });
 });
 
