@@ -109,13 +109,45 @@ A API estará disponível em [http://localhost:3000/api](http://localhost:3000/a
 
 ## Testando a API
 
-- Utilize o arquivo `postman-collection.json` para importar a coleção de requisições no [Postman](https://www.postman.com/).
-- Endpoints principais:
-  - `POST   /api/users` – Criar usuário
-  - `GET    /api/users` – Listar usuários
-  - `GET    /api/users/:id` – Buscar usuário por ID
-  - `PUT    /api/users/:id` – Atualizar usuário
-  - `DELETE /api/users/:id` – Remover usuário
+- Utilize o arquivo [postman-collection.json](./postman-collection.json) para importar a coleção de requisições no [Postman](https://www.postman.com/).
+
+### 🔎 Health
+
+- `GET    /api/health` – Verificar saúde da API
+
+### Users
+
+- `GET    /api/users` – Listar todos usuários
+- `GET    /api/users/:id` – Buscar usuário por ID
+- `POST   /api/users` – Criar usuário
+- `PUT    /api/users/:id` – Atualizar usuário
+- `DELETE /api/users/:id` – Remover usuário
+
+### Follow Requests
+
+- `POST   /api/follow-requests/register` – Solicitar seguir usuário
+- `GET    /api/follow-requests/by-follower/:id` – Listar solicitações por seguidor
+- `GET    /api/follow-requests/by-followed/:id` – Listar solicitações por seguido
+- `DELETE /api/follow-requests/:id` – Cancelar solicitação de seguir
+- `PATCH  /api/follow-requests/:id/process` – Processar solicitação (aprovar/rejeitar)
+
+### Follows
+
+- `GET    /api/follows/:userId/followers` – Listar seguidores do usuário
+- `DELETE /api/follows/:followedId/unfollow` – Deixar de seguir usuário
+- `DELETE /api/follows/:followerId/remove` – Remover seguidor
+
+### Playlists
+
+- `GET    /api/playlists/:id` – Buscar playlist por ID
+- `GET    /api/playlists/user/:userId` – Listar playlists de um usuário
+- `GET    /api/playlists/public/all` – Listar todas playlists públicas
+- `POST   /api/playlists` – Criar playlist
+- `PUT    /api/playlists/:id` – Atualizar playlist
+- `DELETE /api/playlists/:id` – Deletar playlist
+- `POST   /api/playlists/:id/musics` – Adicionar música à playlist
+- `DELETE /api/playlists/:id/musics` – Remover música da playlist
+- `GET    /api/playlists/:id/musics` – Listar músicas da playlist
 
 ## Considerações
 

@@ -78,7 +78,7 @@ model MusicPlaylist {
 }
 
 model PlaylistComment {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(uuid())
   content    String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -92,7 +92,7 @@ model PlaylistComment {
 }
 
 model FollowRequest {
-  id         Int                  @id @default(autoincrement())
+  id         String    @id @default(uuid())
   status     FollowRequestStatus
   createdAt  DateTime             @default(now())
   updatedAt  DateTime             @updatedAt
@@ -105,7 +105,7 @@ model FollowRequest {
 }
 
 model Follow {
-  id        Int      @id @default(autoincrement())
+  id         String    @id @default(uuid())
   createdAt DateTime @default(now())
 
   followerId String

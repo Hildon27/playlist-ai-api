@@ -8,3 +8,8 @@ export enum FollowRequestStatus {
   APPROVED = 'approved',
   REJECTED = 'rejected',
 }
+
+export enum FollowRequestProcessingAction {
+  ACCEPT = 'accept',
+  REJECT = 'reject',
+}

@@ -3,7 +3,7 @@ import { z } from 'zod';
 // Schemas
 
 export const playlistCommentSchema = z.object({
-  id: z.number().int().positive(),
+  id: z.string().nonempty(),
   content: z.string().min(1, 'Conteúdo do comentário é obrigatório'),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -61,12 +61,7 @@ export type PlaylistCommentWithUserAndPlaylistDTO = z.infer<
 
 // Query schemas for validation
 export const getCommentByIdSchema = z.object({
-  id: z
-    .string()
-    .transform(val => parseInt(val))
-    .refine(val => !isNaN(val) && val > 0, {
-      message: 'ID deve ser um número inteiro positivo',
-    }),
+  id: z.string().nonempty(),
 });
 
 export const getCommentsByPlaylistIdSchema = z.object({

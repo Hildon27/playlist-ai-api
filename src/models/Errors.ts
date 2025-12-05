@@ -25,6 +25,19 @@ export enum ErrorCode {
   VALIDATION_INVALID_PRIVACY = 2004,
   VALIDATION_INVALID_FIELDS = 2005,
 
+  // Follow Request errors (3000 - 3999)
+  FOLLOW_REQUEST_NOT_FOUND = 3000,
+  FOLLOW_REQUEST_ALREADY_EXISTS = 3001,
+  FOLLOW_REQUEST_PUBLIC_FOLLOWED_USER_NOT_FOUND = 3002,
+  FOLLOW_REQUEST_NOT_PENDING = 3003,
+  FOLLOWER_ID_AND_FOLLOWED_ID_CAN_NOT_BE_EQUALS = 3004,
+
+  // Follow errors (4000-4999)
+  FOLLOWER_NOT_FOUND = 4000,
+  FOLLOWED_NOT_FOUND = 4001,
+  FOLLOW_NOT_FOUND = 4002,
+  FOLLOW_ALREADY_EXISTS = 4003,
+
   // System errors (9000-9999)
   SYSTEM_ERROR = 9000,
   DATABASE_ERROR = 9001,
@@ -102,6 +115,55 @@ export const errorDictionary: Record<ErrorCode, ErrorResponse> = {
     code: ErrorCode.VALIDATION_INVALID_FIELDS,
     message: 'Invalid field values provided',
     status: 400,
+  },
+
+  // Follow requests errors
+  [ErrorCode.FOLLOW_REQUEST_NOT_FOUND]: {
+    code: ErrorCode.FOLLOW_REQUEST_NOT_FOUND,
+    message: 'Follow request not found',
+    status: 404,
+  },
+  [ErrorCode.FOLLOW_REQUEST_ALREADY_EXISTS]: {
+    code: ErrorCode.FOLLOW_REQUEST_ALREADY_EXISTS,
+    message: 'Follow request already exists',
+    status: 409,
+  },
+  [ErrorCode.FOLLOW_REQUEST_PUBLIC_FOLLOWED_USER_NOT_FOUND]: {
+    code: ErrorCode.FOLLOW_REQUEST_PUBLIC_FOLLOWED_USER_NOT_FOUND,
+    message: 'Public user to follow not found',
+    status: 404,
+  },
+  [ErrorCode.FOLLOW_REQUEST_NOT_PENDING]: {
+    code: ErrorCode.FOLLOW_REQUEST_NOT_PENDING,
+    message: 'Follow request is not pending',
+    status: 400,
+  },
+  [ErrorCode.FOLLOWER_ID_AND_FOLLOWED_ID_CAN_NOT_BE_EQUALS]: {
+    code: ErrorCode.FOLLOWER_ID_AND_FOLLOWED_ID_CAN_NOT_BE_EQUALS,
+    message: 'Follower ID and Followed ID can not be equals',
+    status: 400,
+  },
+
+  // Follow errors
+  [ErrorCode.FOLLOWER_NOT_FOUND]: {
+    code: ErrorCode.FOLLOWER_NOT_FOUND,
+    message: 'Follower not found',
+    status: 404,
+  },
+  [ErrorCode.FOLLOWED_NOT_FOUND]: {
+    code: ErrorCode.FOLLOWED_NOT_FOUND,
+    message: 'Followed not found',
+    status: 404,
+  },
+  [ErrorCode.FOLLOW_NOT_FOUND]: {
+    code: ErrorCode.FOLLOW_NOT_FOUND,
+    message: 'Follow not found',
+    status: 404,
+  },
+  [ErrorCode.FOLLOW_ALREADY_EXISTS]: {
+    code: ErrorCode.FOLLOW_ALREADY_EXISTS,
+    message: 'Follow already exists',
+    status: 404,
   },
 
   // System errors

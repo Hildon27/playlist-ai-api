@@ -27,6 +27,15 @@ export class UserServiceImpl implements UserService {
     return user;
   }
 
+  public async findByEmail(email: string): Promise<UserResponseDTO | null> {
+    if (email.trim() === '') {
+      throw new ApiError(ErrorCode.VALIDATION_EMAIL_INVALID);
+    }
+
+    const user = await this.userRepository.findByEmail(email);
+    return user;
+  }
+
   public async findAll(): Promise<UserResponseDTO[]> {
     const users = await this.userRepository.findAll();
     return users;

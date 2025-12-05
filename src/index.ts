@@ -1,8 +1,11 @@
 import express from 'express';
 import userRoutes from '@/routes/userRoutes';
+import followRequestRoutes from '@/routes/followRequestRoutes';
+import followRoutes from '@/routes/followRoutes';
 import playlistRoutes from '@/routes/playlistRoutes';
 import commentRoutes from '@/routes/commentRoutes';
 import { globalErrorHandler } from '@/middleware/global-error-handling';
+import { endpoints } from 'endpoints';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -13,6 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/follow-requests', followRequestRoutes);
+app.use('/api/follows', followRoutes);
 app.use('/api/playlists', playlistRoutes);
 app.use('/api/comments', commentRoutes);
 
@@ -30,11 +35,7 @@ app.get('/api', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Welcome to Playlist AI API',
-    endpoints: {
-      health: '/health',
-      users: '/api/users',
-      playlists: '/api/playlists',
-    },
+    endpoints,
   });
 });
 
@@ -51,24 +52,58 @@ app.use(globalErrorHandler);
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📋 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`👥 Users API: http://localhost:${PORT}/api/users`);
-  console.log(`🎵 Playlists API: http://localhost:${PORT}/api/playlists`);
-  console.log(`\n📡 Available endpoints for Postman testing:`);
+  console.log('\n📋 Endpoints disponíveis:');
+  console.log('──────────────────────────────────────────────');
+  console.log('🔎 Health');
   console.log(
-    `   GET    http://localhost:${PORT}/api/users        - Get all users`
+    `   GET    /api/health                         → Verificar saúde da API`
+  );
+  console.log('──────────────────────────────────────────────');
+  console.log('👤 Users');
+  console.log(
+    `   GET    /api/users                          → Listar todos usuários`
   );
   console.log(
-    `   GET    http://localhost:${PORT}/api/users/:id    - Get user by ID`
+    `   GET    /api/users/:id                      → Buscar usuário por ID`
+  );
+  console.log(`   POST   /api/users                          → Criar usuário`);
+  console.log(
+    `   PUT    /api/users/:id                      → Atualizar usuário`
   );
   console.log(
-    `   POST   http://localhost:${PORT}/api/users        - Create user`
+    `   DELETE /api/users/:id                      → Remover usuário`
+  );
+  console.log('──────────────────────────────────────────────');
+  console.log('🔗 Follow Requests');
+  console.log(
+    `   POST   /api/follow-requests/register       → Solicitar seguir usuário`
   );
   console.log(
-    `   PUT    http://localhost:${PORT}/api/users/:id    - Update user`
+    `   GET    /api/follow-requests/by-follower/:id→ Listar solicitações por seguidor`
   );
   console.log(
-    `   DELETE http://localhost:${PORT}/api/users/:id    - Delete user`
+    `   GET    /api/follow-requests/by-followed/:id→ Listar solicitações por seguido`
+  );
+  console.log(
+    `   DELETE /api/follow-requests/:id            → Cancelar solicitação de seguir`
+  );
+  console.log(
+    `   PATCH  /api/follow-requests/:id/process    → Processar solicitação (aprovar/rejeitar)`
+  );
+  console.log('──────────────────────────────────────────────');
+  console.log('👥 Follows');
+  console.log(
+    `   GET    /api/follows/:userId/followers      → Listar seguidores do usuário`
+  );
+  console.log(
+    `   DELETE /api/follows/:followed/unfollow           → Deixar de seguir usuário`
+  );
+  console.log(
+    `   DELETE /api/follows/:follower/remove             → Remover seguidor`
+  );
+  console.log('──────────────────────────────────────────────');
+  console.log(
+    '\n💡 Utilize o arquivo postman-collection.json para testar todos os endpoints!'
   );
   console.log(`\n🎵 Playlist endpoints:`);
   console.log(

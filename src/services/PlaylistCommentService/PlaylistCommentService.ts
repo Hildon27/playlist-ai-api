@@ -10,14 +10,14 @@ export interface PlaylistCommentService {
   createComment(data: CreatePlaylistCommentDTO): Promise<PlaylistCommentDTO>;
 
   updateComment(
-    id: number,
+    id: string,
     data: UpdatePlaylistCommentDTO,
     userId: string
   ): Promise<PlaylistCommentDTO | null>;
 
-  deleteComment(id: number, userId: string): Promise<boolean>;
+  deleteComment(id: string, userId: string): Promise<boolean>;
 
-  getCommentById(id: number): Promise<PlaylistCommentWithUserDTO | null>;
+  getCommentById(id: string): Promise<PlaylistCommentWithUserDTO | null>;
 
   getCommentsByPlaylistId(
     playlistId: string
@@ -27,5 +27,5 @@ export interface PlaylistCommentService {
     userId: string
   ): Promise<PlaylistCommentWithUserAndPlaylistDTO[]>;
 
-  isCommentOwner(id: number, userId: string): Promise<boolean>;
+  isCommentOwner(id: string, userId: string): Promise<boolean>;
 }
