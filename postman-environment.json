@@ -8,13 +8,6 @@
       "description": "Base URL for the API",
       "type": "default",
       "enabled": true
-    },
-    {
-      "key": "userId",
-      "value": "",
-      "description": "User ID for testing (will be set after creating a user)",
-      "type": "default",
-      "enabled": true
     }
   ],
   "_postman_variable_scope": "environment"
