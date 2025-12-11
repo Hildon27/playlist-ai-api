@@ -21,6 +21,9 @@ export class PlaylistCommentController {
     );
   }
 
+  /**
+   * Create a new comment on a playlist
+   */
   public createComment = async (req: Request, res: Response): Promise<void> => {
     const validatedData = createPlaylistCommentSchema.parse(req.body);
 
@@ -33,6 +36,9 @@ export class PlaylistCommentController {
     });
   };
 
+  /**
+   * Get a comment by its ID
+   */
   public getCommentById = async (
     req: Request,
     res: Response
@@ -51,6 +57,9 @@ export class PlaylistCommentController {
     });
   };
 
+  /**
+   * Get all comments from a specific playlist
+   */
   public getCommentsByPlaylistId = async (
     req: Request,
     res: Response
@@ -66,6 +75,9 @@ export class PlaylistCommentController {
     });
   };
 
+  /**
+   * Get all comments made by a specific user
+   */
   public getCommentsByUserId = async (
     req: Request,
     res: Response
@@ -81,12 +93,13 @@ export class PlaylistCommentController {
     });
   };
 
+  /**
+   * Update an existing comment
+   */
   public updateComment = async (req: Request, res: Response): Promise<void> => {
     const { id } = getCommentByIdSchema.parse(req.params);
     const validatedData = updatePlaylistCommentSchema.parse(req.body);
 
-    // In a real application, you would get the userId from authentication middleware
-    // For now, we'll expect it in the request body or headers
     const userId = req.body.userId ?? req.headers['user-id'];
     if (!userId) {
       throw new BadRequestError(
@@ -110,11 +123,12 @@ export class PlaylistCommentController {
     });
   };
 
+  /**
+   * Delete a comment by its ID
+   */
   public deleteComment = async (req: Request, res: Response): Promise<void> => {
     const { id } = getCommentByIdSchema.parse(req.params);
 
-    // In a real application, you would get the userId from authentication middleware
-    // For now, we'll expect it in the request body or headers
     const userId = req.body.userId ?? req.headers['user-id'];
     if (!userId) {
       throw new BadRequestError(

@@ -19,7 +19,6 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
   public async createComment(
     data: CreatePlaylistCommentDTO
   ): Promise<PlaylistCommentDTO> {
-    // Verify if playlist exists
     const playlist = await this.userPlaylistRepository.findById(
       data.playlistId
     );
@@ -35,13 +34,11 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
     data: UpdatePlaylistCommentDTO,
     userId: string
   ): Promise<PlaylistCommentDTO | null> {
-    // Verify if comment exists
     const commentExists = await this.playlistCommentRepository.exists(id);
     if (!commentExists) {
       throw new NotFoundError('Comentário não encontrado');
     }
 
-    // Verify if user owns the comment
     const isOwner = await this.playlistCommentRepository.isCommentOwner(
       id,
       userId
@@ -56,13 +53,11 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
   }
 
   public async deleteComment(id: string, userId: string): Promise<boolean> {
-    // Verify if comment exists
     const commentExists = await this.playlistCommentRepository.exists(id);
     if (!commentExists) {
       throw new NotFoundError('Comentário não encontrado');
     }
 
-    // Verify if user owns the comment
     const isOwner = await this.playlistCommentRepository.isCommentOwner(
       id,
       userId
@@ -85,7 +80,6 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
   public async getCommentsByPlaylistId(
     playlistId: string
   ): Promise<PlaylistCommentWithUserDTO[]> {
-    // Verify if playlist exists
     const playlist = await this.userPlaylistRepository.findById(playlistId);
     if (!playlist) {
       throw new NotFoundError('Playlist não encontrada');

@@ -92,10 +92,8 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
 
     if (!playlist) return false;
 
-    // Se a playlist é pública, qualquer um pode acessar
     if (playlist.privacity === Privacity.PUBLIC) return true;
 
-    // Se a playlist é privada, só o dono pode acessar
     if (playlist.privacity === Privacity.PRIVATE) {
       return playlist.userId === userId;
     }

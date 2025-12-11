@@ -7,13 +7,11 @@ export class UserServiceImpl implements UserService {
   private readonly userRepository = new UserRepository();
 
   public async create(data: CreateUserDTO): Promise<UserResponseDTO> {
-    // Verificar se já existe um usuário com este email
     const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
       throw new ApiError(ErrorCode.USER_EMAIL_IN_USE);
     }
 
-    // Criar o usuário
     const user = await this.userRepository.create(data);
     return user;
   }
@@ -49,13 +47,11 @@ export class UserServiceImpl implements UserService {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
     }
 
-    // Verificar se o usuário existe
     const existingUser = await this.userRepository.findById(id);
     if (!existingUser) {
       throw new ApiError(ErrorCode.USER_NOT_FOUND);
     }
 
-    // Se estiver atualizando o email, verificar se não está sendo usado por outro usuário
     if (data.email && data.email !== existingUser.email) {
       const emailExists = await this.userRepository.findByEmail(data.email);
       if (emailExists) {
@@ -63,7 +59,6 @@ export class UserServiceImpl implements UserService {
       }
     }
 
-    // Atualizar o usuário
     const updatedUser = await this.userRepository.update(id, data);
     return updatedUser;
   }
@@ -73,13 +68,11 @@ export class UserServiceImpl implements UserService {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
     }
 
-    // Verificar se o usuário existe
     const existingUser = await this.userRepository.findById(id);
     if (!existingUser) {
       throw new ApiError(ErrorCode.USER_NOT_FOUND);
     }
 
-    // Deletar o usuário
     const deleted = await this.userRepository.delete(id);
     if (!deleted) {
       throw new ApiError(ErrorCode.USER_DELETE_FAILED);
