@@ -102,9 +102,6 @@ app.listen(PORT, () => {
     `   DELETE /api/follows/:follower/remove             → Remover seguidor`
   );
   console.log('──────────────────────────────────────────────');
-  console.log(
-    '\n💡 Utilize o arquivo postman-collection.json para testar todos os endpoints!'
-  );
   console.log(`\n🎵 Playlist endpoints:`);
   console.log(
     `   GET    http://localhost:${PORT}/api/playlists/:id              - Get playlist by ID`
@@ -132,5 +129,9 @@ app.listen(PORT, () => {
   );
   console.log(
     `   GET    http://localhost:${PORT}/api/playlists/:id/musics       - Get playlist musics`
+  );
+  console.log('──────────────────────────────────────────────');
+  console.log(
+    '\n💡 Utilize o arquivo postman-collection.json para testar todos os endpoints!'
   );
 });
