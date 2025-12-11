@@ -22,6 +22,9 @@ export class UserPlaylistController {
     );
   }
 
+  /**
+   * Create a new playlist
+   */
   public createPlaylist = async (
     req: Request,
     res: Response
@@ -41,6 +44,9 @@ export class UserPlaylistController {
     }
   };
 
+  /**
+   * Update an existing playlist
+   */
   public updatePlaylist = async (
     req: Request,
     res: Response
@@ -77,6 +83,9 @@ export class UserPlaylistController {
     }
   };
 
+  /**
+   * Delete a playlist by its ID
+   */
   public deletePlaylist = async (
     req: Request,
     res: Response
@@ -111,6 +120,9 @@ export class UserPlaylistController {
     }
   };
 
+  /**
+   * Get a playlist by its ID
+   */
   public getPlaylistById = async (
     req: Request,
     res: Response
@@ -145,6 +157,9 @@ export class UserPlaylistController {
     }
   };
 
+  /**
+   * Get all playlists from a specific user
+   */
   public getPlaylistsByUserId = async (
     req: Request,
     res: Response
@@ -166,6 +181,9 @@ export class UserPlaylistController {
     }
   };
 
+  /**
+   * Get all public playlists
+   */
   public getPublicPlaylists = async (
     req: Request,
     res: Response
@@ -182,6 +200,9 @@ export class UserPlaylistController {
     }
   };
 
+  /**
+   * Add a music to a playlist
+   */
   public addMusicToPlaylist = async (
     req: Request,
     res: Response
@@ -222,6 +243,9 @@ export class UserPlaylistController {
     }
   };
 
+  /**
+   * Remove a music from a playlist
+   */
   public removeMusicFromPlaylist = async (
     req: Request,
     res: Response
@@ -260,6 +284,9 @@ export class UserPlaylistController {
     }
   };
 
+  /**
+   * Get all musics from a playlist
+   */
   public getPlaylistMusics = async (
     req: Request,
     res: Response

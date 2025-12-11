@@ -79,7 +79,7 @@ export class FollowRequestServiceImpl implements FollowRequestService {
     const followRequest =
       await this.followRequestRepository.findById(followRequestId);
 
-    if (!followRequest || followRequest.followerId !== followerId) {
+    if (followRequest?.followerId !== followerId) {
       throw new ApiError(ErrorCode.FOLLOW_REQUEST_NOT_FOUND);
     }
     if (followRequest.status !== FollowRequestStatus.PENDING) {
@@ -97,7 +97,7 @@ export class FollowRequestServiceImpl implements FollowRequestService {
     const followRequest =
       await this.followRequestRepository.findById(followRequestId);
 
-    if (!followRequest || followRequest.followedId !== followedId) {
+    if (followRequest?.followedId !== followedId) {
       throw new ApiError(ErrorCode.FOLLOW_REQUEST_NOT_FOUND);
     }
     if (followRequest.status !== FollowRequestStatus.PENDING) {
