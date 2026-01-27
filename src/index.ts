@@ -1,10 +1,15 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import userRoutes from '@/routes/userRoutes';
 import followRequestRoutes from '@/routes/followRequestRoutes';
 import followRoutes from '@/routes/followRoutes';
 import playlistRoutes from '@/routes/playlistRoutes';
 import commentRoutes from '@/routes/commentRoutes';
+import authRoutes from './routes/authRoutes';
 import { globalErrorHandler } from '@/middleware/global-error-handling';
+import { authenticate } from '@/middleware/authMiddleware';
 import { endpoints } from 'endpoints';
 
 const app = express();
@@ -14,12 +19,15 @@ const PORT = process.env.PORT ?? 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Public Routes
 app.use('/api/users', userRoutes);
-app.use('/api/follow-requests', followRequestRoutes);
-app.use('/api/follows', followRoutes);
-app.use('/api/playlists', playlistRoutes);
-app.use('/api/comments', commentRoutes);
+app.use('/auth', authRoutes);
+
+// Protected Routes (require JWT token)
+app.use('/api/follow-requests', authenticate, followRequestRoutes);
+app.use('/api/follows', authenticate, followRoutes);
+app.use('/api/playlists', authenticate, playlistRoutes);
+app.use('/api/comments', authenticate, commentRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

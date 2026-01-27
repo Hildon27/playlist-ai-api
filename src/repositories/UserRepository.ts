@@ -47,6 +47,21 @@ export class UserRepository {
     return user ? this.toResponse(user) : null;
   }
 
+  /**
+   * Finds a user by email and includes the password field.
+   * Used only for authentication purposes.
+   *
+   * @param email - The user's email address
+   * @returns User with password or null if not found
+   */
+  public async findByEmailWithPassword(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    return user;
+  }
+
   public async findById(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },

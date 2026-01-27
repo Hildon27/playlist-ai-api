@@ -1,6 +1,5 @@
 import express from 'express';
 import {
-  createUser,
   getUserById,
   getAllUsers,
   updateUser,
@@ -8,9 +7,6 @@ import {
 } from '../controllers/userController';
 
 const router = express.Router();
-
-// Create a new user
-router.post('/', createUser);
 
 // Get user by ID
 router.get('/:id', getUserById);
