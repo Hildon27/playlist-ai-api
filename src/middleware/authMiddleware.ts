@@ -20,10 +20,7 @@ export const authenticate = (
   try {
     const decoded = verifyToken(token);
     (req as any).user = decoded;
-    authLogger.debug(
-      { userId: (decoded as any).id },
-      'Token verified successfully'
-    );
+    authLogger.debug({ userId: decoded.id }, 'Token verified successfully');
     return next();
   } catch (err) {
     authLogger.warn({ err }, 'Invalid token attempt');
