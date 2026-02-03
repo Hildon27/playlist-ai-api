@@ -737,6 +737,30 @@
       ]
     },
     {
+      "name": "AI Playlist",
+      "item": [
+        {
+          "name": "Generate Playlist with AI",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedTracks\": [\n    { \"name\": \"Bohemian Rhapsody\", \"artist\": \"Queen\" },\n    { \"name\": \"Stairway to Heaven\", \"artist\": \"Led Zeppelin\" },\n    { \"name\": \"Hotel California\", \"artist\": \"Eagles\" },\n    { \"name\": \"Comfortably Numb\", \"artist\": \"Pink Floyd\" },\n    { \"name\": \"November Rain\", \"artist\": \"Guns N' Roses\" }\n  ],\n  \"limit\": 20\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/generate-playlist",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ai", "generate-playlist"]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Test Cases",
       "item": [
         {
