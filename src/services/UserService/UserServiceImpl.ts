@@ -1,18 +1,34 @@
-import { UserService } from './UserService';
+import { AuthResult, UserService } from './UserService';
 import { UserRepository } from '@/repositories/UserRepository';
 import { ApiError, ErrorCode } from '@/models/Errors';
 import { CreateUserDTO, UpdateUserDTO, UserResponseDTO } from '@/models/users';
+import { comparePassword, generateToken, hashPassword } from '../../utils/auth';
+import { Privacity } from '@/models/Enums';
 
 export class UserServiceImpl implements UserService {
   private readonly userRepository = new UserRepository();
 
+  /**
+   * Creates a new user with hashed password.
+   *
+   * @param data - User data including plain text password
+   * @returns The created user without password
+   * @throws ApiError if email is already in use
+   */
   public async create(data: CreateUserDTO): Promise<UserResponseDTO> {
     const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
       throw new ApiError(ErrorCode.USER_EMAIL_IN_USE);
     }
 
-    const user = await this.userRepository.create(data);
+    // Hash password before saving
+    const hashedPassword = await hashPassword(data.password);
+    const userWithHashedPassword = {
+      ...data,
+      password: hashedPassword,
+    };
+
+    const user = await this.userRepository.create(userWithHashedPassword);
     return user;
   }
 
@@ -77,5 +93,47 @@ export class UserServiceImpl implements UserService {
     if (!deleted) {
       throw new ApiError(ErrorCode.USER_DELETE_FAILED);
     }
+  }
+
+  /**
+   * Authenticates a user by email and password.
+   *
+   * @param email - User's email address
+   * @param password - User's plain text password
+   * @returns AuthResult containing user data and JWT token
+   * @throws ApiError if credentials are invalid
+   */
+  public async authenticate(
+    email: string,
+    password: string
+  ): Promise<AuthResult> {
+    if (!email || email.trim() === '') {
+      throw new ApiError(ErrorCode.VALIDATION_EMAIL_INVALID);
+    }
+
+    const user = await this.userRepository.findByEmailWithPassword(email);
+    if (!user) {
+      throw new ApiError(ErrorCode.INVALID_CREDENTIALS);
+    }
+
+    const isPasswordValid = await comparePassword(password, user.password);
+    if (!isPasswordValid) {
+      throw new ApiError(ErrorCode.INVALID_CREDENTIALS);
+    }
+
+    const token = generateToken(user.id, user.email);
+
+    return {
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        privacity: user.privacity as Privacity,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+      token,
+    };
   }
 }
