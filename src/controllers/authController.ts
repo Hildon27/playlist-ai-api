@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserServiceImpl } from '@/services/UserService/UserServiceImpl';
 import { createUserSchema } from '@/models/users';
 import { createLogger } from '@/lib/logger';
+import { AuthServiceImpl } from '@/services/AuthService/AuthServiceImpl';
 
 const logger = createLogger('AuthController');
-const userService = new UserServiceImpl();
+const authService = new AuthServiceImpl();
 
 /**
  * Handles user registration.
@@ -23,7 +23,7 @@ export const register = async (
   try {
     logger.info({ email: req.body.email }, 'Registering new user');
     const userData = createUserSchema.parse(req.body);
-    const user = await userService.create(userData);
+    const user = await authService.register(userData);
 
     logger.info({ userId: user.id }, 'User registered successfully');
     res.status(201).json({
@@ -54,7 +54,7 @@ export const login = async (
 
   try {
     logger.info({ email }, 'User login attempt');
-    const { token } = await userService.authenticate(email, password);
+    const { token } = await authService.authenticate(email, password);
 
     logger.info({ email }, 'User logged in successfully');
     res.status(200).json({ message: 'Login successful', token });
