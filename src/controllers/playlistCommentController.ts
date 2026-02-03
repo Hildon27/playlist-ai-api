@@ -28,7 +28,10 @@ export class PlaylistCommentController {
    * Create a new comment on a playlist
    */
   public createComment = async (req: Request, res: Response): Promise<void> => {
-    logger.info({ playlistId: req.body.playlistId, userId: req.body.userId }, 'Creating comment');
+    logger.info(
+      { playlistId: req.body.playlistId, userId: req.body.userId },
+      'Creating comment'
+    );
     const validatedData = createPlaylistCommentSchema.parse(req.body);
 
     const comment =

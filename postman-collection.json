@@ -651,6 +651,92 @@
       ]
     },
     {
+      "name": "Spotify",
+      "item": [
+        {
+          "name": "Search Tracks",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/spotify/search?query=Bohemian Rhapsody&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "spotify", "search"],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "Bohemian Rhapsody",
+                  "description": "Search query (song name, artist, etc.)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Max results (1-50, default: 10)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Track by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/spotify/tracks/:trackId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "spotify", "tracks", ":trackId"],
+              "variable": [
+                {
+                  "key": "trackId",
+                  "value": "4u7EnebtmKWzUH433cf5Qv",
+                  "description": "Spotify Track ID"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Validate Tracks",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trackIds\": [\n    \"4u7EnebtmKWzUH433cf5Qv\",\n    \"7tFiyTwD0nx5a1eklYtX2J\",\n    \"invalid_track_id\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/spotify/validate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "spotify", "validate"]
+            }
+          }
+        },
+        {
+          "name": "Get Recommendations",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedTrackIds\": [\n    \"4u7EnebtmKWzUH433cf5Qv\",\n    \"7tFiyTwD0nx5a1eklYtX2J\",\n    \"3n3Ppam7vgaVa1iaRUc9Lp\"\n  ],\n  \"limit\": 20\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/spotify/recommendations",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "spotify", "recommendations"]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Test Cases",
       "item": [
         {

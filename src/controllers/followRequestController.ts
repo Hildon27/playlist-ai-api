@@ -29,7 +29,10 @@ export const requestToFollowUser = async (
       followedUserEmail
     );
 
-    logger.info({ followRequestId: followRequest.id }, 'Follow request created successfully');
+    logger.info(
+      { followRequestId: followRequest.id },
+      'Follow request created successfully'
+    );
     res.status(201).json({
       success: true,
       data: followRequest,
@@ -59,7 +62,10 @@ export const findAllByFollowerId = async (
     const followRequests =
       await followRequestService.findAllByFollowerId(followerId);
 
-    logger.info({ followerId, count: followRequests.length }, 'Follow requests retrieved');
+    logger.info(
+      { followerId, count: followRequests.length },
+      'Follow requests retrieved'
+    );
     res.status(200).json({
       success: true,
       data: followRequests,
@@ -89,7 +95,10 @@ export const findAllByFollowedId = async (
     const followRequests =
       await followRequestService.findAllByFollowedId(followedId);
 
-    logger.info({ followedId, count: followRequests.length }, 'Follow requests retrieved');
+    logger.info(
+      { followedId, count: followRequests.length },
+      'Follow requests retrieved'
+    );
     res.status(200).json({
       success: true,
       data: followRequests,
@@ -144,7 +153,10 @@ export const processFollowRequest = async (
   try {
     const { id: followRequestId } = req.params;
     const { followedId, action } = proccessFollowRequestSchema.parse(req.body);
-    logger.info({ followRequestId, followedId, action }, 'Processing follow request');
+    logger.info(
+      { followRequestId, followedId, action },
+      'Processing follow request'
+    );
 
     if (!followRequestId || followRequestId.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
@@ -156,7 +168,10 @@ export const processFollowRequest = async (
       action
     );
 
-    logger.info({ followRequestId, action }, 'Follow request processed successfully');
+    logger.info(
+      { followRequestId, action },
+      'Follow request processed successfully'
+    );
     res.status(200).json({
       success: true,
       data: followRequests,

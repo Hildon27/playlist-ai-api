@@ -22,12 +22,18 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
   public async createComment(
     data: CreatePlaylistCommentDTO
   ): Promise<PlaylistCommentDTO> {
-    logger.debug({ playlistId: data.playlistId, userId: data.userId }, 'Creating comment');
+    logger.debug(
+      { playlistId: data.playlistId, userId: data.userId },
+      'Creating comment'
+    );
     const playlist = await this.userPlaylistRepository.findById(
       data.playlistId
     );
     if (!playlist) {
-      logger.warn({ playlistId: data.playlistId }, 'Playlist not found for comment');
+      logger.warn(
+        { playlistId: data.playlistId },
+        'Playlist not found for comment'
+      );
       throw new NotFoundError('Playlist não encontrada');
     }
 

@@ -65,7 +65,10 @@ export class FollowRequestServiceImpl implements FollowRequestService {
       throw new ApiError(ErrorCode.FOLLOW_REQUEST_ALREADY_EXISTS);
     }
 
-    const result = await this.followRequestRepository.create(followerId, followedId);
+    const result = await this.followRequestRepository.create(
+      followerId,
+      followedId
+    );
     logger.info({ followRequestId: result.id }, 'Follow request created');
     return result;
   }
@@ -104,7 +107,10 @@ export class FollowRequestServiceImpl implements FollowRequestService {
     followedId: string,
     action: FollowRequestProcessingAction
   ): Promise<FollowRequestDto> {
-    logger.debug({ followRequestId, followedId, action }, 'Processing follow request');
+    logger.debug(
+      { followRequestId, followedId, action },
+      'Processing follow request'
+    );
     const followRequest =
       await this.followRequestRepository.findById(followRequestId);
 
@@ -113,7 +119,10 @@ export class FollowRequestServiceImpl implements FollowRequestService {
       throw new ApiError(ErrorCode.FOLLOW_REQUEST_NOT_FOUND);
     }
     if (followRequest.status !== FollowRequestStatus.PENDING) {
-      logger.warn({ followRequestId, status: followRequest.status }, 'Follow request not pending');
+      logger.warn(
+        { followRequestId, status: followRequest.status },
+        'Follow request not pending'
+      );
       throw new ApiError(ErrorCode.FOLLOW_REQUEST_NOT_PENDING);
     }
 
@@ -127,7 +136,10 @@ export class FollowRequestServiceImpl implements FollowRequestService {
         followRequest.followerId,
         followRequest.followedId
       );
-      logger.info({ followRequestId }, 'Follow request accepted, follow created');
+      logger.info(
+        { followRequestId },
+        'Follow request accepted, follow created'
+      );
     } else {
       logger.info({ followRequestId }, 'Follow request rejected');
     }
