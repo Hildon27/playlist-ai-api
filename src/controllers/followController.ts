@@ -25,7 +25,10 @@ export const findAllUserFollowers = async (
 
     const followers = await followService.findAllUserFollowers(userId);
 
-    logger.info({ userId, count: followers.length }, 'Followers retrieved successfully');
+    logger.info(
+      { userId, count: followers.length },
+      'Followers retrieved successfully'
+    );
     res.status(200).json({
       success: true,
       data: followers,
@@ -47,7 +50,10 @@ export const unfollowUserByFollowedId = async (
   try {
     const { followedId } = req.params;
     const data = unfollowBodySchema.parse(req.body);
-    logger.info({ followerId: data.followerId, followedId }, 'Unfollowing user');
+    logger.info(
+      { followerId: data.followerId, followedId },
+      'Unfollowing user'
+    );
 
     if (!followedId || followedId.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
@@ -58,7 +64,10 @@ export const unfollowUserByFollowedId = async (
       followedId
     );
 
-    logger.info({ followerId: data.followerId, followedId }, 'Unfollowed successfully');
+    logger.info(
+      { followerId: data.followerId, followedId },
+      'Unfollowed successfully'
+    );
     res.status(204).json({
       success: true,
     });
@@ -79,7 +88,10 @@ export const removeFollowerById = async (
   try {
     const { followerId } = req.params;
     const data = removeFollowerBodySchema.parse(req.body);
-    logger.info({ followerId, followedId: data.followedId }, 'Removing follower');
+    logger.info(
+      { followerId, followedId: data.followedId },
+      'Removing follower'
+    );
 
     if (!followerId || followerId.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
@@ -90,7 +102,10 @@ export const removeFollowerById = async (
       data.followedId
     );
 
-    logger.info({ followerId, followedId: data.followedId }, 'Follower removed successfully');
+    logger.info(
+      { followerId, followedId: data.followedId },
+      'Follower removed successfully'
+    );
     res.status(204).json({
       success: true,
     });

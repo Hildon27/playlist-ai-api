@@ -38,7 +38,10 @@ export const globalErrorHandler = (
   }
 
   // Unexpected Error
-  errorLogger.error({ err, url: req.url, method: req.method }, 'Unexpected error');
+  errorLogger.error(
+    { err, url: req.url, method: req.method },
+    'Unexpected error'
+  );
   response.message = 'Internal server error';
   return res.status(500).json(response);
 };

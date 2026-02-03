@@ -10,6 +10,7 @@ import followRoutes from '@/routes/followRoutes';
 import playlistRoutes from '@/routes/playlistRoutes';
 import commentRoutes from '@/routes/commentRoutes';
 import authRoutes from './routes/authRoutes';
+import spotifyRoutes from '@/routes/spotifyRoutes';
 import { globalErrorHandler } from '@/middleware/global-error-handling';
 import { authenticate } from '@/middleware/authMiddleware';
 import { endpoints } from 'endpoints';
@@ -27,6 +28,7 @@ app.use('/api/users', userRoutes);
 app.use('/auth', authRoutes);
 
 // Protected Routes (require JWT token)
+app.use('/api/spotify', authenticate, spotifyRoutes);
 app.use('/api/follow-requests', authenticate, followRequestRoutes);
 app.use('/api/follows', authenticate, followRoutes);
 app.use('/api/playlists', authenticate, playlistRoutes);
@@ -71,6 +73,7 @@ app.listen(PORT, () => {
   logger.info('  Follow Requests: /api/follow-requests');
   logger.info('  Follows: /api/follows');
   logger.info('  Playlists: /api/playlists');
+  logger.info('  Spotify: /api/spotify');
   logger.info('  Comments: /api/comments');
   logger.info('Use postman-collection.json to test all endpoints!');
 });
