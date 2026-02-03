@@ -4,6 +4,9 @@ import { ApiError, ErrorCode } from '@/models/Errors';
 import { CreateUserDTO, UpdateUserDTO, UserResponseDTO } from '@/models/users';
 import { comparePassword, generateToken, hashPassword } from '../../utils/auth';
 import { Privacity } from '@/models/Enums';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('UserService');
 
 export class UserServiceImpl implements UserService {
   private readonly userRepository = new UserRepository();
@@ -16,8 +19,10 @@ export class UserServiceImpl implements UserService {
    * @throws ApiError if email is already in use
    */
   public async create(data: CreateUserDTO): Promise<UserResponseDTO> {
+    logger.debug({ email: data.email }, 'Creating user');
     const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
+      logger.warn({ email: data.email }, 'Email already in use');
       throw new ApiError(ErrorCode.USER_EMAIL_IN_USE);
     }
 
@@ -29,6 +34,7 @@ export class UserServiceImpl implements UserService {
     };
 
     const user = await this.userRepository.create(userWithHashedPassword);
+    logger.info({ userId: user.id }, 'User created in database');
     return user;
   }
 
@@ -107,21 +113,25 @@ export class UserServiceImpl implements UserService {
     email: string,
     password: string
   ): Promise<AuthResult> {
+    logger.debug({ email }, 'Authenticating user');
     if (!email || email.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_EMAIL_INVALID);
     }
 
     const user = await this.userRepository.findByEmailWithPassword(email);
     if (!user) {
+      logger.warn({ email }, 'User not found for authentication');
       throw new ApiError(ErrorCode.INVALID_CREDENTIALS);
     }
 
     const isPasswordValid = await comparePassword(password, user.password);
     if (!isPasswordValid) {
+      logger.warn({ email }, 'Invalid password attempt');
       throw new ApiError(ErrorCode.INVALID_CREDENTIALS);
     }
 
     const token = generateToken(user.id, user.email);
+    logger.info({ userId: user.id }, 'User authenticated successfully');
 
     return {
       user: {

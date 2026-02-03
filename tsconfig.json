@@ -27,6 +27,7 @@
     "exactOptionalPropertyTypes": true,
     "baseUrl": "./src",
     "paths": {
+      "@/lib/*": ["lib/*"],
       "@/controllers/*": ["controllers/*"],
       "@/middleware/*": ["middleware/*"],
       "@/models/*": ["models/*"],

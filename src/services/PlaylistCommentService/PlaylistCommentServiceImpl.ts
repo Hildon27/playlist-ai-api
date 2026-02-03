@@ -9,6 +9,9 @@ import {
   PlaylistCommentWithUserAndPlaylistDTO,
 } from '@/models/comments';
 import { NotFoundError, ForbiddenError } from '@/models/Errors';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('CommentService');
 
 export class PlaylistCommentServiceImpl implements PlaylistCommentService {
   constructor(
@@ -19,14 +22,18 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
   public async createComment(
     data: CreatePlaylistCommentDTO
   ): Promise<PlaylistCommentDTO> {
+    logger.debug({ playlistId: data.playlistId, userId: data.userId }, 'Creating comment');
     const playlist = await this.userPlaylistRepository.findById(
       data.playlistId
     );
     if (!playlist) {
+      logger.warn({ playlistId: data.playlistId }, 'Playlist not found for comment');
       throw new NotFoundError('Playlist não encontrada');
     }
 
-    return await this.playlistCommentRepository.create(data);
+    const result = await this.playlistCommentRepository.create(data);
+    logger.info({ commentId: result.id }, 'Comment created');
+    return result;
   }
 
   public async updateComment(

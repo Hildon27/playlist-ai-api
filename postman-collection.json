@@ -207,9 +207,7 @@
           "name": "Delete Playlist",
           "request": {
             "method": "DELETE",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/:playlistId",
               "host": ["{{baseUrl}}"],
@@ -228,9 +226,7 @@
           "name": "Get Playlist by ID",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/:playlistId",
               "host": ["{{baseUrl}}"],
@@ -249,9 +245,7 @@
           "name": "Get Playlist with Musics",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/:playlistId?includeMusics=true",
               "host": ["{{baseUrl}}"],
@@ -271,9 +265,7 @@
           "name": "Get Playlists by User",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/user/:userId",
               "host": ["{{baseUrl}}"],
@@ -288,9 +280,7 @@
           "name": "Get All Public Playlists",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/public/all",
               "host": ["{{baseUrl}}"],
@@ -359,9 +349,7 @@
           "name": "Get Playlist Musics",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/:playlistId/musics",
               "host": ["{{baseUrl}}"],
@@ -404,9 +392,7 @@
           "name": "Get Comment by ID",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/comments/:commentId",
               "host": ["{{baseUrl}}"],
@@ -443,9 +429,7 @@
           "name": "Delete Comment",
           "request": {
             "method": "DELETE",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": \"replace-with-user-id\"\n}"
@@ -464,9 +448,7 @@
           "name": "Get Comments by Playlist",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/comments/playlist/:playlistId",
               "host": ["{{baseUrl}}"],
@@ -485,9 +467,7 @@
           "name": "Get Comments by User",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/comments/user/:userId",
               "host": ["{{baseUrl}}"],
@@ -507,9 +487,7 @@
           "name": "Find All User Followers",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/follows/:userId/followers",
               "host": ["{{baseUrl}}"],
@@ -600,9 +578,7 @@
           "name": "Find All Requests by Follower ID",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/follow-requests/by-follower/:id",
               "host": ["{{baseUrl}}"],
@@ -617,9 +593,7 @@
           "name": "Find All Requests by Followed ID",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/follow-requests/by-followed/:id",
               "host": ["{{baseUrl}}"],
@@ -794,9 +768,7 @@
           "name": "Playlists - Get Non-existent ID",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/non-existent-id",
               "host": ["{{baseUrl}}"],

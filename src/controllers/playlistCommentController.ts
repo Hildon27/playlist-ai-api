@@ -10,6 +10,9 @@ import {
   getCommentsByUserIdSchema,
 } from '@/models/comments';
 import { BadRequestError, NotFoundError } from '@/models/Errors';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('CommentController');
 
 export class PlaylistCommentController {
   private readonly playlistCommentService: PlaylistCommentServiceImpl;
@@ -25,11 +28,13 @@ export class PlaylistCommentController {
    * Create a new comment on a playlist
    */
   public createComment = async (req: Request, res: Response): Promise<void> => {
+    logger.info({ playlistId: req.body.playlistId, userId: req.body.userId }, 'Creating comment');
     const validatedData = createPlaylistCommentSchema.parse(req.body);
 
     const comment =
       await this.playlistCommentService.createComment(validatedData);
 
+    logger.info({ commentId: comment.id }, 'Comment created successfully');
     res.status(201).json({
       message: 'Comentário criado com sucesso',
       data: comment,

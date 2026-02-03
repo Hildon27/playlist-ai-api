@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../utils/auth';
+import { createLogger } from '@/lib/logger';
+
+const authLogger = createLogger('Auth');
 
 export const authenticate = (
   req: Request,
@@ -17,8 +20,10 @@ export const authenticate = (
   try {
     const decoded = verifyToken(token);
     (req as any).user = decoded;
+    authLogger.debug({ userId: (decoded as any).id }, 'Token verified successfully');
     return next();
   } catch (err) {
+    authLogger.warn({ err }, 'Invalid token attempt');
     return res.status(400).json({ message: 'Invalid token.', err });
   }
 };

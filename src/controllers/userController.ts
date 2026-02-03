@@ -2,7 +2,9 @@ import { ApiError, ErrorCode } from '@/models/Errors';
 import { createUserSchema, updateUserSchema } from '@/models/users';
 import { UserServiceImpl } from '@/services/UserService/UserServiceImpl';
 import { NextFunction, Request, Response } from 'express';
+import { createLogger } from '@/lib/logger';
 
+const logger = createLogger('UserController');
 const userService = new UserServiceImpl();
 
 /**
@@ -14,15 +16,18 @@ export const createUser = async (
   next: NextFunction
 ) => {
   try {
+    logger.info({ email: req.body.email }, 'Creating new user');
     const userData = createUserSchema.parse(req.body);
 
     const user = await userService.create(userData);
 
+    logger.info({ userId: user.id }, 'User created successfully');
     res.status(201).json({
       success: true,
       data: user,
     });
   } catch (error) {
+    logger.error({ error }, 'Error creating user');
     next(error);
   }
 };
@@ -33,6 +38,7 @@ export const createUser = async (
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    logger.info({ userId: id }, 'Getting user by ID');
 
     if (!id || id.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
@@ -41,9 +47,11 @@ export const getUserById = async (req: Request, res: Response) => {
     const user = await userService.findById(id);
 
     if (!user) {
+      logger.warn({ userId: id }, 'User not found');
       throw new ApiError(ErrorCode.USER_NOT_FOUND);
     }
 
+    logger.info({ userId: id }, 'User found successfully');
     res.status(200).json({
       success: true,
       data: user,
@@ -69,8 +77,10 @@ export const getUserById = async (req: Request, res: Response) => {
  */
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
+    logger.info('Getting all users');
     const users = await userService.findAll();
 
+    logger.info({ count: users.length }, 'Users retrieved successfully');
     res.status(200).json({
       success: true,
       data: users,
@@ -97,6 +107,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    logger.info({ userId: id }, 'Updating user');
 
     if (!id || id.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
@@ -107,9 +118,11 @@ export const updateUser = async (req: Request, res: Response) => {
     const user = await userService.update(id, userData);
 
     if (!user) {
+      logger.warn({ userId: id }, 'User not found for update');
       throw new ApiError(ErrorCode.USER_NOT_FOUND);
     }
 
+    logger.info({ userId: id }, 'User updated successfully');
     res.status(200).json({
       success: true,
       data: user,
@@ -136,6 +149,7 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    logger.info({ userId: id }, 'Deleting user');
 
     if (!id || id.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
@@ -143,6 +157,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 
     await userService.delete(id);
 
+    logger.info({ userId: id }, 'User deleted successfully');
     res.status(200).json({
       success: true,
       message: 'User deleted successfully',
