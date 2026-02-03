@@ -9,6 +9,9 @@ import {
   AddMusicToPlaylistDTO,
   MusicDTO,
 } from '@/models/playlists';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('PlaylistService');
 
 export class UserPlaylistServiceImpl implements UserPlaylistService {
   constructor(
@@ -18,7 +21,10 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
   public async createPlaylist(
     data: CreateUserPlaylistDTO
   ): Promise<UserPlaylistDTO> {
-    return await this.userPlaylistRepository.create(data);
+    logger.debug({ userId: data.userId, name: data.name }, 'Creating playlist');
+    const result = await this.userPlaylistRepository.create(data);
+    logger.info({ playlistId: result.id }, 'Playlist created');
+    return result;
   }
 
   public async updatePlaylist(
@@ -29,7 +35,12 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
   }
 
   public async deletePlaylist(id: string): Promise<boolean> {
-    return await this.userPlaylistRepository.delete(id);
+    logger.debug({ playlistId: id }, 'Deleting playlist');
+    const result = await this.userPlaylistRepository.delete(id);
+    if (result) {
+      logger.info({ playlistId: id }, 'Playlist deleted');
+    }
+    return result;
   }
 
   public async getPlaylistById(id: string): Promise<UserPlaylistDTO | null> {

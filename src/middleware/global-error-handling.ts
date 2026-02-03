@@ -1,6 +1,9 @@
 import { ApiError } from '@/models/Errors';
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
+import { createLogger } from '@/lib/logger';
+
+const errorLogger = createLogger('Error');
 
 export const globalErrorHandler = (
   err: unknown,
@@ -35,7 +38,7 @@ export const globalErrorHandler = (
   }
 
   // Unexpected Error
-  console.error(err); // Log error for debugging
+  errorLogger.error({ err, url: req.url, method: req.method }, 'Unexpected error');
   response.message = 'Internal server error';
   return res.status(500).json(response);
 };

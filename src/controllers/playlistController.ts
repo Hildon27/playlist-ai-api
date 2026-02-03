@@ -12,6 +12,9 @@ import {
   NotFoundError,
   ForbiddenError,
 } from '@/models/Errors';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('PlaylistController');
 
 export class UserPlaylistController {
   private readonly userPlaylistService: UserPlaylistServiceImpl;
@@ -30,16 +33,19 @@ export class UserPlaylistController {
     res: Response
   ): Promise<void> => {
     try {
+      logger.info({ userId: req.body.userId }, 'Creating new playlist');
       const validatedData = createUserPlaylistSchema.parse(req.body);
       const playlist =
         await this.userPlaylistService.createPlaylist(validatedData);
 
+      logger.info({ playlistId: playlist.id }, 'Playlist created successfully');
       res.status(201).json({
         success: true,
         data: playlist,
         message: 'Playlist criada com sucesso',
       });
     } catch {
+      logger.error('Error creating playlist');
       throw new BadRequestError('Dados inválidos para criação da playlist');
     }
   };
@@ -53,6 +59,7 @@ export class UserPlaylistController {
   ): Promise<void> => {
     try {
       const { id } = req.params;
+      logger.info({ playlistId: id }, 'Updating playlist');
       if (!id) {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
@@ -62,6 +69,7 @@ export class UserPlaylistController {
       const existingPlaylist =
         await this.userPlaylistService.getPlaylistById(id);
       if (!existingPlaylist) {
+        logger.warn({ playlistId: id }, 'Playlist not found for update');
         throw new NotFoundError('Playlist não encontrada');
       }
 
@@ -70,6 +78,7 @@ export class UserPlaylistController {
         validatedData
       );
 
+      logger.info({ playlistId: id }, 'Playlist updated successfully');
       res.status(200).json({
         success: true,
         data: playlist,
@@ -79,6 +88,7 @@ export class UserPlaylistController {
       if (error instanceof NotFoundError || error instanceof ForbiddenError) {
         throw error;
       }
+      logger.error({ error }, 'Error updating playlist');
       throw new BadRequestError('Dados inválidos para atualização da playlist');
     }
   };
@@ -92,6 +102,7 @@ export class UserPlaylistController {
   ): Promise<void> => {
     try {
       const { id } = req.params;
+      logger.info({ playlistId: id }, 'Deleting playlist');
       if (!id) {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
@@ -99,6 +110,7 @@ export class UserPlaylistController {
       const existingPlaylist =
         await this.userPlaylistService.getPlaylistById(id);
       if (!existingPlaylist) {
+        logger.warn({ playlistId: id }, 'Playlist not found for deletion');
         throw new NotFoundError('Playlist não encontrada');
       }
 
@@ -108,6 +120,7 @@ export class UserPlaylistController {
         throw new BadRequestError('Não foi possível excluir a playlist');
       }
 
+      logger.info({ playlistId: id }, 'Playlist deleted successfully');
       res.status(200).json({
         success: true,
         message: 'Playlist excluída com sucesso',
@@ -116,6 +129,7 @@ export class UserPlaylistController {
       if (error instanceof NotFoundError || error instanceof ForbiddenError) {
         throw error;
       }
+      logger.error({ error }, 'Error deleting playlist');
       throw new BadRequestError('Erro ao excluir playlist');
     }
   };
@@ -129,6 +143,7 @@ export class UserPlaylistController {
   ): Promise<void> => {
     try {
       const { id } = req.params;
+      logger.info({ playlistId: id }, 'Getting playlist by ID');
       if (!id) {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
@@ -142,9 +157,11 @@ export class UserPlaylistController {
       }
 
       if (!playlist) {
+        logger.warn({ playlistId: id }, 'Playlist not found');
         throw new NotFoundError('Playlist não encontrada');
       }
 
+      logger.info({ playlistId: id }, 'Playlist retrieved successfully');
       res.status(200).json({
         success: true,
         data: playlist,
