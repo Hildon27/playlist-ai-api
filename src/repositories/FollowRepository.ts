@@ -50,6 +50,14 @@ export class FollowRepository {
     });
   }
 
+  public async findAllByFollowerId(followerId: string): Promise<FollowDto[]> {
+    return await this.prisma.follow.findMany({
+      where: {
+        followerId,
+      },
+    });
+  }
+
   public async delete(followId: string): Promise<void> {
     await this.prisma.follow.delete({
       where: {
