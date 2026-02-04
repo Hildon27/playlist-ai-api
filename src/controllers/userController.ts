@@ -3,6 +3,7 @@ import { updateUserSchema } from '@/models/users';
 import { UserServiceImpl } from '@/services/UserService/UserServiceImpl';
 import { Request, Response } from 'express';
 import { createLogger } from '@/lib/logger';
+import { AuthContext } from 'contexts/auth-context';
 
 const logger = createLogger('UserController');
 const userService = new UserServiceImpl();
@@ -12,7 +13,9 @@ const userService = new UserServiceImpl();
  */
 export const getLoggedUserData = async (_: Request, res: Response) => {
   try {
-    const user = await userService.getLoggedUserData();
+    const loggedUser = AuthContext.getLoggedUser();
+
+    const user = await userService.findById(loggedUser.id);
 
     if (!user) {
       logger.warn('User not found');
@@ -78,7 +81,9 @@ export const updateUser = async (req: Request, res: Response) => {
 
     const userData = updateUserSchema.parse(req.body);
 
-    const user = await userService.update(userData);
+    const loggedUser = AuthContext.getLoggedUser();
+
+    const user = await userService.update(loggedUser.id, userData);
 
     if (!user) {
       logger.warn('User not found for update');
@@ -109,11 +114,13 @@ export const updateUser = async (req: Request, res: Response) => {
 /**
  * Delete logged user account
  */
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (_: Request, res: Response) => {
   try {
     logger.info('Deleting user');
 
-    await userService.delete();
+    const loggedUser = AuthContext.getLoggedUser();
+
+    await userService.delete(loggedUser.id);
 
     logger.info('User deleted successfully');
     res.status(200).json({

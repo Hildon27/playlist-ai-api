@@ -3,7 +3,6 @@ import { UserRepository } from '@/repositories/UserRepository';
 import { ApiError, ErrorCode } from '@/models/Errors';
 import { UpdateUserDTO, UserResponseDTO } from '@/models/users';
 import { createLogger } from '@/lib/logger';
-import { AuthContext } from 'contexts/auth-context';
 
 const logger = createLogger('UserService');
 
@@ -17,12 +16,6 @@ export class UserServiceImpl implements UserService {
 
     const user = await this.userRepository.findById(id);
     return user;
-  }
-
-  public async getLoggedUserData(): Promise<UserResponseDTO | null> {
-    const user = AuthContext.getLoggedUser();
-
-    return await this.findById(user.id);
   }
 
   public async findByEmail(email: string): Promise<UserResponseDTO | null> {
@@ -39,11 +32,11 @@ export class UserServiceImpl implements UserService {
     return users;
   }
 
-  public async update(data: UpdateUserDTO): Promise<UserResponseDTO | null> {
+  public async update(
+    id: string,
+    data: UpdateUserDTO
+  ): Promise<UserResponseDTO | null> {
     logger.info('Starting user update');
-
-    const user = AuthContext.getLoggedUser();
-    const id = user.id;
 
     if (!id || id.trim() === '') {
       logger.warn('User update failed: userId not provided');
@@ -90,11 +83,8 @@ export class UserServiceImpl implements UserService {
     return updatedUser;
   }
 
-  public async delete(): Promise<void> {
+  public async delete(id: string): Promise<void> {
     logger.info('Starting user deletion');
-
-    const user = AuthContext.getLoggedUser();
-    const id = user.id;
 
     if (!id || id.trim() === '') {
       logger.warn('User deletion failed: userId not provided');
