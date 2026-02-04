@@ -5,7 +5,7 @@ const router = Router();
 const commentController = new PlaylistCommentController();
 
 // CRUD routes for playlist comments
-router.post('/', commentController.createComment);
+router.post('/:playlistId', commentController.createComment);
 router.get('/:id', commentController.getCommentById);
 router.put('/:id', commentController.updateComment);
 router.delete('/:id', commentController.deleteComment);

@@ -1,57 +1,28 @@
 import { ApiError, ErrorCode } from '@/models/Errors';
-import { createUserSchema, updateUserSchema } from '@/models/users';
+import { updateUserSchema } from '@/models/users';
 import { UserServiceImpl } from '@/services/UserService/UserServiceImpl';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { createLogger } from '@/lib/logger';
+import { AuthContext } from 'contexts/auth-context';
 
 const logger = createLogger('UserController');
 const userService = new UserServiceImpl();
 
 /**
- * Create a new user
+ * Get logged user data
  */
-export const createUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getLoggedUserData = async (_: Request, res: Response) => {
   try {
-    logger.info({ email: req.body.email }, 'Creating new user');
-    const userData = createUserSchema.parse(req.body);
+    const loggedUser = AuthContext.getLoggedUser();
 
-    const user = await userService.create(userData);
-
-    logger.info({ userId: user.id }, 'User created successfully');
-    res.status(201).json({
-      success: true,
-      data: user,
-    });
-  } catch (error) {
-    logger.error({ error }, 'Error creating user');
-    next(error);
-  }
-};
-
-/**
- * Get user by ID
- */
-export const getUserById = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    logger.info({ userId: id }, 'Getting user by ID');
-
-    if (!id || id.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
-
-    const user = await userService.findById(id);
+    const user = await userService.findById(loggedUser.id);
 
     if (!user) {
-      logger.warn({ userId: id }, 'User not found');
+      logger.warn('User not found');
       throw new ApiError(ErrorCode.USER_NOT_FOUND);
     }
 
-    logger.info({ userId: id }, 'User found successfully');
+    logger.info({ userId: user.id }, 'User found successfully');
     res.status(200).json({
       success: true,
       data: user,
@@ -75,7 +46,7 @@ export const getUserById = async (req: Request, res: Response) => {
 /**
  * Get all users
  */
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (_: Request, res: Response) => {
   try {
     logger.info('Getting all users');
     const users = await userService.findAll();
@@ -102,27 +73,24 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 /**
- * Update user
+ * Update logged user account
  */
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    logger.info({ userId: id }, 'Updating user');
-
-    if (!id || id.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
+    logger.info('Updating user');
 
     const userData = updateUserSchema.parse(req.body);
 
-    const user = await userService.update(id, userData);
+    const loggedUser = AuthContext.getLoggedUser();
+
+    const user = await userService.update(loggedUser.id, userData);
 
     if (!user) {
-      logger.warn({ userId: id }, 'User not found for update');
+      logger.warn('User not found for update');
       throw new ApiError(ErrorCode.USER_NOT_FOUND);
     }
 
-    logger.info({ userId: id }, 'User updated successfully');
+    logger.info('User updated successfully');
     res.status(200).json({
       success: true,
       data: user,
@@ -144,20 +112,17 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 /**
- * Delete user
+ * Delete logged user account
  */
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (_: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    logger.info({ userId: id }, 'Deleting user');
+    logger.info('Deleting user');
 
-    if (!id || id.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
+    const loggedUser = AuthContext.getLoggedUser();
 
-    await userService.delete(id);
+    await userService.delete(loggedUser.id);
 
-    logger.info({ userId: id }, 'User deleted successfully');
+    logger.info('User deleted successfully');
     res.status(200).json({
       success: true,
       message: 'User deleted successfully',

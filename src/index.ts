@@ -25,10 +25,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Public Routes
-app.use('/api/users', userRoutes);
 app.use('/auth', authRoutes);
 
 // Protected Routes (require JWT token)
+app.use('/api/users', authenticate, userRoutes);
 app.use('/api/spotify', authenticate, spotifyRoutes);
 app.use('/api/ai', authenticate, aiRoutes);
 app.use('/api/follow-requests', authenticate, followRequestRoutes);

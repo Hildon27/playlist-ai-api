@@ -20,32 +20,34 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
   ) {}
 
   public async createComment(
+    userId: string,
+    playlistId: string,
     data: CreatePlaylistCommentDTO
   ): Promise<PlaylistCommentDTO> {
     logger.debug(
-      { playlistId: data.playlistId, userId: data.userId },
+      { playlistId: playlistId, userId: userId },
       'Creating comment'
     );
-    const playlist = await this.userPlaylistRepository.findById(
-      data.playlistId
-    );
+    const playlist = await this.userPlaylistRepository.findById(playlistId);
+
     if (!playlist) {
-      logger.warn(
-        { playlistId: data.playlistId },
-        'Playlist not found for comment'
-      );
+      logger.warn({ playlistId: playlistId }, 'Playlist not found for comment');
       throw new NotFoundError('Playlist não encontrada');
     }
 
-    const result = await this.playlistCommentRepository.create(data);
+    const result = await this.playlistCommentRepository.create(
+      userId,
+      playlistId,
+      data
+    );
     logger.info({ commentId: result.id }, 'Comment created');
     return result;
   }
 
   public async updateComment(
+    userId: string,
     id: string,
-    data: UpdatePlaylistCommentDTO,
-    userId: string
+    data: UpdatePlaylistCommentDTO
   ): Promise<PlaylistCommentDTO | null> {
     const commentExists = await this.playlistCommentRepository.exists(id);
     if (!commentExists) {
@@ -65,7 +67,7 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
     return await this.playlistCommentRepository.update(id, data);
   }
 
-  public async deleteComment(id: string, userId: string): Promise<boolean> {
+  public async deleteComment(userId: string, id: string): Promise<boolean> {
     const commentExists = await this.playlistCommentRepository.exists(id);
     if (!commentExists) {
       throw new NotFoundError('Comentário não encontrado');

@@ -17,9 +17,14 @@ import {
 export class UserPlaylistRepository {
   private readonly prisma = prisma;
 
-  public async create(data: CreateUserPlaylistDTO): Promise<UserPlaylistDTO> {
+  public async create(
+    userId: string,
+    data: CreateUserPlaylistDTO
+  ): Promise<UserPlaylistDTO> {
+    const playlistModel = this.toModel(data);
+
     const playlist = await this.prisma.userPlaylist.create({
-      data: this.toModel(data),
+      data: { ...playlistModel, userId },
     });
 
     return this.toResponse(playlist);
@@ -62,11 +67,23 @@ export class UserPlaylistRepository {
     return playlist ? this.toResponse(playlist) : null;
   }
 
-  public async findByIdWithMusics(
-    id: string
+  public async findByIdAndUserId(
+    id: string,
+    userId: string
+  ): Promise<UserPlaylistDTO | null> {
+    const playlist = await this.prisma.userPlaylist.findUnique({
+      where: { id, userId },
+    });
+
+    return playlist ? this.toResponse(playlist) : null;
+  }
+
+  public async findByIdAndUserIdWithMusics(
+    id: string,
+    userId: string
   ): Promise<PlaylistWithMusicsDTO | null> {
     const playlist = await this.prisma.userPlaylist.findUnique({
-      where: { id },
+      where: { id, userId },
       include: {
         musics: {
           include: {

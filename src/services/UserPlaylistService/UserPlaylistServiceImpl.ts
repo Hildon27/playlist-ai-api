@@ -10,6 +10,7 @@ import {
   MusicDTO,
 } from '@/models/playlists';
 import { createLogger } from '@/lib/logger';
+import { BadRequestError, NotFoundError } from '@/models/Errors';
 
 const logger = createLogger('PlaylistService');
 
@@ -19,23 +20,47 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
   ) {}
 
   public async createPlaylist(
+    userId: string,
     data: CreateUserPlaylistDTO
   ): Promise<UserPlaylistDTO> {
-    logger.debug({ userId: data.userId, name: data.name }, 'Creating playlist');
-    const result = await this.userPlaylistRepository.create(data);
+    logger.debug(
+      { name: data.name, privacity: data.privacity },
+      'Creating playlist'
+    );
+
+    const result = await this.userPlaylistRepository.create(userId, data);
+
     logger.info({ playlistId: result.id }, 'Playlist created');
+
     return result;
   }
 
   public async updatePlaylist(
+    userId: string,
     id: string,
     data: UpdateUserPlaylistDTO
   ): Promise<UserPlaylistDTO | null> {
+    const existingPlaylist =
+      await this.userPlaylistRepository.findByIdAndUserId(id, userId);
+    if (!existingPlaylist) {
+      logger.warn({ playlistId: id }, 'Playlist not found for update');
+      throw new NotFoundError('Playlist não encontrada');
+    }
+
     return await this.userPlaylistRepository.update(id, data);
   }
 
-  public async deletePlaylist(id: string): Promise<boolean> {
+  public async deletePlaylist(userId: string, id: string): Promise<boolean> {
     logger.debug({ playlistId: id }, 'Deleting playlist');
+
+    const existingPlaylist =
+      await this.userPlaylistRepository.findByIdAndUserId(id, userId);
+
+    if (!existingPlaylist) {
+      logger.warn({ playlistId: id }, 'Playlist not found for deletion');
+      throw new NotFoundError('Playlist não encontrada');
+    }
+
     const result = await this.userPlaylistRepository.delete(id);
     if (result) {
       logger.info({ playlistId: id }, 'Playlist deleted');
@@ -43,14 +68,32 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
     return result;
   }
 
-  public async getPlaylistById(id: string): Promise<UserPlaylistDTO | null> {
-    return await this.userPlaylistRepository.findById(id);
+  public async getPlaylistById(
+    userId: string,
+    id: string
+  ): Promise<UserPlaylistDTO | null> {
+    const existingPlaylist =
+      await this.userPlaylistRepository.findByIdAndUserId(id, userId);
+
+    if (!existingPlaylist) {
+      throw new NotFoundError('Playlist não encontrada');
+    }
+
+    return existingPlaylist;
   }
 
   public async getPlaylistWithMusics(
+    userId: string,
     id: string
   ): Promise<PlaylistWithMusicsDTO | null> {
-    return await this.userPlaylistRepository.findByIdWithMusics(id);
+    const existingPlaylist =
+      await this.userPlaylistRepository.findByIdAndUserIdWithMusics(id, userId);
+
+    if (!existingPlaylist) {
+      throw new NotFoundError('Playlist não encontrada');
+    }
+
+    return existingPlaylist;
   }
 
   public async getPlaylistsByUserId(
@@ -64,26 +107,66 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
   }
 
   public async addMusicToPlaylist(
+    userId: string,
     playlistId: string,
     musicData: AddMusicToPlaylistDTO
   ): Promise<boolean> {
-    return await this.userPlaylistRepository.addMusicToPlaylist(
+    const existingPlaylist =
+      await this.userPlaylistRepository.findByIdAndUserId(playlistId, userId);
+
+    if (!existingPlaylist) {
+      throw new NotFoundError('Playlist não encontrada');
+    }
+
+    const added = await this.userPlaylistRepository.addMusicToPlaylist(
       playlistId,
       musicData
     );
+
+    if (!added) {
+      throw new BadRequestError(
+        'Música já existe na playlist ou erro ao adicionar'
+      );
+    }
+
+    return added;
   }
 
   public async removeMusicFromPlaylist(
+    userId: string,
     playlistId: string,
     musicId: string
   ): Promise<boolean> {
-    return await this.userPlaylistRepository.removeMusicFromPlaylist(
+    const existingPlaylist =
+      await this.userPlaylistRepository.findByIdAndUserId(playlistId, userId);
+
+    if (!existingPlaylist) {
+      throw new NotFoundError('Playlist não encontrada');
+    }
+
+    const removed = await this.userPlaylistRepository.removeMusicFromPlaylist(
       playlistId,
       musicId
     );
+
+    if (!removed) {
+      throw new BadRequestError('Erro ao remover música da playlist');
+    }
+
+    return removed;
   }
 
-  public async getPlaylistMusics(playlistId: string): Promise<MusicDTO[]> {
+  public async getPlaylistMusics(
+    userId: string,
+    playlistId: string
+  ): Promise<MusicDTO[]> {
+    const existingPlaylist =
+      await this.userPlaylistRepository.findByIdAndUserId(playlistId, userId);
+
+    if (!existingPlaylist) {
+      throw new NotFoundError('Playlist não encontrada');
+    }
+
     return await this.userPlaylistRepository.getPlaylistMusics(playlistId);
   }
 

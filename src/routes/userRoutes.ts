@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  getUserById,
+  getLoggedUserData,
   getAllUsers,
   updateUser,
   deleteUser,
@@ -9,15 +9,15 @@ import {
 const router = express.Router();
 
 // Get user by ID
-router.get('/:id', getUserById);
+router.get('/me', getLoggedUserData);
 
 // Get all users
 router.get('/', getAllUsers);
 
 // Update user
-router.put('/:id', updateUser);
+router.put('/me', updateUser);
 
 // Delete user
-router.delete('/:id', deleteUser);
+router.delete('/me', deleteUser);
 
 export default router;

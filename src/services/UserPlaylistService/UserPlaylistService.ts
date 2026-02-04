@@ -8,33 +8,43 @@ import {
 } from '@/models/playlists';
 
 export interface UserPlaylistService {
-  createPlaylist(data: CreateUserPlaylistDTO): Promise<UserPlaylistDTO>;
+  createPlaylist(
+    userId: string,
+    data: CreateUserPlaylistDTO
+  ): Promise<UserPlaylistDTO>;
 
   updatePlaylist(
+    userId: string,
     id: string,
     data: UpdateUserPlaylistDTO
   ): Promise<UserPlaylistDTO | null>;
-  deletePlaylist(id: string): Promise<boolean>;
 
-  getPlaylistById(id: string): Promise<UserPlaylistDTO | null>;
+  deletePlaylist(userId: string, id: string): Promise<boolean>;
 
-  getPlaylistWithMusics(id: string): Promise<PlaylistWithMusicsDTO | null>;
+  getPlaylistById(userId: string, id: string): Promise<UserPlaylistDTO | null>;
+
+  getPlaylistWithMusics(
+    userId: string,
+    id: string
+  ): Promise<PlaylistWithMusicsDTO | null>;
 
   getPlaylistsByUserId(userId: string): Promise<UserPlaylistDTO[]>;
 
   getPublicPlaylists(): Promise<UserPlaylistDTO[]>;
 
   addMusicToPlaylist(
+    userId: string,
     playlistId: string,
     musicData: AddMusicToPlaylistDTO
   ): Promise<boolean>;
 
   removeMusicFromPlaylist(
+    userId: string,
     playlistId: string,
     musicId: string
   ): Promise<boolean>;
 
-  getPlaylistMusics(playlistId: string): Promise<MusicDTO[]>;
+  getPlaylistMusics(userId: string, playlistId: string): Promise<MusicDTO[]>;
 
   validatePlaylistOwnership(
     playlistId: string,

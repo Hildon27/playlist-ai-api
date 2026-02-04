@@ -12,10 +12,16 @@ export class PlaylistCommentRepository {
   private readonly prisma = prisma;
 
   public async create(
+    userId: string,
+    playlistId: string,
     data: CreatePlaylistCommentDTO
   ): Promise<PlaylistCommentDTO> {
     const comment = await this.prisma.playlistComment.create({
-      data,
+      data: {
+        ...data,
+        playlistId,
+        userId,
+      },
     });
 
     return this.mapToDTO(comment);

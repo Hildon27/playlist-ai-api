@@ -13,6 +13,7 @@ import {
   ForbiddenError,
 } from '@/models/Errors';
 import { createLogger } from '@/lib/logger';
+import { AuthContext } from 'contexts/auth-context';
 
 const logger = createLogger('PlaylistController');
 
@@ -34,9 +35,15 @@ export class UserPlaylistController {
   ): Promise<void> => {
     try {
       logger.info({ userId: req.body.userId }, 'Creating new playlist');
+
       const validatedData = createUserPlaylistSchema.parse(req.body);
-      const playlist =
-        await this.userPlaylistService.createPlaylist(validatedData);
+
+      const user = AuthContext.getLoggedUser();
+
+      const playlist = await this.userPlaylistService.createPlaylist(
+        user.id,
+        validatedData
+      );
 
       logger.info({ playlistId: playlist.id }, 'Playlist created successfully');
       res.status(201).json({
@@ -66,14 +73,10 @@ export class UserPlaylistController {
 
       const validatedData = updateUserPlaylistSchema.parse(req.body);
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        logger.warn({ playlistId: id }, 'Playlist not found for update');
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
       const playlist = await this.userPlaylistService.updatePlaylist(
+        user.id,
         id,
         validatedData
       );
@@ -107,14 +110,12 @@ export class UserPlaylistController {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        logger.warn({ playlistId: id }, 'Playlist not found for deletion');
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
-      const deleted = await this.userPlaylistService.deletePlaylist(id);
+      const deleted = await this.userPlaylistService.deletePlaylist(
+        user.id,
+        id
+      );
 
       if (!deleted) {
         throw new BadRequestError('Não foi possível excluir a playlist');
@@ -149,16 +150,16 @@ export class UserPlaylistController {
       }
       const { includeMusics } = req.query;
 
+      const user = AuthContext.getLoggedUser();
+
       let playlist;
       if (includeMusics === 'true') {
-        playlist = await this.userPlaylistService.getPlaylistWithMusics(id);
+        playlist = await this.userPlaylistService.getPlaylistWithMusics(
+          user.id,
+          id
+        );
       } else {
-        playlist = await this.userPlaylistService.getPlaylistById(id);
-      }
-
-      if (!playlist) {
-        logger.warn({ playlistId: id }, 'Playlist not found');
-        throw new NotFoundError('Playlist não encontrada');
+        playlist = await this.userPlaylistService.getPlaylistById(user.id, id);
       }
 
       logger.info({ playlistId: id }, 'Playlist retrieved successfully');
@@ -231,22 +232,13 @@ export class UserPlaylistController {
       }
       const validatedData = addMusicToPlaylistSchema.parse(req.body);
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
-      const added = await this.userPlaylistService.addMusicToPlaylist(
+      await this.userPlaylistService.addMusicToPlaylist(
+        user.id,
         id,
         validatedData
       );
-
-      if (!added) {
-        throw new BadRequestError(
-          'Música já existe na playlist ou erro ao adicionar'
-        );
-      }
 
       res.status(200).json({
         success: true,
@@ -274,20 +266,13 @@ export class UserPlaylistController {
       }
       const validatedData = removeMusicFromPlaylistSchema.parse(req.body);
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
-      const removed = await this.userPlaylistService.removeMusicFromPlaylist(
+      await this.userPlaylistService.removeMusicFromPlaylist(
+        user.id,
         id,
         validatedData.musicId
       );
-
-      if (!removed) {
-        throw new BadRequestError('Erro ao remover música da playlist');
-      }
 
       res.status(200).json({
         success: true,
@@ -314,7 +299,12 @@ export class UserPlaylistController {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
 
-      const musics = await this.userPlaylistService.getPlaylistMusics(id);
+      const user = AuthContext.getLoggedUser();
+
+      const musics = await this.userPlaylistService.getPlaylistMusics(
+        user.id,
+        id
+      );
 
       res.status(200).json({
         success: true,

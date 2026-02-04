@@ -6,7 +6,7 @@
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
-    { "key": "token", "value": "", "type": "string" }
+    { "key": "access_token", "value": "", "type": "string" }
   ],
   "item": [
     {
@@ -66,7 +66,7 @@
                 "exec": [
                   "var jsonData = pm.response.json();",
                   "if (jsonData.token) {",
-                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "    pm.collectionVariables.set('access_token', jsonData.token);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -96,7 +96,9 @@
           "name": "Get All Users",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/users",
               "host": ["{{baseUrl}}"],
@@ -105,51 +107,49 @@
           }
         },
         {
-          "name": "Get User by ID",
+          "name": "Get Logged User",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/users/:userId",
+              "raw": "{{baseUrl}}/api/users/me",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", ":userId"],
-              "variable": [
-                { "key": "userId", "value": "", "description": "User ID" }
-              ]
+              "path": ["api", "users", "me"]
             }
           }
         },
         {
-          "name": "Update User",
+          "name": "Update Logged User",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"privacity\": \"private\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/users/:userId",
+              "raw": "{{baseUrl}}/api/users/me",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", ":userId"],
-              "variable": [
-                { "key": "userId", "value": "", "description": "User ID" }
-              ]
+              "path": ["api", "users", "me"]
             }
           }
         },
         {
-          "name": "Delete User",
+          "name": "Delete Logged User",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/users/:userId",
+              "raw": "{{baseUrl}}/api/users/me",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", ":userId"],
-              "variable": [
-                { "key": "userId", "value": "", "description": "User ID" }
-              ]
+              "path": ["api", "users", "me"]
             }
           }
         }
@@ -164,11 +164,11 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"My Playlist\",\n  \"userId\": \"replace-with-user-id\",\n  \"privacity\": \"public\"\n}"
+              "raw": "{\n  \"name\": \"My Playlist\",\n  \"privacity\": \"public\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/playlists",
@@ -183,7 +183,7 @@
             "method": "PUT",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
@@ -207,7 +207,9 @@
           "name": "Delete Playlist",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/:playlistId",
               "host": ["{{baseUrl}}"],
@@ -226,7 +228,9 @@
           "name": "Get Playlist by ID",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/:playlistId",
               "host": ["{{baseUrl}}"],
@@ -245,7 +249,9 @@
           "name": "Get Playlist with Musics",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/:playlistId?includeMusics=true",
               "host": ["{{baseUrl}}"],
@@ -262,17 +268,16 @@
           }
         },
         {
-          "name": "Get Playlists by User",
+          "name": "Get Playlists by Logged User",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/playlists/user/:userId",
+              "raw": "{{baseUrl}}/api/playlists/user",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "playlists", "user", ":userId"],
-              "variable": [
-                { "key": "userId", "value": "", "description": "User ID" }
-              ]
+              "path": ["api", "playlists", "user"]
             }
           }
         },
@@ -280,7 +285,9 @@
           "name": "Get All Public Playlists",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/public/all",
               "host": ["{{baseUrl}}"],
@@ -299,7 +306,7 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
@@ -325,7 +332,7 @@
             "method": "DELETE",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
@@ -349,7 +356,9 @@
           "name": "Get Playlist Musics",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/:playlistId/musics",
               "host": ["{{baseUrl}}"],
@@ -375,11 +384,11 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"content\": \"Great playlist!\",\n  \"playlistId\": \"replace-with-playlist-id\",\n  \"userId\": \"replace-with-user-id\"\n}"
+              "raw": "{\n  \"content\": \"Great playlist!\",\n  \"playlistId\": \"replace-with-playlist-id\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/comments",
@@ -392,7 +401,9 @@
           "name": "Get Comment by ID",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/comments/:commentId",
               "host": ["{{baseUrl}}"],
@@ -409,11 +420,11 @@
             "method": "PUT",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"content\": \"Updated comment!\",\n  \"userId\": \"replace-with-user-id\"\n}"
+              "raw": "{\n  \"content\": \"Updated comment!\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/comments/:commentId",
@@ -429,10 +440,12 @@
           "name": "Delete Comment",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"replace-with-user-id\"\n}"
+              "raw": "{}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/comments/:commentId",
@@ -448,7 +461,9 @@
           "name": "Get Comments by Playlist",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/comments/playlist/:playlistId",
               "host": ["{{baseUrl}}"],
@@ -464,17 +479,16 @@
           }
         },
         {
-          "name": "Get Comments by User",
+          "name": "Get Comments by Logged User",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/comments/user/:userId",
+              "raw": "{{baseUrl}}/api/comments/user",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "comments", "user", ":userId"],
-              "variable": [
-                { "key": "userId", "value": "", "description": "User ID" }
-              ]
+              "path": ["api", "comments", "user"]
             }
           }
         }
@@ -487,14 +501,13 @@
           "name": "Find All User Followers",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/follows/:userId/followers",
+              "raw": "{{baseUrl}}/api/follows/followers",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follows", ":userId", "followers"],
-              "variable": [
-                { "key": "userId", "value": "", "description": "User ID" }
-              ]
+              "path": ["api", "follows", "followers"]
             }
           }
         },
@@ -504,11 +517,11 @@
             "method": "DELETE",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"followerId\": \"replace-with-follower-id\"\n}"
+              "raw": "{}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/follows/:followedId/unfollow",
@@ -530,11 +543,11 @@
             "method": "DELETE",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"followedId\": \"replace-with-followed-id\"\n}"
+              "raw": "{}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/follows/:followerId/remove",
@@ -561,11 +574,11 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"followerId\": \"replace-with-follower-id\",\n  \"followedUserEmail\": \"user@email.com\"\n}"
+              "raw": "{\n  \"followedUserEmail\": \"user@email.com\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/follow-requests/register",
@@ -575,32 +588,30 @@
           }
         },
         {
-          "name": "Find All Requests by Follower ID",
+          "name": "Find Sent Follow Requests (Logged User)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/follow-requests/by-follower/:id",
+              "raw": "{{baseUrl}}/api/follow-requests/sent",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follow-requests", "by-follower", ":id"],
-              "variable": [
-                { "key": "id", "value": "", "description": "Follower ID" }
-              ]
+              "path": ["api", "follow-requests", "sent"]
             }
           }
         },
         {
-          "name": "Find All Requests by Followed ID",
+          "name": "Find Received Follow Requests (Logged User)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token')}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/follow-requests/by-followed/:id",
+              "raw": "{{baseUrl}}/api/follow-requests/received",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follow-requests", "by-followed", ":id"],
-              "variable": [
-                { "key": "id", "value": "", "description": "Followed ID" }
-              ]
+              "path": ["api", "follow-requests", "received"]
             }
           }
         },
@@ -610,11 +621,11 @@
             "method": "DELETE",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"followerId\": \"replace-with-follower-id\"\n}"
+              "raw": "{}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/follow-requests/:id",
@@ -632,11 +643,11 @@
             "method": "PATCH",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"followedId\": \"replace-with-followed-id\",\n  \"action\": \"accept\"\n}"
+              "raw": "{\n  \"action\": \"accept\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/follow-requests/:id/process",
@@ -657,7 +668,9 @@
           "name": "Search Tracks",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/spotify/search?query=Bohemian Rhapsody&limit=10",
               "host": ["{{baseUrl}}"],
@@ -681,7 +694,9 @@
           "name": "Get Track by ID",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/spotify/tracks/:trackId",
               "host": ["{{baseUrl}}"],
@@ -702,7 +717,7 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
@@ -721,7 +736,7 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
@@ -745,7 +760,7 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
@@ -825,14 +840,16 @@
           }
         },
         {
-          "name": "Users - Get Non-existent ID",
+          "name": "Users - Get Logged User (was Non-existent ID)",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/users/non-existent-id",
+              "raw": "{{baseUrl}}/api/users/me",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "non-existent-id"]
+              "path": ["api", "users", "me"]
             }
           }
         },
@@ -842,7 +859,7 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
@@ -856,12 +873,12 @@
           }
         },
         {
-          "name": "Playlists - Missing User ID",
+          "name": "Playlists - Create Without Explicit User ID",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": {
               "mode": "raw",
@@ -878,7 +895,9 @@
           "name": "Playlists - Get Non-existent ID",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/playlists/non-existent-id",
               "host": ["{{baseUrl}}"],
@@ -892,7 +911,7 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "body": { "mode": "raw", "raw": "{\n  \"externalId\": \"\"\n}" },
             "url": {

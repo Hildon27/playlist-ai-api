@@ -45,7 +45,7 @@ export class FollowServiceImpl implements FollowService {
     return await this.followRepository.findAllByFollowedId(userId);
   }
 
-  public async deleteFollowByIdAndFollowedId(
+  public async deleteFollowByFollowerAndFollowedId(
     followerId: string,
     followedId: string
   ): Promise<void> {

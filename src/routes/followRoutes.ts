@@ -8,7 +8,7 @@ import express from 'express';
 const router = express.Router();
 
 // Find all user followers
-router.get('/:userId/followers', findAllUserFollowers);
+router.get('/followers', findAllUserFollowers);
 
 // Unfollow user by follow ID
 router.delete('/:followedId/unfollow', unfollowUserByFollowedId);

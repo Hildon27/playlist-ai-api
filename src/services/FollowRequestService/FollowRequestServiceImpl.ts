@@ -73,16 +73,18 @@ export class FollowRequestServiceImpl implements FollowRequestService {
     return result;
   }
 
-  public async findAllByFollowerId(
-    followerId: string
+  public async findSentFollowRequests(
+    userId: string
   ): Promise<FollowRequestDto[]> {
-    return await this.followRequestRepository.findAllByFollowerId(followerId);
+    return await this.followRequestRepository.findSentFollowRequests(userId);
   }
 
-  public async findAllByFollowedId(
-    followedId: string
+  public async findReceivedFollowRequests(
+    userId: string
   ): Promise<FollowRequestDto[]> {
-    return await this.followRequestRepository.findAllByFollowedId(followedId);
+    return await this.followRequestRepository.findReceivedFollowRequests(
+      userId
+    );
   }
 
   public async cancelFollowRequest(
