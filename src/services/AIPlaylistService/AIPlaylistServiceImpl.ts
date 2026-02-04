@@ -1,5 +1,9 @@
 import { createLogger } from '@/lib/logger';
-import { generateMusicRecommendations, MusicSuggestion } from '@/lib/gemini';
+import {
+  generateMusicRecommendations,
+  MusicSuggestion,
+  MusicRecommendationResponse,
+} from '@/lib/gemini';
 import { GeneratePlaylistDTO, GeneratedPlaylist } from '@/models/ai';
 import { TrackDTO } from '@/models/spotify';
 import { SpotifyServiceImpl } from '@/services/SpotifyService/SpotifyServiceImpl';
@@ -24,10 +28,13 @@ export class AIPlaylistServiceImpl implements AIPlaylistService {
     );
 
     // Step 1: Generate recommendations using Gemini AI
-    const aiSuggestions = await generateMusicRecommendations(
-      seedTracks.map(t => ({ name: t.name, artist: t.artist })),
-      limit
-    );
+    const aiResponse: MusicRecommendationResponse =
+      await generateMusicRecommendations(
+        seedTracks.map(t => ({ name: t.name, artist: t.artist })),
+        limit
+      );
+
+    const { message: aiMessage, suggestions: aiSuggestions } = aiResponse;
 
     aiLogger.info(
       { suggestionsCount: aiSuggestions.length },
@@ -81,6 +88,7 @@ export class AIPlaylistServiceImpl implements AIPlaylistService {
     );
 
     return {
+      message: aiMessage,
       seedTracks: seedTracks.map(t => ({ name: t.name, artist: t.artist })),
       generatedTracks: validatedTracks,
       invalidSuggestions,
