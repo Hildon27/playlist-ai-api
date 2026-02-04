@@ -1,4 +1,4 @@
-import { ApiError } from '@/models/Errors';
+import { ApiError, AppError } from '@/models/Errors';
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { createLogger } from '@/lib/logger';
@@ -35,6 +35,12 @@ export const globalErrorHandler = (
     response.message = err.message;
     response.code = err.code;
     return res.status(err.status).json(response);
+  }
+
+  if (err instanceof AppError) {
+    response.message = err.message;
+    response.code = err.statusCode;
+    return res.status(err.statusCode).json(response);
   }
 
   // Unexpected Error
