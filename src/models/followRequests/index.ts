@@ -13,21 +13,12 @@ export const followRequestSchema = z.object({
 });
 
 export const followRequestBaseSchema = z.object({
-  followerId: z.string().nonempty('Follower ID can not be empty'),
   followedUserEmail: z.email('Followed user email bust be a valid email'),
 });
 
-export const cancelFollowRequestSchema = followRequestSchema.pick({
-  followerId: true,
+export const proccessFollowRequestSchema = z.object({
+  action: z.enum(FollowRequestProcessingAction),
 });
-
-export const proccessFollowRequestSchema = followRequestSchema
-  .pick({
-    followedId: true,
-  })
-  .extend({
-    action: z.enum(FollowRequestProcessingAction),
-  });
 
 // Type
 

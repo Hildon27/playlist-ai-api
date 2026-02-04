@@ -6,8 +6,8 @@ export interface FollowRequestService {
     followerId: string,
     followedUserEmail: string
   ): Promise<FollowRequestDto>;
-  findAllByFollowerId(followerId: string): Promise<FollowRequestDto[]>;
-  findAllByFollowedId(followedId: string): Promise<FollowRequestDto[]>;
+  findSentFollowRequests(userId: string): Promise<FollowRequestDto[]>;
+  findReceivedFollowRequests(userId: string): Promise<FollowRequestDto[]>;
   cancelFollowRequest(
     followRequestId: string,
     followerId: string

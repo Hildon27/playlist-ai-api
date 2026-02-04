@@ -1,12 +1,12 @@
 import { ApiError, ErrorCode } from '@/models/Errors';
 import {
-  cancelFollowRequestSchema,
   followRequestBaseSchema,
   proccessFollowRequestSchema,
 } from '@/models/followRequests';
 import { FollowRequestServiceImpl } from '@/services/FollowRequestService/FollowRequestServiceImpl';
 import { NextFunction, Request, Response } from 'express';
 import { createLogger } from '@/lib/logger';
+import { AuthContext } from 'contexts/auth-context';
 
 const logger = createLogger('FollowRequestController');
 const followRequestService = new FollowRequestServiceImpl();
@@ -21,7 +21,11 @@ export const requestToFollowUser = async (
 ) => {
   try {
     const data = followRequestBaseSchema.parse(req.body);
-    const { followerId, followedUserEmail } = data;
+    const { followedUserEmail } = data;
+
+    const user = AuthContext.getLoggedUser();
+    const followerId = user.id;
+
     logger.info({ followerId, followedUserEmail }, 'Creating follow request');
 
     const followRequest = await followRequestService.requestToFollowUser(
@@ -44,26 +48,22 @@ export const requestToFollowUser = async (
 };
 
 /**
- * Find all follow requests by follower ID
+ * Find all follow requests sent by logged user
  */
-export const findAllByFollowerId = async (
+export const findSentFollowRequests = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { id: followerId } = req.params;
-    logger.info({ followerId }, 'Getting follow requests by follower');
+    const user = AuthContext.getLoggedUser();
 
-    if (!followerId || followerId.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
-
-    const followRequests =
-      await followRequestService.findAllByFollowerId(followerId);
+    const followRequests = await followRequestService.findSentFollowRequests(
+      user.id
+    );
 
     logger.info(
-      { followerId, count: followRequests.length },
+      { followerId: user.id, count: followRequests.length },
       'Follow requests retrieved'
     );
     res.status(200).json({
@@ -77,26 +77,21 @@ export const findAllByFollowerId = async (
 };
 
 /**
- * Find all follow requests by followed ID
+ * Find all follow requests received by the logged-in user.
  */
-export const findAllByFollowedId = async (
+export const findReceivedFollowRequests = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { id: followedId } = req.params;
-    logger.info({ followedId }, 'Getting follow requests by followed');
-
-    if (!followedId || followedId.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
+    const user = AuthContext.getLoggedUser();
 
     const followRequests =
-      await followRequestService.findAllByFollowedId(followedId);
+      await followRequestService.findReceivedFollowRequests(user.id);
 
     logger.info(
-      { followedId, count: followRequests.length },
+      { followedId: user.id, count: followRequests.length },
       'Follow requests retrieved'
     );
     res.status(200).json({
@@ -110,7 +105,7 @@ export const findAllByFollowedId = async (
 };
 
 /**
- * Cancel a follow requests by ID
+ * Cancel a follow request by ID
  */
 export const cancelFollowRequest = async (
   req: Request,
@@ -119,16 +114,21 @@ export const cancelFollowRequest = async (
 ) => {
   try {
     const { id: followRequestId } = req.params;
-    const { followerId } = cancelFollowRequestSchema.parse(req.body);
-    logger.info({ followRequestId, followerId }, 'Cancelling follow request');
 
     if (!followRequestId || followRequestId.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
     }
 
+    const user = AuthContext.getLoggedUser();
+
+    logger.info(
+      { followRequestId, followerId: user.id },
+      'Cancelling follow request'
+    );
+
     const followRequests = await followRequestService.cancelFollowRequest(
       followRequestId,
-      followerId
+      user.id
     );
 
     logger.info({ followRequestId }, 'Follow request cancelled successfully');
@@ -152,19 +152,22 @@ export const processFollowRequest = async (
 ) => {
   try {
     const { id: followRequestId } = req.params;
-    const { followedId, action } = proccessFollowRequestSchema.parse(req.body);
-    logger.info(
-      { followRequestId, followedId, action },
-      'Processing follow request'
-    );
+    const { action } = proccessFollowRequestSchema.parse(req.body);
 
     if (!followRequestId || followRequestId.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
     }
 
+    const user = AuthContext.getLoggedUser();
+
+    logger.info(
+      { followRequestId, followedId: user.id, action },
+      'Processing follow request'
+    );
+
     const followRequests = await followRequestService.processFollowRequest(
       followRequestId,
-      followedId,
+      user.id,
       action
     );
 

@@ -45,11 +45,11 @@ export class FollowRequestRepository {
     return followRequest ? this.toResponse(followRequest) : null;
   }
 
-  public async findAllByFollowerId(
-    followerId: string
+  public async findSentFollowRequests(
+    userId: string
   ): Promise<FollowRequestDto[]> {
     const followRequests = await this.prisma.followRequest.findMany({
-      where: { followerId },
+      where: { followerId: userId },
     });
 
     return followRequests.map(v => this.toResponse(v));
@@ -72,11 +72,11 @@ export class FollowRequestRepository {
     return this.toResponse(updatedFollowRequest);
   }
 
-  public async findAllByFollowedId(
-    followedId: string
+  public async findReceivedFollowRequests(
+    userId: string
   ): Promise<FollowRequestDto[]> {
     const followRequests = await this.prisma.followRequest.findMany({
-      where: { followedId },
+      where: { followedId: userId },
     });
 
     return followRequests.map(v => this.toResponse(v));
