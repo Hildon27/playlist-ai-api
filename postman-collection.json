@@ -512,6 +512,20 @@
           }
         },
         {
+          "name": "Find All User Followeds",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/follows/followeds",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "follows", "followeds"]
+            }
+          }
+        },
+        {
           "name": "Unfollow User",
           "request": {
             "method": "DELETE",

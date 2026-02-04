@@ -34,6 +34,7 @@ export const endpoints = {
   },
   follows: {
     followers: '/api/follows/followers',
+    followeds: '/api/follows/followeds',
     unfollow: '/api/follows/:followedId/unfollow',
     removeFollower: '/api/follows/:followerId/remove',
   },

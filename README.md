@@ -155,6 +155,7 @@ A API estará disponível em [http://localhost:3000/api](http://localhost:3000/a
 ### Follows
 
 - `GET    /api/follows/followers` – Listar seguidores do usuário
+- `GET    /api/follows/followeds` – Listar pessoas seguindas do usuário
 - `DELETE /api/follows/:followedId/unfollow` – Deixar de seguir usuário
 - `DELETE /api/follows/:followerId/remove` – Remover seguidor
 

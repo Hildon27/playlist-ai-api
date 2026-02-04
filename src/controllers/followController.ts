@@ -11,7 +11,7 @@ const followService = new FollowServiceImpl();
  * Find all user followers
  */
 export const findAllUserFollowers = async (
-  req: Request,
+  _: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -30,6 +30,33 @@ export const findAllUserFollowers = async (
     });
   } catch (error) {
     logger.error({ error }, 'Error getting followers');
+    next(error);
+  }
+};
+
+/**
+ * Find all user followeds
+ */
+export const findAllUserFolloweds = async (
+  _: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = AuthContext.getLoggedUser();
+
+    const followers = await followService.findAllUserFolloweds(user.id);
+
+    logger.info(
+      { userId: user.id, count: followers.length },
+      'Followeds retrieved successfully'
+    );
+    res.status(200).json({
+      success: true,
+      data: followers,
+    });
+  } catch (error) {
+    logger.error({ error }, 'Error getting followeds');
     next(error);
   }
 };
