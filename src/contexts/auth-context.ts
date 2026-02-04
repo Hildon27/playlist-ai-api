@@ -16,5 +16,5 @@ export const AuthContext = {
     const user = storage.getStore();
     if (!user) throw new Error('No user found in current context');
     return user;
-  }
+  },
 };
