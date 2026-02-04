@@ -11,6 +11,7 @@ import {
 } from '@/models/comments';
 import { BadRequestError, NotFoundError } from '@/models/Errors';
 import { createLogger } from '@/lib/logger';
+import { AuthContext } from 'contexts/auth-context';
 
 const logger = createLogger('CommentController');
 
@@ -28,14 +29,25 @@ export class PlaylistCommentController {
    * Create a new comment on a playlist
    */
   public createComment = async (req: Request, res: Response): Promise<void> => {
-    logger.info(
-      { playlistId: req.body.playlistId, userId: req.body.userId },
-      'Creating comment'
-    );
+    const { playlistId } = req.params;
+    if (!playlistId) {
+      throw new BadRequestError('ID da playlist é obrigatório');
+    }
+
     const validatedData = createPlaylistCommentSchema.parse(req.body);
 
-    const comment =
-      await this.playlistCommentService.createComment(validatedData);
+    const user = AuthContext.getLoggedUser();
+
+    logger.info(
+      { playlistId: playlistId, userId: user.id },
+      'Creating comment'
+    );
+
+    const comment = await this.playlistCommentService.createComment(
+      user.id,
+      playlistId,
+      validatedData
+    );
 
     logger.info({ commentId: comment.id }, 'Comment created successfully');
     res.status(201).json({
@@ -108,17 +120,12 @@ export class PlaylistCommentController {
     const { id } = getCommentByIdSchema.parse(req.params);
     const validatedData = updatePlaylistCommentSchema.parse(req.body);
 
-    const userId = req.body.userId ?? req.headers['user-id'];
-    if (!userId) {
-      throw new BadRequestError(
-        'ID do usuário é obrigatório para atualizar comentário'
-      );
-    }
+    const user = AuthContext.getLoggedUser();
 
     const comment = await this.playlistCommentService.updateComment(
+      user.id,
       id,
-      validatedData,
-      userId as string
+      validatedData
     );
 
     if (!comment) {
@@ -137,16 +144,11 @@ export class PlaylistCommentController {
   public deleteComment = async (req: Request, res: Response): Promise<void> => {
     const { id } = getCommentByIdSchema.parse(req.params);
 
-    const userId = req.body.userId ?? req.headers['user-id'];
-    if (!userId) {
-      throw new BadRequestError(
-        'ID do usuário é obrigatório para excluir comentário'
-      );
-    }
+    const user = AuthContext.getLoggedUser();
 
     const deleted = await this.playlistCommentService.deleteComment(
-      id,
-      userId as string
+      user.id,
+      id
     );
 
     if (!deleted) {

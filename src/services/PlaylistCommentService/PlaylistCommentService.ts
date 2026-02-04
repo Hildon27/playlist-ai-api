@@ -7,15 +7,19 @@ import {
 } from '@/models/comments';
 
 export interface PlaylistCommentService {
-  createComment(data: CreatePlaylistCommentDTO): Promise<PlaylistCommentDTO>;
+  createComment(
+    userId: string,
+    playlistId: string,
+    data: CreatePlaylistCommentDTO
+  ): Promise<PlaylistCommentDTO>;
 
   updateComment(
+    userId: string,
     id: string,
-    data: UpdatePlaylistCommentDTO,
-    userId: string
+    data: UpdatePlaylistCommentDTO
   ): Promise<PlaylistCommentDTO | null>;
 
-  deleteComment(id: string, userId: string): Promise<boolean>;
+  deleteComment(userId: string, id: string): Promise<boolean>;
 
   getCommentById(id: string): Promise<PlaylistCommentWithUserDTO | null>;
 

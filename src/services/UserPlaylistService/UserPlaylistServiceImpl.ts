@@ -10,7 +10,6 @@ import {
   MusicDTO,
 } from '@/models/playlists';
 import { createLogger } from '@/lib/logger';
-import { AuthContext } from 'contexts/auth-context';
 import { BadRequestError, NotFoundError } from '@/models/Errors';
 
 const logger = createLogger('PlaylistService');
