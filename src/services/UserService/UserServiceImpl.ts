@@ -39,11 +39,11 @@ export class UserServiceImpl implements UserService {
     return users;
   }
 
-  public async update(
-    id: string,
-    data: UpdateUserDTO
-  ): Promise<UserResponseDTO | null> {
-    logger.info({ userId: id }, 'Starting user update');
+  public async update(data: UpdateUserDTO): Promise<UserResponseDTO | null> {
+    logger.info('Starting user update');
+
+    const user = AuthContext.getLoggedUser();
+    const id = user.id;
 
     if (!id || id.trim() === '') {
       logger.warn('User update failed: userId not provided');
@@ -90,8 +90,11 @@ export class UserServiceImpl implements UserService {
     return updatedUser;
   }
 
-  public async delete(id: string): Promise<void> {
-    logger.info({ userId: id }, 'Starting user deletion');
+  public async delete(): Promise<void> {
+    logger.info('Starting user deletion');
+
+    const user = AuthContext.getLoggedUser();
+    const id = user.id;
 
     if (!id || id.trim() === '') {
       logger.warn('User deletion failed: userId not provided');

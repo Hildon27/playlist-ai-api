@@ -8,9 +8,9 @@ const logger = createLogger('UserController');
 const userService = new UserServiceImpl();
 
 /**
- * Get user by ID
+ * Get logged user data
  */
-export const getLoggedUserData = async (req: Request, res: Response) => {
+export const getLoggedUserData = async (_: Request, res: Response) => {
   try {
     const user = await userService.getLoggedUserData();
 
@@ -43,7 +43,7 @@ export const getLoggedUserData = async (req: Request, res: Response) => {
 /**
  * Get all users
  */
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (_: Request, res: Response) => {
   try {
     logger.info('Getting all users');
     const users = await userService.findAll();
@@ -70,27 +70,22 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 /**
- * Update user
+ * Update logged user account
  */
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    logger.info({ userId: id }, 'Updating user');
-
-    if (!id || id.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
+    logger.info('Updating user');
 
     const userData = updateUserSchema.parse(req.body);
 
-    const user = await userService.update(id, userData);
+    const user = await userService.update(userData);
 
     if (!user) {
-      logger.warn({ userId: id }, 'User not found for update');
+      logger.warn('User not found for update');
       throw new ApiError(ErrorCode.USER_NOT_FOUND);
     }
 
-    logger.info({ userId: id }, 'User updated successfully');
+    logger.info('User updated successfully');
     res.status(200).json({
       success: true,
       data: user,
@@ -112,20 +107,15 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 /**
- * Delete user
+ * Delete logged user account
  */
 export const deleteUser = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    logger.info({ userId: id }, 'Deleting user');
+    logger.info('Deleting user');
 
-    if (!id || id.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
+    await userService.delete();
 
-    await userService.delete(id);
-
-    logger.info({ userId: id }, 'User deleted successfully');
+    logger.info('User deleted successfully');
     res.status(200).json({
       success: true,
       message: 'User deleted successfully',
