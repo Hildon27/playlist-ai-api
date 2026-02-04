@@ -21,25 +21,30 @@ export interface UserPlaylistService {
 
   deletePlaylist(userId: string, id: string): Promise<boolean>;
 
-  getPlaylistById(id: string): Promise<UserPlaylistDTO | null>;
+  getPlaylistById(userId: string, id: string): Promise<UserPlaylistDTO | null>;
 
-  getPlaylistWithMusics(id: string): Promise<PlaylistWithMusicsDTO | null>;
+  getPlaylistWithMusics(
+    userId: string,
+    id: string
+  ): Promise<PlaylistWithMusicsDTO | null>;
 
   getPlaylistsByUserId(userId: string): Promise<UserPlaylistDTO[]>;
 
   getPublicPlaylists(): Promise<UserPlaylistDTO[]>;
 
   addMusicToPlaylist(
+    userId: string,
     playlistId: string,
     musicData: AddMusicToPlaylistDTO
   ): Promise<boolean>;
 
   removeMusicFromPlaylist(
+    userId: string,
     playlistId: string,
     musicId: string
   ): Promise<boolean>;
 
-  getPlaylistMusics(playlistId: string): Promise<MusicDTO[]>;
+  getPlaylistMusics(userId: string, playlistId: string): Promise<MusicDTO[]>;
 
   validatePlaylistOwnership(
     playlistId: string,

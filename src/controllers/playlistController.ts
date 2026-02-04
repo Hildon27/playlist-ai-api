@@ -150,16 +150,16 @@ export class UserPlaylistController {
       }
       const { includeMusics } = req.query;
 
+      const user = AuthContext.getLoggedUser();
+
       let playlist;
       if (includeMusics === 'true') {
-        playlist = await this.userPlaylistService.getPlaylistWithMusics(id);
+        playlist = await this.userPlaylistService.getPlaylistWithMusics(
+          user.id,
+          id
+        );
       } else {
-        playlist = await this.userPlaylistService.getPlaylistById(id);
-      }
-
-      if (!playlist) {
-        logger.warn({ playlistId: id }, 'Playlist not found');
-        throw new NotFoundError('Playlist não encontrada');
+        playlist = await this.userPlaylistService.getPlaylistById(user.id, id);
       }
 
       logger.info({ playlistId: id }, 'Playlist retrieved successfully');
@@ -232,22 +232,13 @@ export class UserPlaylistController {
       }
       const validatedData = addMusicToPlaylistSchema.parse(req.body);
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
-      const added = await this.userPlaylistService.addMusicToPlaylist(
+      await this.userPlaylistService.addMusicToPlaylist(
+        user.id,
         id,
         validatedData
       );
-
-      if (!added) {
-        throw new BadRequestError(
-          'Música já existe na playlist ou erro ao adicionar'
-        );
-      }
 
       res.status(200).json({
         success: true,
@@ -275,20 +266,13 @@ export class UserPlaylistController {
       }
       const validatedData = removeMusicFromPlaylistSchema.parse(req.body);
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
-      const removed = await this.userPlaylistService.removeMusicFromPlaylist(
+      await this.userPlaylistService.removeMusicFromPlaylist(
+        user.id,
         id,
         validatedData.musicId
       );
-
-      if (!removed) {
-        throw new BadRequestError('Erro ao remover música da playlist');
-      }
 
       res.status(200).json({
         success: true,
@@ -315,7 +299,12 @@ export class UserPlaylistController {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
 
-      const musics = await this.userPlaylistService.getPlaylistMusics(id);
+      const user = AuthContext.getLoggedUser();
+
+      const musics = await this.userPlaylistService.getPlaylistMusics(
+        user.id,
+        id
+      );
 
       res.status(200).json({
         success: true,
