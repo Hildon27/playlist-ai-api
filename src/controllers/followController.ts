@@ -1,8 +1,8 @@
 import { ApiError, ErrorCode } from '@/models/Errors';
-import { removeFollowerBodySchema, unfollowBodySchema } from '@/models/follows';
 import { FollowServiceImpl } from '@/services/Follow/FollowServiceImpl';
 import { NextFunction, Request, Response } from 'express';
 import { createLogger } from '@/lib/logger';
+import { AuthContext } from 'contexts/auth-context';
 
 const logger = createLogger('FollowController');
 const followService = new FollowServiceImpl();
@@ -16,17 +16,12 @@ export const findAllUserFollowers = async (
   next: NextFunction
 ) => {
   try {
-    const { userId } = req.params;
-    logger.info({ userId }, 'Getting all followers for user');
+    const user = AuthContext.getLoggedUser();
 
-    if (!userId || userId.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
-
-    const followers = await followService.findAllUserFollowers(userId);
+    const followers = await followService.findAllUserFollowers(user.id);
 
     logger.info(
-      { userId, count: followers.length },
+      { userId: user.id, count: followers.length },
       'Followers retrieved successfully'
     );
     res.status(200).json({
@@ -49,25 +44,21 @@ export const unfollowUserByFollowedId = async (
 ) => {
   try {
     const { followedId } = req.params;
-    const data = unfollowBodySchema.parse(req.body);
-    logger.info(
-      { followerId: data.followerId, followedId },
-      'Unfollowing user'
-    );
 
     if (!followedId || followedId.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
     }
 
-    await followService.deleteFollowByIdAndFollowedId(
-      data.followerId,
+    const user = AuthContext.getLoggedUser();
+
+    logger.info({ followerId: user.id, followedId }, 'Unfollowing user');
+
+    await followService.deleteFollowByFollowerAndFollowedId(
+      user.id,
       followedId
     );
 
-    logger.info(
-      { followerId: data.followerId, followedId },
-      'Unfollowed successfully'
-    );
+    logger.info({ followerId: user.id, followedId }, 'Unfollowed successfully');
     res.status(204).json({
       success: true,
     });
@@ -78,7 +69,7 @@ export const unfollowUserByFollowedId = async (
 };
 
 /**
- * Remove follower by follower ID
+ * Remove follower by ID
  */
 export const removeFollowerById = async (
   req: Request,
@@ -87,23 +78,22 @@ export const removeFollowerById = async (
 ) => {
   try {
     const { followerId } = req.params;
-    const data = removeFollowerBodySchema.parse(req.body);
-    logger.info(
-      { followerId, followedId: data.followedId },
-      'Removing follower'
-    );
 
     if (!followerId || followerId.trim() === '') {
       throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
     }
 
-    await followService.deleteFollowByIdAndFollowedId(
+    const user = AuthContext.getLoggedUser();
+
+    logger.info({ followerId, followedId: user.id }, 'Removing follower');
+
+    await followService.deleteFollowByFollowerAndFollowedId(
       followerId,
-      data.followedId
+      user.id
     );
 
     logger.info(
-      { followerId, followedId: data.followedId },
+      { followerId, followedId: user.id },
       'Follower removed successfully'
     );
     res.status(204).json({
