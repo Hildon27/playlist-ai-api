@@ -1,57 +1,25 @@
 import { ApiError, ErrorCode } from '@/models/Errors';
-import { createUserSchema, updateUserSchema } from '@/models/users';
+import { updateUserSchema } from '@/models/users';
 import { UserServiceImpl } from '@/services/UserService/UserServiceImpl';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('UserController');
 const userService = new UserServiceImpl();
 
 /**
- * Create a new user
- */
-export const createUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    logger.info({ email: req.body.email }, 'Creating new user');
-    const userData = createUserSchema.parse(req.body);
-
-    const user = await userService.create(userData);
-
-    logger.info({ userId: user.id }, 'User created successfully');
-    res.status(201).json({
-      success: true,
-      data: user,
-    });
-  } catch (error) {
-    logger.error({ error }, 'Error creating user');
-    next(error);
-  }
-};
-
-/**
  * Get user by ID
  */
-export const getUserById = async (req: Request, res: Response) => {
+export const getLoggedUserData = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    logger.info({ userId: id }, 'Getting user by ID');
-
-    if (!id || id.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
-
-    const user = await userService.findById(id);
+    const user = await userService.getLoggedUserData();
 
     if (!user) {
-      logger.warn({ userId: id }, 'User not found');
+      logger.warn('User not found');
       throw new ApiError(ErrorCode.USER_NOT_FOUND);
     }
 
-    logger.info({ userId: id }, 'User found successfully');
+    logger.info({ userId: user.id }, 'User found successfully');
     res.status(200).json({
       success: true,
       data: user,
