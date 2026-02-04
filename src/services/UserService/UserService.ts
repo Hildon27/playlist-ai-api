@@ -1,8 +1,9 @@
 import { CreateUserDTO, UserResponseDTO } from '@/models/users';
 
 export interface UserService {
-  findById(id: string): Promise<UserResponseDTO | null>;
   findAll(): Promise<UserResponseDTO[]>;
+  findById(id: string): Promise<UserResponseDTO | null>;
+  getLoggedUserData(): Promise<UserResponseDTO | null>;
   update(
     id: string,
     data: Partial<CreateUserDTO>

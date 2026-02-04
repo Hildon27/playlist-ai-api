@@ -3,6 +3,7 @@ import { UserRepository } from '@/repositories/UserRepository';
 import { ApiError, ErrorCode } from '@/models/Errors';
 import { UpdateUserDTO, UserResponseDTO } from '@/models/users';
 import { createLogger } from '@/lib/logger';
+import { AuthContext } from 'contexts/auth-context';
 
 const logger = createLogger('UserService');
 
@@ -16,6 +17,12 @@ export class UserServiceImpl implements UserService {
 
     const user = await this.userRepository.findById(id);
     return user;
+  }
+
+  public async getLoggedUserData(): Promise<UserResponseDTO | null> {
+    const user = AuthContext.getLoggedUser();
+
+    return await this.findById(user.id);
   }
 
   public async findByEmail(email: string): Promise<UserResponseDTO | null> {
