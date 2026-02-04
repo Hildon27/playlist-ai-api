@@ -13,6 +13,7 @@ import {
   ForbiddenError,
 } from '@/models/Errors';
 import { createLogger } from '@/lib/logger';
+import { AuthContext } from 'contexts/auth-context';
 
 const logger = createLogger('PlaylistController');
 
@@ -34,9 +35,15 @@ export class UserPlaylistController {
   ): Promise<void> => {
     try {
       logger.info({ userId: req.body.userId }, 'Creating new playlist');
+
       const validatedData = createUserPlaylistSchema.parse(req.body);
-      const playlist =
-        await this.userPlaylistService.createPlaylist(validatedData);
+
+      const user = AuthContext.getLoggedUser();
+
+      const playlist = await this.userPlaylistService.createPlaylist(
+        user.id,
+        validatedData
+      );
 
       logger.info({ playlistId: playlist.id }, 'Playlist created successfully');
       res.status(201).json({
@@ -66,14 +73,10 @@ export class UserPlaylistController {
 
       const validatedData = updateUserPlaylistSchema.parse(req.body);
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        logger.warn({ playlistId: id }, 'Playlist not found for update');
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
       const playlist = await this.userPlaylistService.updatePlaylist(
+        user.id,
         id,
         validatedData
       );
@@ -107,14 +110,12 @@ export class UserPlaylistController {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        logger.warn({ playlistId: id }, 'Playlist not found for deletion');
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
-      const deleted = await this.userPlaylistService.deletePlaylist(id);
+      const deleted = await this.userPlaylistService.deletePlaylist(
+        user.id,
+        id
+      );
 
       if (!deleted) {
         throw new BadRequestError('Não foi possível excluir a playlist');

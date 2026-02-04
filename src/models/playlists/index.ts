@@ -32,7 +32,6 @@ export const playlistWithMusicsSchema = userPlaylistSchema.extend({
 export const createUserPlaylistSchema = userPlaylistSchema.pick({
   name: true,
   privacity: true,
-  userId: true,
 });
 
 export const updateUserPlaylistSchema = userPlaylistSchema

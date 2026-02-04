@@ -8,13 +8,18 @@ import {
 } from '@/models/playlists';
 
 export interface UserPlaylistService {
-  createPlaylist(data: CreateUserPlaylistDTO): Promise<UserPlaylistDTO>;
+  createPlaylist(
+    userId: string,
+    data: CreateUserPlaylistDTO
+  ): Promise<UserPlaylistDTO>;
 
   updatePlaylist(
+    userId: string,
     id: string,
     data: UpdateUserPlaylistDTO
   ): Promise<UserPlaylistDTO | null>;
-  deletePlaylist(id: string): Promise<boolean>;
+
+  deletePlaylist(userId: string, id: string): Promise<boolean>;
 
   getPlaylistById(id: string): Promise<UserPlaylistDTO | null>;
 
