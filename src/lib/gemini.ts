@@ -25,13 +25,19 @@ export interface MusicSuggestion {
   artist: string;
 }
 
+export interface MusicRecommendationResponse {
+  message: string;
+  suggestions: MusicSuggestion[];
+}
+
 /**
  * Generate music recommendations based on seed tracks using Gemini AI
+ * Returns both the song suggestions and an interactive message explaining the choices
  */
 export const generateMusicRecommendations = async (
   seedTracks: { name: string; artist: string }[],
   limit: number = 20
-): Promise<MusicSuggestion[]> => {
+): Promise<MusicRecommendationResponse> => {
   geminiLogger.info(
     { seedCount: seedTracks.length, limit },
     'Generating music recommendations'
@@ -44,21 +50,35 @@ export const generateMusicRecommendations = async (
     .map((t, i) => `${i + 1}. "${t.name}" - ${t.artist}`)
     .join('\n');
 
-  const prompt = `You are a music recommendation expert. Based on these ${seedTracks.length} songs that a user likes:
+  const prompt = `Você é um especialista em recomendações musicais com personalidade amigável e envolvente. 
+O usuário escolheu estas ${seedTracks.length} músicas para criar uma playlist:
 
 ${seedList}
 
-Suggest ${limit} similar songs that the user would probably enjoy. Consider:
-- Similar genres and subgenres
-- Similar era/decade
-- Similar mood and energy
-- Related artists or musical influences
-- Mix of popular and lesser-known tracks
+Sua tarefa:
+1. Analise as músicas escolhidas pelo usuário e identifique padrões (gênero, mood, época, artistas)
+2. Sugira ${limit} músicas similares que o usuário provavelmente vai adorar
 
-IMPORTANT: Return ONLY a valid JSON array with no additional text, markdown, or explanation.
-Format: [{"name": "song name", "artist": "artist name"}]
+Considere ao recomendar:
+- Gêneros e subgêneros similares
+- Era/década similar
+- Mood e energia parecidos
+- Artistas relacionados ou influências musicais
+- Mix de faixas populares e menos conhecidas
 
-Return exactly ${limit} unique songs that are NOT in the input list.`;
+IMPORTANTE: Retorne APENAS um JSON válido sem texto adicional, markdown ou explicação fora do JSON.
+
+Formato obrigatório:
+{
+  "message": "Uma mensagem amigável e personalizada (2-4 parágrafos) em português brasileiro que:
+    - Comente sobre o gosto musical do usuário baseado nas músicas que ele escolheu
+    - Explique brevemente o que você identificou nas escolhas dele (mood, gênero, época)
+    - Apresente as recomendações explicando por que elas combinam com o perfil musical dele
+    - Use um tom descontraído e entusiasmado, como se fosse um amigo apaixonado por música",
+  "suggestions": [{"name": "nome da música", "artist": "nome do artista"}]
+}
+
+Retorne exatamente ${limit} músicas únicas que NÃO estejam na lista original.`;
 
   try {
     const result = await model.generateContent(prompt);
@@ -80,14 +100,17 @@ Return exactly ${limit} unique songs that are NOT in the input list.`;
     }
     jsonStr = jsonStr.trim();
 
-    const suggestions: MusicSuggestion[] = JSON.parse(jsonStr);
+    const parsed = JSON.parse(jsonStr) as MusicRecommendationResponse;
 
     geminiLogger.info(
-      { suggestionsCount: suggestions.length },
+      { suggestionsCount: parsed.suggestions.length },
       'Music recommendations generated successfully'
     );
 
-    return suggestions;
+    return {
+      message: parsed.message,
+      suggestions: parsed.suggestions,
+    };
   } catch (error) {
     geminiLogger.error({ error }, 'Failed to generate recommendations');
     throw new Error('Failed to generate music recommendations from AI');

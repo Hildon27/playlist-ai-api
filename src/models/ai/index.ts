@@ -10,6 +10,7 @@ export interface GeneratePlaylistDTO {
 }
 
 export interface GeneratedPlaylist {
+  message: string;
   seedTracks: {
     name: string;
     artist: string;
