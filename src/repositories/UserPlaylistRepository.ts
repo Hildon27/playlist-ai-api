@@ -203,6 +203,7 @@ export class UserPlaylistRepository {
       id: playlist.id,
       name: playlist.name,
       privacity: playlist.privacity as Privacity,
+      aiMessage: playlist.aiMessage,
       userId: playlist.userId,
       createdAt: playlist.createdAt,
       updatedAt: playlist.updatedAt,

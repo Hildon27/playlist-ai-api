@@ -45,6 +45,7 @@ model UserPlaylist {
   id         String    @id @default(uuid())
   name       String
   privacity  Privacity
+  aiMessage  String?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
