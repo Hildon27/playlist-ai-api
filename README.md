@@ -111,43 +111,72 @@ A API estará disponível em [http://localhost:3000/api](http://localhost:3000/a
 
 - Utilize o arquivo [postman-collection.json](./postman-collection.json) para importar a coleção de requisições no [Postman](https://www.postman.com/).
 
-### 🔎 Health
+### 🔎 Health & Info
 
 - `GET    /api/health` – Verificar saúde da API
+- `GET    /api` – Buscar informações da API (Nome, endpoints, etc)
+
+### Auth
+
+- `POST   /api/auth/register` – Criar usuário
+- `POST   /api/auth/login` – Iniciar sessão de usuário
 
 ### Users
 
 - `GET    /api/users` – Listar todos usuários
-- `GET    /api/users/:id` – Buscar usuário por ID
-- `POST   /api/users` – Criar usuário
-- `PUT    /api/users/:id` – Atualizar usuário
-- `DELETE /api/users/:id` – Remover usuário
+- `GET    /api/users/me` – Buscar usuário por ID
+- `PUT    /api/users/me` – Atualizar usuário
+- `DELETE /api/users/me` – Remover usuário
+
+### Playlists
+
+- `POST   /api/playlists` – Criar playlist
+- `GET    /api/playlists/:id` – Buscar playlist por ID
+- `PUT    /api/playlists/:id` – Atualizar playlist
+- `DELETE /api/playlists/:id` – Deletar playlist
+- `GET    /api/playlists/user` – Listar playlists do usuário logado
+- `GET    /api/playlists/public/all` – Listar todas playlists públicas
+
+### Playlist Musics
+
+- `POST   /api/playlists/:id/musics` – Adicionar música à playlist
+- `DELETE /api/playlists/:id/musics` – Remover música da playlist
+- `GET    /api/playlists/:id/musics` – Listar músicas da playlist
+
+### Comments
+
+- `POST   /api/comments` – Adicionar comentário a uma playlist
+- `GET    /api/comments/:commentId` – Buscar comentário por ID
+- `PUT    /api/comments/:commentId` – Editar um comentário
+- `DELETE /api/comments/:commentId` – Deletar comentário
+- `GET    /api/comments/playlists/:playlistId` – Buscar todos os comentário de uma playlists
+- `GET    /api/comments/user` – Buscar todos os comentário feitos pelo usuário logado
+
+### Follows
+
+- `GET    /api/follows/followers` – Listar seguidores do usuário
+- `GET    /api/follows/followeds` – Listar pessoas seguindas do usuário
+- `DELETE /api/follows/:followedId/unfollow` – Deixar de seguir usuário
+- `DELETE /api/follows/:followerId/remove` – Remover seguidor
 
 ### Follow Requests
 
 - `POST   /api/follow-requests/register` – Solicitar seguir usuário
-- `GET    /api/follow-requests/by-follower/:id` – Listar solicitações por seguidor
-- `GET    /api/follow-requests/by-followed/:id` – Listar solicitações por seguido
+- `GET    /api/follow-requests/sent` – Listar solicitações feitas
+- `GET    /api/follow-requests/received` – Listar solicitações recebidas
 - `DELETE /api/follow-requests/:id` – Cancelar solicitação de seguir
 - `PATCH  /api/follow-requests/:id/process` – Processar solicitação (aprovar/rejeitar)
 
-### Follows
+### Spotify
 
-- `GET    /api/follows/:userId/followers` – Listar seguidores do usuário
-- `DELETE /api/follows/:followedId/unfollow` – Deixar de seguir usuário
-- `DELETE /api/follows/:followerId/remove` – Remover seguidor
+- `GET    /api/spotify/search` – Buscar músicas no Spotify
+- `GET    /api/spotify/tracks/:trackId` – Buscar música específica no Spotify
+- `POST   /api/spotify/validate` – Validação de músicas no Spotify
+- `POST   /api/spotify/recommendations` – Buscar recomendações de músicas no Spotify
 
-### Playlists
+### AI Playlist
 
-- `GET    /api/playlists/:id` – Buscar playlist por ID
-- `GET    /api/playlists/user/:userId` – Listar playlists de um usuário
-- `GET    /api/playlists/public/all` – Listar todas playlists públicas
-- `POST   /api/playlists` – Criar playlist
-- `PUT    /api/playlists/:id` – Atualizar playlist
-- `DELETE /api/playlists/:id` – Deletar playlist
-- `POST   /api/playlists/:id/musics` – Adicionar música à playlist
-- `DELETE /api/playlists/:id/musics` – Remover música da playlist
-- `GET    /api/playlists/:id/musics` – Listar músicas da playlist
+- `POST    /api/ai/generate-playlist` – Geração de playlist com IA
 
 ## Considerações
 
