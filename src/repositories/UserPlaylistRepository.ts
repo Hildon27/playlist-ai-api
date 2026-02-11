@@ -215,14 +215,32 @@ export class UserPlaylistRepository {
     }
   }
 
-  public async getPlaylistMusics(playlistId: string): Promise<MusicDTO[]> {
-    const musicPlaylists = await this.prisma.musicPlaylist.findMany({
-      where: { playlistId },
-      include: { music: true },
-      orderBy: { createdAt: 'asc' },
-    });
+  public async getPlaylistMusics(
+    playlistId: string,
+    params: PaginationParams<MusicDTO>
+  ): Promise<PaginatedResult<MusicDTO>> {
+    const { page, size, sortBy = 'createdAt', sortOrder = 'asc' } = params;
 
-    return musicPlaylists.map(mp => this.toMusicResponse(mp.music));
+    const offset = getPaginationOffset(page, size);
+
+    const where = { playlistId } as const;
+
+    const [musicPlaylists, total] = await this.prisma.$transaction([
+      this.prisma.musicPlaylist.findMany({
+        where,
+        include: { music: true },
+        skip: offset,
+        take: size,
+        orderBy: { [sortBy]: sortOrder },
+      }),
+      this.prisma.musicPlaylist.count({ where }),
+    ]);
+
+    const mappedMusics = musicPlaylists.map(mp =>
+      this.toMusicResponse(mp.music)
+    );
+
+    return buildPaginatedResult(mappedMusics, total, page, size);
   }
 
   private toModel(data: CreateUserPlaylistDTO | UpdateUserPlaylistDTO) {

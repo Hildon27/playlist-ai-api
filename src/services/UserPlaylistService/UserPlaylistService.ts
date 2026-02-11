@@ -50,7 +50,11 @@ export interface UserPlaylistService {
     musicId: string
   ): Promise<boolean>;
 
-  getPlaylistMusics(userId: string, playlistId: string): Promise<MusicDTO[]>;
+  getPlaylistMusics(
+    userId: string,
+    playlistId: string,
+    params: PaginationParams<MusicDTO>
+  ): Promise<PaginatedResult<MusicDTO>>;
 
   validatePlaylistOwnership(
     playlistId: string,

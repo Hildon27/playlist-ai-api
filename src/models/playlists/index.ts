@@ -55,6 +55,9 @@ export const removeMusicFromPlaylistSchema = z.object({
 export const findManyUserPlaylistsRequestSchema =
   createPaginationParamsSchema(userPlaylistSchema);
 
+export const findManyPlaylistMusicsRequestSchema =
+  createPaginationParamsSchema(musicSchema);
+
 // Types
 
 export type MusicDTO = z.infer<typeof musicSchema>;

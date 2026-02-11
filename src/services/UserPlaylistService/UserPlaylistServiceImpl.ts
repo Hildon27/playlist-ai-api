@@ -162,8 +162,9 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
 
   public async getPlaylistMusics(
     userId: string,
-    playlistId: string
-  ): Promise<MusicDTO[]> {
+    playlistId: string,
+    params: PaginationParams<MusicDTO>
+  ): Promise<PaginatedResult<MusicDTO>> {
     const existingPlaylist =
       await this.userPlaylistRepository.findByIdAndUserId(playlistId, userId);
 
@@ -171,7 +172,10 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
       throw new NotFoundError('Playlist não encontrada');
     }
 
-    return await this.userPlaylistRepository.getPlaylistMusics(playlistId);
+    return await this.userPlaylistRepository.getPlaylistMusics(
+      playlistId,
+      params
+    );
   }
 
   public async validatePlaylistOwnership(

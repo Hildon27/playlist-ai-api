@@ -7,6 +7,7 @@ import {
   addMusicToPlaylistSchema,
   removeMusicFromPlaylistSchema,
   findManyUserPlaylistsRequestSchema,
+  findManyPlaylistMusicsRequestSchema,
 } from '@/models/playlists';
 import {
   BadRequestError,
@@ -296,11 +297,14 @@ export class UserPlaylistController {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
 
+      const params = findManyPlaylistMusicsRequestSchema.parse(req.query);
+
       const user = AuthContext.getLoggedUser();
 
       const musics = await this.userPlaylistService.getPlaylistMusics(
         user.id,
-        id
+        id,
+        params
       );
 
       res.status(200).json({
