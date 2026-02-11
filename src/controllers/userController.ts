@@ -1,5 +1,5 @@
 import { ApiError, ErrorCode } from '@/models/Errors';
-import { updateUserSchema } from '@/models/users';
+import { findManyUsersRequestSchema, updateUserSchema } from '@/models/users';
 import { UserServiceImpl } from '@/services/UserService/UserServiceImpl';
 import { Request, Response } from 'express';
 import { createLogger } from '@/lib/logger';
@@ -46,30 +46,22 @@ export const getLoggedUserData = async (_: Request, res: Response) => {
 /**
  * Get all users
  */
-export const getAllUsers = async (_: Request, res: Response) => {
-  try {
-    logger.info('Getting all users');
-    const users = await userService.findAll();
+export const getAllUsers = async (req: Request, res: Response) => {
+  logger.info('Getting all users');
 
-    logger.info({ count: users.length }, 'Users retrieved successfully');
-    res.status(200).json({
-      success: true,
-      data: users,
-    });
-  } catch (error) {
-    if (error instanceof ApiError) {
-      res.status(error.status).json({
-        success: false,
-        error: error.message,
-        code: error.code,
-      });
-    } else {
-      res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-      });
-    }
-  }
+  const params = findManyUsersRequestSchema.parse(req.query);
+
+  const paginatedUsers = await userService.findAll(params);
+
+  logger.info(
+    { count: paginatedUsers.meta.total },
+    'Users retrieved successfully'
+  );
+
+  res.status(200).json({
+    success: true,
+    ...paginatedUsers,
+  });
 };
 
 /**

@@ -3,6 +3,7 @@ import { UserRepository } from '@/repositories/UserRepository';
 import { ApiError, ErrorCode } from '@/models/Errors';
 import { UpdateUserDTO, UserResponseDTO } from '@/models/users';
 import { createLogger } from '@/lib/logger';
+import { PaginatedResult, PaginationParams } from '@/lib/pagination';
 
 const logger = createLogger('UserService');
 
@@ -27,9 +28,10 @@ export class UserServiceImpl implements UserService {
     return user;
   }
 
-  public async findAll(): Promise<UserResponseDTO[]> {
-    const users = await this.userRepository.findAll();
-    return users;
+  public async findAll(
+    params: PaginationParams<UserResponseDTO>
+  ): Promise<PaginatedResult<UserResponseDTO>> {
+    return await this.userRepository.findAll(params);
   }
 
   public async update(
