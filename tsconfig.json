@@ -43,8 +43,6 @@
     "build",
     "prisma/migrations",
     "generated",
-    "**/*.test.ts",
-    "**/*.spec.ts",
     "coverage"
   ]
 }

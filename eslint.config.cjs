@@ -97,6 +97,23 @@ module.exports = [
       '@typescript-eslint/prefer-optional-chain': 'error',
     },
   },
+  // Test files configuration
+  {
+    files: ['**/*.test.ts', '**/*.spec.ts', '**/__tests__/**/*.ts'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        test: 'readonly',
+        jest: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+      },
+    },
+  },
   {
     ignores: [
       'node_modules/',
