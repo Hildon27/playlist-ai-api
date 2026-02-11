@@ -309,7 +309,7 @@ export class UserPlaylistController {
 
       res.status(200).json({
         success: true,
-        data: musics,
+        ...musics,
       });
     } catch (error) {
       if (error instanceof ForbiddenError) {

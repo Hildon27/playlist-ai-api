@@ -2,6 +2,13 @@ import { FollowRequestDto } from '@/models/followRequests';
 import prisma from '../lib/prisma';
 import { FollowRequest } from '../../generated/prisma';
 import { FollowRequestStatus } from '@/models/Enums';
+import {
+  buildPaginatedResult,
+  getPaginationOffset,
+  paginate,
+  PaginatedResult,
+  PaginationParams,
+} from '@/lib/pagination';
 
 export class FollowRequestRepository {
   private readonly prisma = prisma;
@@ -46,13 +53,15 @@ export class FollowRequestRepository {
   }
 
   public async findSentFollowRequests(
-    userId: string
-  ): Promise<FollowRequestDto[]> {
-    const followRequests = await this.prisma.followRequest.findMany({
-      where: { followerId: userId },
-    });
-
-    return followRequests.map(v => this.toResponse(v));
+    userId: string,
+    params: PaginationParams<FollowRequestDto>
+  ): Promise<PaginatedResult<FollowRequestDto>> {
+    return paginate(
+      this.prisma.followRequest,
+      { where: { followerId: userId } },
+      params,
+      this.toResponse
+    );
   }
 
   public async updateFollowRequestStatus(
@@ -73,13 +82,15 @@ export class FollowRequestRepository {
   }
 
   public async findReceivedFollowRequests(
-    userId: string
-  ): Promise<FollowRequestDto[]> {
-    const followRequests = await this.prisma.followRequest.findMany({
-      where: { followedId: userId },
-    });
-
-    return followRequests.map(v => this.toResponse(v));
+    userId: string,
+    params: PaginationParams<FollowRequestDto>
+  ): Promise<PaginatedResult<FollowRequestDto>> {
+    return paginate(
+      this.prisma.followRequest,
+      { where: { followedId: userId } },
+      params,
+      this.toResponse
+    );
   }
 
   public async delete(followRequestId: string): Promise<void> {

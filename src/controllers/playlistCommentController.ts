@@ -121,7 +121,7 @@ export class PlaylistCommentController {
 
     res.status(200).json({
       message: 'Comentários encontrados',
-      data: comments,
+      ...comments,
     });
   };
 

@@ -1,5 +1,6 @@
 import z from 'zod';
 import { FollowRequestProcessingAction, FollowRequestStatus } from '../Enums';
+import { createPaginationParamsSchema } from '@/lib/pagination';
 
 // Schemas
 
@@ -19,6 +20,9 @@ export const followRequestBaseSchema = z.object({
 export const proccessFollowRequestSchema = z.object({
   action: z.enum(FollowRequestProcessingAction),
 });
+
+export const findManyFollowRequestsSchema =
+  createPaginationParamsSchema(followRequestSchema);
 
 // Type
 

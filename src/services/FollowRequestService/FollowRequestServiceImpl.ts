@@ -10,6 +10,7 @@ import {
 import { FollowServiceImpl } from '../Follow/FollowServiceImpl';
 import { UserServiceImpl } from '../UserService/UserServiceImpl';
 import { createLogger } from '@/lib/logger';
+import { PaginatedResult, PaginationParams } from '@/lib/pagination';
 
 const logger = createLogger('FollowRequestService');
 
@@ -74,16 +75,22 @@ export class FollowRequestServiceImpl implements FollowRequestService {
   }
 
   public async findSentFollowRequests(
-    userId: string
-  ): Promise<FollowRequestDto[]> {
-    return await this.followRequestRepository.findSentFollowRequests(userId);
+    userId: string,
+    params: PaginationParams<FollowRequestDto>
+  ): Promise<PaginatedResult<FollowRequestDto>> {
+    return await this.followRequestRepository.findSentFollowRequests(
+      userId,
+      params
+    );
   }
 
   public async findReceivedFollowRequests(
-    userId: string
-  ): Promise<FollowRequestDto[]> {
+    userId: string,
+    params: PaginationParams<FollowRequestDto>
+  ): Promise<PaginatedResult<FollowRequestDto>> {
     return await this.followRequestRepository.findReceivedFollowRequests(
-      userId
+      userId,
+      params
     );
   }
 
