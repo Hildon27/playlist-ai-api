@@ -155,3 +155,57 @@ export const buildPaginatedResult = <T>(
     },
   };
 };
+
+/**
+ * Executes a paginated database query using a Prisma model delegate.
+ * * This utility abstracts the boilerplate of manual pagination by performing
+ * the data fetch and the total record count in parallel for optimized performance.
+ *
+ * @template T - The raw database entity type returned by Prisma.
+ * @template FindManyArgs - Type for Prisma's `findMany` arguments (where, include, etc.).
+ * @template CountArgs - Type for Prisma's `count` arguments.
+ * @template TResult - The final transformed type (defaults to T if no mapper is provided).
+ *
+ * @param model - The Prisma model delegate (e.g., `this.prisma.user`).
+ * @param args - Standard Prisma query arguments excluding pagination fields.
+ * @param params - Pagination metadata including `page`, `size`, `sortBy`, and `sortOrder`.
+ * @param toResponse - Optional mapper function to transform database entities into DTOs.
+ * * @returns A promise resolving to a `PaginatedResult` containing data and metadata.
+ * * @example
+ * const result = await paginate(
+ * this.prisma.followRequest,
+ * { where: { status: 'pending' } },
+ * paginationParams,
+ * (item) => this.toResponse(item)
+ * );
+ */
+export async function paginate<T, FindManyArgs, CountArgs, TResult = T>(
+  model: {
+    findMany: (args: any) => Promise<T[]>;
+    count: (args: any) => Promise<number>;
+  },
+  args: FindManyArgs & { where?: any },
+  params: PaginationParams<any>,
+  toResponse?: (item: T) => TResult
+): Promise<PaginatedResult<TResult>> {
+  const { page, size, sortBy = 'createdAt', sortOrder = 'asc' } = params;
+  const offset = getPaginationOffset(page, size);
+
+  const [data, total] = await Promise.all([
+    model.findMany({
+      ...args,
+      skip: offset,
+      take: size,
+      orderBy: { [sortBy as string]: sortOrder },
+    }),
+    model.count({
+      where: args.where,
+    }),
+  ]);
+
+  const mappedData = toResponse
+    ? data.map(toResponse)
+    : (data as unknown as TResult[]);
+
+  return buildPaginatedResult(mappedData, total, page, size);
+}
