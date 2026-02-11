@@ -8,6 +8,8 @@ import {
   getCommentByIdSchema,
   getCommentsByPlaylistIdSchema,
   getCommentsByUserIdSchema,
+  findManyPlaylistCommentsRequestSchema,
+  findManyCommentsWithUserAndPlaylistRequestSchema,
 } from '@/models/comments';
 import { BadRequestError, NotFoundError } from '@/models/Errors';
 import { createLogger } from '@/lib/logger';
@@ -86,26 +88,36 @@ export class PlaylistCommentController {
   ): Promise<void> => {
     const { playlistId } = getCommentsByPlaylistIdSchema.parse(req.params);
 
-    const comments =
-      await this.playlistCommentService.getCommentsByPlaylistId(playlistId);
+    const params = findManyPlaylistCommentsRequestSchema.parse(req.query);
+
+    const comments = await this.playlistCommentService.getCommentsByPlaylistId(
+      playlistId,
+      params
+    );
 
     res.status(200).json({
       message: 'Comentários encontrados',
-      data: comments,
+      ...comments,
     });
   };
 
   /**
-   * Get all comments made by a specific user
+   * Get all comments made by the logged user
    */
-  public getCommentsByUserId = async (
+  public getLoggedUserComments = async (
     req: Request,
     res: Response
   ): Promise<void> => {
-    const { userId } = getCommentsByUserIdSchema.parse(req.params);
+    const user = AuthContext.getLoggedUser();
 
-    const comments =
-      await this.playlistCommentService.getCommentsByUserId(userId);
+    const params = findManyCommentsWithUserAndPlaylistRequestSchema.parse(
+      req.query
+    );
+
+    const comments = await this.playlistCommentService.getCommentsByUserId(
+      user.id,
+      params
+    );
 
     res.status(200).json({
       message: 'Comentários encontrados',
