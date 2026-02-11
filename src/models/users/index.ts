@@ -44,5 +44,3 @@ export const findManyUsersRequestSchema =
 export type UserResponseDTO = z.infer<typeof readUserSchema>;
 export type CreateUserDTO = z.infer<typeof createUserSchema>;
 export type UpdateUserDTO = z.infer<typeof updateUserSchema>;
-
-export type FindManyUsersDTO = z.infer<typeof findManyUsersRequestSchema>;

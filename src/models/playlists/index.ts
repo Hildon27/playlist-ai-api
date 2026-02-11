@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Privacity } from '../Enums';
+import { createPaginationParamsSchema } from '@/lib/pagination';
 
 // Schemas
 
@@ -50,6 +51,9 @@ export const addMusicToPlaylistSchema = z.object({
 export const removeMusicFromPlaylistSchema = z.object({
   musicId: z.string().min(1, 'ID da música é obrigatório'),
 });
+
+export const findManyUserPlaylistsRequestSchema =
+  createPaginationParamsSchema(userPlaylistSchema);
 
 // Types
 

@@ -13,6 +13,12 @@ import {
   AddMusicToPlaylistDTO,
   MusicDTO,
 } from '@/models/playlists';
+import {
+  buildPaginatedResult,
+  getPaginationOffset,
+  PaginatedResult,
+  PaginationParams,
+} from '@/lib/pagination';
 
 export class UserPlaylistRepository {
   private readonly prisma = prisma;
@@ -102,22 +108,57 @@ export class UserPlaylistRepository {
     };
   }
 
-  public async findByUserId(userId: string): Promise<UserPlaylistDTO[]> {
-    const playlists = await this.prisma.userPlaylist.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-    });
+  public async findByUserId(
+    userId: string,
+    params: PaginationParams<UserPlaylistDTO>
+  ): Promise<PaginatedResult<UserPlaylistDTO>> {
+    const { page, size, sortBy = 'createdAt', sortOrder = 'asc' } = params;
 
-    return playlists.map(p => this.toResponse(p));
+    const offset = getPaginationOffset(page, size);
+
+    const where = { userId } as const;
+
+    const [playlists, total] = await this.prisma.$transaction([
+      this.prisma.userPlaylist.findMany({
+        where,
+        skip: offset,
+        take: size,
+        orderBy: { [sortBy]: sortOrder },
+      }),
+      this.prisma.userPlaylist.count({ where }),
+    ]);
+
+    const mappedPlaylists = playlists.map((p: UserPlaylist) =>
+      this.toResponse(p)
+    );
+
+    return buildPaginatedResult(mappedPlaylists, total, page, size);
   }
 
-  public async findPublicPlaylists(): Promise<UserPlaylistDTO[]> {
-    const playlists = await this.prisma.userPlaylist.findMany({
-      where: { privacity: 'public' },
-      orderBy: { createdAt: 'desc' },
-    });
+  public async findPublicPlaylists(
+    params: PaginationParams<UserPlaylistDTO>
+  ): Promise<PaginatedResult<UserPlaylistDTO>> {
+    const { page, size, sortBy = 'createdAt', sortOrder = 'asc' } = params;
 
-    return playlists.map(p => this.toResponse(p));
+    const offset = getPaginationOffset(page, size);
+
+    const where = { privacity: 'public' } as const;
+
+    const [playlists, total] = await this.prisma.$transaction([
+      this.prisma.userPlaylist.findMany({
+        where,
+        skip: offset,
+        take: size,
+        orderBy: { [sortBy]: sortOrder },
+      }),
+      this.prisma.userPlaylist.count({ where }),
+    ]);
+
+    const mappedPlaylists = playlists.map((p: UserPlaylist) =>
+      this.toResponse(p)
+    );
+
+    return buildPaginatedResult(mappedPlaylists, total, page, size);
   }
 
   public async addMusicToPlaylist(
