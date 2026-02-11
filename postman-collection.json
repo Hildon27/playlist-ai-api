@@ -100,9 +100,31 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/users",
+              "raw": "{{baseUrl}}/api/users?page=1&size=10&sortBy=id&sortOrder=asc",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users"]
+              "path": ["api", "users"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Number of items per page (default: 10)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "id",
+                  "description": "Field to sort by (optional)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "description": "Sort order: asc or desc (default: asc)"
+                }
+              ]
             }
           }
         },
