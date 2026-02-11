@@ -1,3 +1,4 @@
+import { createPaginationParamsSchema } from '@/lib/pagination';
 import z from 'zod';
 
 // Schemas
@@ -8,6 +9,9 @@ export const followSchema = z.object({
   followedId: z.string().nonempty('Followed ID can not be empty'),
   createdAt: z.date(),
 });
+
+export const findManyFollowsRequestSchema =
+  createPaginationParamsSchema(followSchema);
 
 // Types
 

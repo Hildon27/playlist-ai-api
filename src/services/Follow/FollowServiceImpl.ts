@@ -4,6 +4,7 @@ import { FollowDto } from '@/models/follows';
 import { ApiError, ErrorCode } from '@/models/Errors';
 import { UserServiceImpl } from '../UserService/UserServiceImpl';
 import { createLogger } from '@/lib/logger';
+import { PaginatedResult, PaginationParams } from '@/lib/pagination';
 
 const logger = createLogger('FollowService');
 
@@ -41,12 +42,18 @@ export class FollowServiceImpl implements FollowService {
     );
   }
 
-  public async findAllUserFollowers(userId: string): Promise<FollowDto[]> {
-    return await this.followRepository.findAllByFollowedId(userId);
+  public async findAllUserFollowers(
+    userId: string,
+    params: PaginationParams<FollowDto>
+  ): Promise<PaginatedResult<FollowDto>> {
+    return await this.followRepository.findAllByFollowedId(userId, params);
   }
 
-  public async findAllUserFolloweds(userId: string): Promise<FollowDto[]> {
-    return await this.followRepository.findAllByFollowerId(userId);
+  public async findAllUserFolloweds(
+    userId: string,
+    params: PaginationParams<FollowDto>
+  ): Promise<PaginatedResult<FollowDto>> {
+    return await this.followRepository.findAllByFollowerId(userId, params);
   }
 
   public async deleteFollowByFollowerAndFollowedId(
