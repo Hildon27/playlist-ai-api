@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import cors from 'cors';
 import express from 'express';
 import { logger } from '@/lib/logger';
 import { requestLogger } from '@/middleware/requestLogger';
@@ -23,6 +24,15 @@ import {
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
+
+app.use(
+  cors({
+    origin: process.env.CORS_ALLOWED_ORIGINS?.split(','),
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 // Middlewares
 app.use(requestLogger);
@@ -58,7 +68,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Root route
-app.get('/api', (req, res) => {
+app.get('/api', (_, res) => {
   res.status(200).json({
     success: true,
     message: 'Welcome to Playlist AI API',
