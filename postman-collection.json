@@ -6,7 +6,14 @@
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
-    { "key": "access_token", "value": "", "type": "string" }
+    { "key": "access_token", "value": "", "type": "string" },
+    { "key": "playlistId", "value": "", "type": "string" },
+    { "key": "commentId", "value": "", "type": "string" },
+    { "key": "trackId", "value": "4u7EnebtmKWzUH433cf5Qv", "type": "string" },
+    { "key": "followRequestId", "value": "", "type": "string" },
+    { "key": "followedId", "value": "", "type": "string" },
+    { "key": "followerId", "value": "", "type": "string" },
+    { "key": "userId", "value": "", "type": "string" }
   ],
   "item": [
     {
@@ -212,13 +219,13 @@
               "raw": "{\n  \"name\": \"Updated Playlist Name\",\n  \"privacity\": \"private\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/playlists/:playlistId",
+              "raw": "{{baseUrl}}/api/playlists/{{playlistId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "playlists", ":playlistId"],
+              "path": ["api", "playlists", "{{playlistId}}"],
               "variable": [
                 {
                   "key": "playlistId",
-                  "value": "",
+                  "value": "{{playlistId}}",
                   "description": "Playlist ID"
                 }
               ]
@@ -233,13 +240,13 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/playlists/:playlistId",
+              "raw": "{{baseUrl}}/api/playlists/{{playlistId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "playlists", ":playlistId"],
+              "path": ["api", "playlists", "{{playlistId}}"],
               "variable": [
                 {
                   "key": "playlistId",
-                  "value": "",
+                  "value": "{{playlistId}}",
                   "description": "Playlist ID"
                 }
               ]
@@ -254,13 +261,13 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/playlists/:playlistId",
+              "raw": "{{baseUrl}}/api/playlists/{{playlistId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "playlists", ":playlistId"],
+              "path": ["api", "playlists", "{{playlistId}}"],
               "variable": [
                 {
                   "key": "playlistId",
-                  "value": "",
+                  "value": "{{playlistId}}",
                   "description": "Playlist ID"
                 }
               ]
@@ -275,14 +282,14 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/playlists/:playlistId?includeMusics=true",
+              "raw": "{{baseUrl}}/api/playlists/{{playlistId}}?includeMusics=true",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "playlists", ":playlistId"],
+              "path": ["api", "playlists", "{{playlistId}}"],
               "query": [{ "key": "includeMusics", "value": "true" }],
               "variable": [
                 {
                   "key": "playlistId",
-                  "value": "",
+                  "value": "{{playlistId}}",
                   "description": "Playlist ID"
                 }
               ]
@@ -379,13 +386,13 @@
               "raw": "{\n  \"externalId\": \"spotify-track-id-example\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/playlists/:playlistId/musics",
+              "raw": "{{baseUrl}}/api/playlists/{{playlistId}}/musics",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "playlists", ":playlistId", "musics"],
+              "path": ["api", "playlists", "{{playlistId}}", "musics"],
               "variable": [
                 {
                   "key": "playlistId",
-                  "value": "",
+                  "value": "{{playlistId}}",
                   "description": "Playlist ID"
                 }
               ]
@@ -402,7 +409,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"musicId\": \"replace-with-music-id\"\n}"
+              "raw": "{\n  \"musicId\": \"{{playlistId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/playlists/:playlistId/musics",
@@ -426,9 +433,9 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/playlists/:playlistId/musics?page=1&size=10&sortBy=createdAt&sortOrder=asc",
+              "raw": "{{baseUrl}}/api/playlists/{{playlistId}}/musics?page=1&size=10&sortBy=createdAt&sortOrder=asc",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "playlists", ":playlistId", "musics"],
+              "path": ["api", "playlists", "{{playlistId}}", "musics"],
               "query": [
                 {
                   "key": "page",
@@ -454,7 +461,7 @@
               "variable": [
                 {
                   "key": "playlistId",
-                  "value": "",
+                  "value": "{{playlistId}}",
                   "description": "Playlist ID"
                 }
               ]
@@ -476,7 +483,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"content\": \"Great playlist!\",\n  \"playlistId\": \"replace-with-playlist-id\"\n}"
+              "raw": "{\n  \"content\": \"Great playlist!\",\n  \"playlistId\": \"{{playlistId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/comments",
@@ -497,7 +504,11 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "comments", ":commentId"],
               "variable": [
-                { "key": "commentId", "value": "", "description": "Comment ID" }
+                {
+                  "key": "commentId",
+                  "value": "{{commentId}}",
+                  "description": "Comment ID"
+                }
               ]
             }
           }
@@ -519,7 +530,11 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "comments", ":commentId"],
               "variable": [
-                { "key": "commentId", "value": "", "description": "Comment ID" }
+                {
+                  "key": "commentId",
+                  "value": "{{commentId}}",
+                  "description": "Comment ID"
+                }
               ]
             }
           }
@@ -540,7 +555,11 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "comments", ":commentId"],
               "variable": [
-                { "key": "commentId", "value": "", "description": "Comment ID" }
+                {
+                  "key": "commentId",
+                  "value": "{{commentId}}",
+                  "description": "Comment ID"
+                }
               ]
             }
           }
@@ -581,7 +600,7 @@
               "variable": [
                 {
                   "key": "playlistId",
-                  "value": "",
+                  "value": "{{playlistId}}",
                   "description": "Playlist ID"
                 }
               ]
@@ -720,7 +739,7 @@
               "variable": [
                 {
                   "key": "followedId",
-                  "value": "",
+                  "value": "{{followedId}}",
                   "description": "User being unfollowed"
                 }
               ]
@@ -746,7 +765,7 @@
               "variable": [
                 {
                   "key": "followerId",
-                  "value": "",
+                  "value": "{{followerId}}",
                   "description": "Follower being removed"
                 }
               ]
@@ -866,7 +885,11 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "follow-requests", ":id"],
               "variable": [
-                { "key": "id", "value": "", "description": "Follow Request ID" }
+                {
+                  "key": "id",
+                  "value": "{{followRequestId}}",
+                  "description": "Follow Request ID"
+                }
               ]
             }
           }
@@ -888,7 +911,11 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "follow-requests", ":id", "process"],
               "variable": [
-                { "key": "id", "value": "", "description": "Follow Request ID" }
+                {
+                  "key": "id",
+                  "value": "{{followRequestId}}",
+                  "description": "Follow Request ID"
+                }
               ]
             }
           }
@@ -938,7 +965,7 @@
               "variable": [
                 {
                   "key": "trackId",
-                  "value": "4u7EnebtmKWzUH433cf5Qv",
+                  "value": "{{trackId}}",
                   "description": "Spotify Track ID"
                 }
               ]
@@ -1097,7 +1124,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"replace-with-user-id\",\n  \"privacity\": \"public\"\n}"
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"privacity\": \"public\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/playlists",

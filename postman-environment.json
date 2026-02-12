@@ -8,6 +8,46 @@
       "description": "Base URL for the API",
       "type": "default",
       "enabled": true
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "description": "JWT token filled after login"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "description": "Current user ID"
+    },
+    {
+      "key": "playlistId",
+      "value": "",
+      "description": "Test playlist ID"
+    },
+    {
+      "key": "trackId",
+      "value": "4u7EnebtmKWzUH433cf5Qv",
+      "description": "Spotify track ID example"
+    },
+    {
+      "key": "commentId",
+      "value": "",
+      "description": "Test comment ID"
+    },
+    {
+      "key": "followRequestId",
+      "value": "",
+      "description": "Follow request ID for processing"
+    },
+    {
+      "key": "followedId",
+      "value": "",
+      "description": "ID of user being followed"
+    },
+    {
+      "key": "followerId",
+      "value": "",
+      "description": "ID of follower to remove"
     }
   ],
   "_postman_variable_scope": "environment"
