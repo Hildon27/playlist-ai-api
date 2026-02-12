@@ -7,7 +7,6 @@ import {
   updatePlaylistCommentSchema,
   getCommentByIdSchema,
   getCommentsByPlaylistIdSchema,
-  getCommentsByUserIdSchema,
   findManyPlaylistCommentsRequestSchema,
   findManyCommentsWithUserAndPlaylistRequestSchema,
 } from '@/models/comments';

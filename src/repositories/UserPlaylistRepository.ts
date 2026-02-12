@@ -13,13 +13,7 @@ import {
   AddMusicToPlaylistDTO,
   MusicDTO,
 } from '@/models/playlists';
-import {
-  buildPaginatedResult,
-  getPaginationOffset,
-  paginate,
-  PaginatedResult,
-  PaginationParams,
-} from '@/lib/pagination';
+import { paginate, PaginatedResult, PaginationParams } from '@/lib/pagination';
 
 export class UserPlaylistRepository {
   private readonly prisma = prisma;

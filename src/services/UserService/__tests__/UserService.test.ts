@@ -6,7 +6,6 @@ import {
   createPaginatedResultMock,
   createPaginationMock,
 } from '@/__tests__/mocks/pagination';
-import { UserResponseDTO } from '@/models/users';
 
 // Mock dependencies
 jest.mock('../../../repositories/UserRepository');

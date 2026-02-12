@@ -6,7 +6,6 @@ import {
   createPaginatedResultMock,
   createPaginationMock,
 } from '@/__tests__/mocks/pagination';
-import { MusicDTO, UserPlaylistDTO } from '@/models/playlists';
 
 // Mock dependencies
 jest.mock('../../../repositories/UserPlaylistRepository');

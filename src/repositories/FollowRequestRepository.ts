@@ -2,13 +2,7 @@ import { FollowRequestDto } from '@/models/followRequests';
 import prisma from '../lib/prisma';
 import { FollowRequest } from '../../generated/prisma';
 import { FollowRequestStatus } from '@/models/Enums';
-import {
-  buildPaginatedResult,
-  getPaginationOffset,
-  paginate,
-  PaginatedResult,
-  PaginationParams,
-} from '@/lib/pagination';
+import { paginate, PaginatedResult, PaginationParams } from '@/lib/pagination';
 
 export class FollowRequestRepository {
   private readonly prisma = prisma;

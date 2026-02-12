@@ -1,10 +1,4 @@
-import {
-  buildPaginatedResult,
-  getPaginationOffset,
-  paginate,
-  PaginatedResult,
-  PaginationParams,
-} from '@/lib/pagination';
+import { paginate, PaginatedResult, PaginationParams } from '@/lib/pagination';
 import { PlaylistComment } from '../../generated/prisma';
 import prisma from '../lib/prisma';
 import {

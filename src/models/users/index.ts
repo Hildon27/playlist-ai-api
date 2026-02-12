@@ -1,9 +1,6 @@
 import { z } from 'zod';
 import { Privacity } from '../Enums';
-import {
-  createPaginatedResultSchema,
-  createPaginationParamsSchema,
-} from '@/lib/pagination';
+import { createPaginationParamsSchema } from '@/lib/pagination';
 
 // Schemas
 
