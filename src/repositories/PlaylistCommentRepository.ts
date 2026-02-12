@@ -1,6 +1,7 @@
 import {
   buildPaginatedResult,
   getPaginationOffset,
+  paginate,
   PaginatedResult,
   PaginationParams,
 } from '@/lib/pagination';
@@ -101,15 +102,10 @@ export class PlaylistCommentRepository {
     playlistId: string,
     params: PaginationParams<PlaylistCommentWithUserDTO>
   ): Promise<PaginatedResult<PlaylistCommentWithUserDTO>> {
-    const { page, size, sortBy = 'createdAt', sortOrder = 'asc' } = params;
-
-    const offset = getPaginationOffset(page, size);
-
-    const where = { playlistId } as const;
-
-    const [comments, total] = await this.prisma.$transaction([
-      this.prisma.playlistComment.findMany({
-        where,
+    return paginate(
+      this.prisma.playlistComment,
+      {
+        where: { playlistId },
         include: {
           user: {
             select: {
@@ -119,32 +115,19 @@ export class PlaylistCommentRepository {
             },
           },
         },
-        skip: offset,
-        take: size,
-        orderBy: { [sortBy]: sortOrder },
-      }),
-      this.prisma.playlistComment.count({ where }),
-    ]);
-
-    const mappedComments = comments.map(comment =>
-      this.mapToDTOWithUser(comment)
+      },
+      params,
+      this.mapToDTOWithUser
     );
-
-    return buildPaginatedResult(mappedComments, total, page, size);
   }
 
   public async findByUserId(
     userId: string,
     params: PaginationParams<PlaylistCommentWithUserAndPlaylistDTO>
   ): Promise<PaginatedResult<PlaylistCommentWithUserAndPlaylistDTO>> {
-    const { page, size, sortBy = 'createdAt', sortOrder = 'asc' } = params;
-
-    const offset = getPaginationOffset(page, size);
-
-    const where = { userId } as const;
-
-    const [comments, total] = await this.prisma.$transaction([
-      this.prisma.playlistComment.findMany({
+    return paginate(
+      this.prisma.playlistComment,
+      {
         where: { userId },
         include: {
           user: {
@@ -161,18 +144,10 @@ export class PlaylistCommentRepository {
             },
           },
         },
-        skip: offset,
-        take: size,
-        orderBy: { [sortBy]: sortOrder },
-      }),
-      this.prisma.playlistComment.count({ where }),
-    ]);
-
-    const mappedComments = comments.map(comment =>
-      this.mapToDTOWithUserAndPlaylist(comment)
+      },
+      params,
+      this.mapToDTOWithUserAndPlaylist
     );
-
-    return buildPaginatedResult(mappedComments, total, page, size);
   }
 
   public async update(

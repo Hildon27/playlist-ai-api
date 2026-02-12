@@ -16,6 +16,7 @@ import {
 import {
   buildPaginatedResult,
   getPaginationOffset,
+  paginate,
   PaginatedResult,
   PaginationParams,
 } from '@/lib/pagination';
@@ -112,53 +113,23 @@ export class UserPlaylistRepository {
     userId: string,
     params: PaginationParams<UserPlaylistDTO>
   ): Promise<PaginatedResult<UserPlaylistDTO>> {
-    const { page, size, sortBy = 'createdAt', sortOrder = 'asc' } = params;
-
-    const offset = getPaginationOffset(page, size);
-
-    const where = { userId } as const;
-
-    const [playlists, total] = await this.prisma.$transaction([
-      this.prisma.userPlaylist.findMany({
-        where,
-        skip: offset,
-        take: size,
-        orderBy: { [sortBy]: sortOrder },
-      }),
-      this.prisma.userPlaylist.count({ where }),
-    ]);
-
-    const mappedPlaylists = playlists.map((p: UserPlaylist) =>
-      this.toResponse(p)
+    return paginate(
+      this.prisma.userPlaylist,
+      { where: { userId } },
+      params,
+      this.toResponse
     );
-
-    return buildPaginatedResult(mappedPlaylists, total, page, size);
   }
 
   public async findPublicPlaylists(
     params: PaginationParams<UserPlaylistDTO>
   ): Promise<PaginatedResult<UserPlaylistDTO>> {
-    const { page, size, sortBy = 'createdAt', sortOrder = 'asc' } = params;
-
-    const offset = getPaginationOffset(page, size);
-
-    const where = { privacity: 'public' } as const;
-
-    const [playlists, total] = await this.prisma.$transaction([
-      this.prisma.userPlaylist.findMany({
-        where,
-        skip: offset,
-        take: size,
-        orderBy: { [sortBy]: sortOrder },
-      }),
-      this.prisma.userPlaylist.count({ where }),
-    ]);
-
-    const mappedPlaylists = playlists.map((p: UserPlaylist) =>
-      this.toResponse(p)
+    return paginate(
+      this.prisma.userPlaylist,
+      { where: { privacity: 'public' } },
+      params,
+      this.toResponse
     );
-
-    return buildPaginatedResult(mappedPlaylists, total, page, size);
   }
 
   public async addMusicToPlaylist(
@@ -219,28 +190,12 @@ export class UserPlaylistRepository {
     playlistId: string,
     params: PaginationParams<MusicDTO>
   ): Promise<PaginatedResult<MusicDTO>> {
-    const { page, size, sortBy = 'createdAt', sortOrder = 'asc' } = params;
-
-    const offset = getPaginationOffset(page, size);
-
-    const where = { playlistId } as const;
-
-    const [musicPlaylists, total] = await this.prisma.$transaction([
-      this.prisma.musicPlaylist.findMany({
-        where,
-        include: { music: true },
-        skip: offset,
-        take: size,
-        orderBy: { [sortBy]: sortOrder },
-      }),
-      this.prisma.musicPlaylist.count({ where }),
-    ]);
-
-    const mappedMusics = musicPlaylists.map(mp =>
-      this.toMusicResponse(mp.music)
+    return await paginate(
+      this.prisma.musicPlaylist,
+      { where: { playlistId }, include: { music: true } },
+      params,
+      item => this.toMusicResponse(item.music)
     );
-
-    return buildPaginatedResult(mappedMusics, total, page, size);
   }
 
   private toModel(data: CreateUserPlaylistDTO | UpdateUserPlaylistDTO) {

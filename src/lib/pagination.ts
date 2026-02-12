@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 /**
@@ -179,14 +180,20 @@ export const buildPaginatedResult = <T>(
  * (item) => this.toResponse(item)
  * );
  */
-export async function paginate<T, FindManyArgs, CountArgs, TResult = T>(
-  model: {
-    findMany: (args: any) => Promise<T[]>;
+export async function paginate<
+  TModel extends {
+    findMany: (args: any) => Promise<any[]>;
     count: (args: any) => Promise<number>;
   },
-  args: FindManyArgs & { where?: any },
+  TArgs extends Parameters<TModel['findMany']>[0],
+  TResult = any,
+>(
+  model: TModel,
+  args: TArgs,
   params: PaginationParams<any>,
-  toResponse?: (item: T) => TResult
+  toResponse?: (
+    item: Prisma.Result<TModel, TArgs, 'findMany'>[number]
+  ) => TResult
 ): Promise<PaginatedResult<TResult>> {
   const { page, size, sortBy = 'createdAt', sortOrder = 'asc' } = params;
   const offset = getPaginationOffset(page, size);
