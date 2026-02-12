@@ -297,9 +297,31 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/playlists/user",
+              "raw": "{{baseUrl}}/api/playlists/user?page=1&size=10&sortBy=createdAt&sortOrder=asc",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "playlists", "user"]
+              "path": ["api", "playlists", "user"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Number of items per page (default: 10)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Field to sort by (optional)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "description": "Sort order: asc or desc (default: asc)"
+                }
+              ]
             }
           }
         },
@@ -311,9 +333,31 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/playlists/public/all",
+              "raw": "{{baseUrl}}/api/playlists/public/all?page=1&size=10&sortBy=createdAt&sortOrder=asc",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "playlists", "public", "all"]
+              "path": ["api", "playlists", "public", "all"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Number of items per page (default: 10)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Field to sort by (optional)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "description": "Sort order: asc or desc (default: asc)"
+                }
+              ]
             }
           }
         }
@@ -382,9 +426,31 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/playlists/:playlistId/musics",
+              "raw": "{{baseUrl}}/api/playlists/:playlistId/musics?page=1&size=10&sortBy=createdAt&sortOrder=asc",
               "host": ["{{baseUrl}}"],
               "path": ["api", "playlists", ":playlistId", "musics"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Number of items per page (default: 10)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Field to sort by (optional)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "description": "Sort order: asc or desc (default: asc)"
+                }
+              ],
               "variable": [
                 {
                   "key": "playlistId",
@@ -487,9 +553,31 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/comments/playlist/:playlistId",
+              "raw": "{{baseUrl}}/api/comments/playlist/:playlistId?page=1&size=10&sortBy=createdAt&sortOrder=asc",
               "host": ["{{baseUrl}}"],
               "path": ["api", "comments", "playlist", ":playlistId"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Number of items per page (default: 10)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Field to sort by (optional)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "description": "Sort order: asc or desc (default: asc)"
+                }
+              ],
               "variable": [
                 {
                   "key": "playlistId",
@@ -508,9 +596,31 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/comments/user",
+              "raw": "{{baseUrl}}/api/comments/user?page=1&size=10&sortBy=createdAt&sortOrder=asc",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "comments", "user"]
+              "path": ["api", "comments", "user"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Number of items per page (default: 10)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Field to sort by (optional)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "description": "Sort order: asc or desc (default: asc)"
+                }
+              ]
             }
           }
         }
@@ -527,9 +637,31 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/follows/followers",
+              "raw": "{{baseUrl}}/api/follows/followers?page=1&size=10&sortBy=createdAt&sortOrder=asc",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follows", "followers"]
+              "path": ["api", "follows", "followers"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Number of items per page (default: 10)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Field to sort by (optional)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "description": "Sort order: asc or desc (default: asc)"
+                }
+              ]
             }
           }
         },
@@ -541,9 +673,31 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/follows/followeds",
+              "raw": "{{baseUrl}}/api/follows/followeds?page=1&size=10&sortBy=createdAt&sortOrder=asc",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follows", "followeds"]
+              "path": ["api", "follows", "followeds"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Number of items per page (default: 10)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Field to sort by (optional)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "description": "Sort order: asc or desc (default: asc)"
+                }
+              ]
             }
           }
         },
@@ -631,9 +785,31 @@
               { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/follow-requests/sent",
+              "raw": "{{baseUrl}}/api/follow-requests/sent?page=1&size=10&sortBy=createdAt&sortOrder=asc",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follow-requests", "sent"]
+              "path": ["api", "follow-requests", "sent"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Number of items per page (default: 10)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Field to sort by (optional)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "description": "Sort order: asc or desc (default: asc)"
+                }
+              ]
             }
           }
         },
@@ -642,12 +818,34 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{access_token)}}" }
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/follow-requests/received",
+              "raw": "{{baseUrl}}/api/follow-requests/received?page=1&size=10&sortBy=createdAt&sortOrder=asc",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "follow-requests", "received"]
+              "path": ["api", "follow-requests", "received"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Number of items per page (default: 10)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Field to sort by (optional)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "description": "Sort order: asc or desc (default: asc)"
+                }
+              ]
             }
           }
         },
