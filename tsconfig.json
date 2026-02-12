@@ -33,7 +33,8 @@
       "@/models/*": ["models/*"],
       "@/repositories/*": ["repositories/*"],
       "@/routes/*": ["routes/*"],
-      "@/services/*": ["services/*"]
+      "@/services/*": ["services/*"],
+      "@/__tests__/*": ["__tests__/*"]
     }
   },
   "include": ["src/**/*"],

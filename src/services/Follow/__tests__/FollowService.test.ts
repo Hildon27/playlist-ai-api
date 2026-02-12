@@ -3,6 +3,10 @@ import { FollowRepository } from '../../../repositories/FollowRepository';
 import { UserServiceImpl } from '../../UserService/UserServiceImpl';
 import { ApiError, ErrorCode } from '../../../models/Errors';
 import { Privacity } from '../../../models/Enums';
+import {
+  createPaginatedResultMock,
+  createPaginationMock,
+} from '@/__tests__/mocks/pagination';
 
 // Mock dependencies
 jest.mock('../../../repositories/FollowRepository');
@@ -111,27 +115,38 @@ describe('FollowService', () => {
 
   describe('findAllUserFollowers', () => {
     it('FOLLOW-LIST-01: should return followers when user has them', async () => {
+      const params = createPaginationMock();
+
       mockFollowRepository.findAllByFollowedId = jest
         .fn()
-        .mockResolvedValue([mockFollow]);
+        .mockResolvedValue(createPaginatedResultMock([mockFollow]));
 
-      const result = await followService.findAllUserFollowers(followedId);
+      const result = await followService.findAllUserFollowers(
+        followedId,
+        params
+      );
 
-      expect(result).toHaveLength(1);
-      expect(result[0]).toEqual(mockFollow);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toEqual(mockFollow);
       expect(mockFollowRepository.findAllByFollowedId).toHaveBeenCalledWith(
-        followedId
+        followedId,
+        params
       );
     });
 
     it('FOLLOW-LIST-02: should return empty array when user has no followers', async () => {
+      const params = createPaginationMock();
+
       mockFollowRepository.findAllByFollowedId = jest
         .fn()
-        .mockResolvedValue([]);
+        .mockResolvedValue(createPaginatedResultMock([]));
 
-      const result = await followService.findAllUserFollowers(followedId);
+      const result = await followService.findAllUserFollowers(
+        followedId,
+        params
+      );
 
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
     });
   });
 
@@ -165,26 +180,37 @@ describe('FollowService', () => {
 
   describe('findAllUserFolloweds', () => {
     it('should return users the user is following', async () => {
+      const params = createPaginationMock();
+
       mockFollowRepository.findAllByFollowerId = jest
         .fn()
-        .mockResolvedValue([mockFollow]);
+        .mockResolvedValue(createPaginatedResultMock([mockFollow]));
 
-      const result = await followService.findAllUserFolloweds(followerId);
+      const result = await followService.findAllUserFolloweds(
+        followerId,
+        params
+      );
 
-      expect(result).toHaveLength(1);
+      expect(result.data).toHaveLength(1);
       expect(mockFollowRepository.findAllByFollowerId).toHaveBeenCalledWith(
-        followerId
+        followerId,
+        params
       );
     });
 
     it('should return empty array when user follows no one', async () => {
+      const params = createPaginationMock();
+
       mockFollowRepository.findAllByFollowerId = jest
         .fn()
-        .mockResolvedValue([]);
+        .mockResolvedValue(createPaginatedResultMock([]));
 
-      const result = await followService.findAllUserFolloweds(followerId);
+      const result = await followService.findAllUserFolloweds(
+        followerId,
+        params
+      );
 
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
     });
   });
 
