@@ -2,6 +2,7 @@ import { User, Privacity as PrismaPrivacity } from '../../generated/prisma';
 import { Privacity } from '@/models/Enums';
 import prisma from '../lib/prisma';
 import { CreateUserDTO, UpdateUserDTO, UserResponseDTO } from '@/models/users';
+import { paginate, PaginatedResult, PaginationParams } from '@/lib/pagination';
 
 export class UserRepository {
   private readonly prisma = prisma;
@@ -70,12 +71,10 @@ export class UserRepository {
     return user ? this.toResponse(user) : null;
   }
 
-  public async findAll(): Promise<UserResponseDTO[]> {
-    const users = await this.prisma.user.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
-
-    return users.map((u: User) => this.toResponse(u));
+  public async findAll(
+    params: PaginationParams<UserResponseDTO>
+  ): Promise<PaginatedResult<UserResponseDTO>> {
+    return paginate(this.prisma.user, {}, params, this.toResponse);
   }
 
   private toModel(data: CreateUserDTO | UpdateUserDTO) {

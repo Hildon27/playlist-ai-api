@@ -2,6 +2,10 @@ import { UserServiceImpl } from '../UserServiceImpl';
 import { UserRepository } from '../../../repositories/UserRepository';
 import { ApiError, ErrorCode } from '../../../models/Errors';
 import { Privacity } from '../../../models/Enums';
+import {
+  createPaginatedResultMock,
+  createPaginationMock,
+} from '@/__tests__/mocks/pagination';
 
 // Mock dependencies
 jest.mock('../../../repositories/UserRepository');
@@ -107,23 +111,29 @@ describe('UserService', () => {
 
   describe('findAll', () => {
     it('USER-ALL-01: should return all users', async () => {
+      const params = createPaginationMock();
+
       mockUserRepository.findAll = jest
         .fn()
-        .mockResolvedValue([mockUser, mockUser2]);
+        .mockResolvedValue(createPaginatedResultMock([mockUser, mockUser2]));
 
-      const result = await userService.findAll();
+      const result = await userService.findAll(params);
 
-      expect(result).toHaveLength(2);
-      expect(result).toContainEqual(mockUser);
-      expect(result).toContainEqual(mockUser2);
+      expect(result.data).toHaveLength(2);
+      expect(result.data).toContainEqual(mockUser);
+      expect(result.data).toContainEqual(mockUser2);
     });
 
     it('USER-ALL-02: should return empty array when no users exist', async () => {
-      mockUserRepository.findAll = jest.fn().mockResolvedValue([]);
+      const params = createPaginationMock();
 
-      const result = await userService.findAll();
+      mockUserRepository.findAll = jest
+        .fn()
+        .mockResolvedValue(createPaginatedResultMock([]));
 
-      expect(result).toEqual([]);
+      const result = await userService.findAll(params);
+
+      expect(result.data).toEqual([]);
     });
   });
 

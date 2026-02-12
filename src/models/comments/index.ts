@@ -1,3 +1,4 @@
+import { createPaginationParamsSchema } from '@/lib/pagination';
 import { z } from 'zod';
 
 // Schemas
@@ -35,6 +36,12 @@ export const playlistCommentWithUserAndPlaylistSchema =
       name: z.string(),
     }),
   });
+
+export const findManyPlaylistCommentsRequestSchema =
+  createPaginationParamsSchema(playlistCommentSchema);
+
+export const findManyCommentsWithUserAndPlaylistRequestSchema =
+  createPaginationParamsSchema(playlistCommentWithUserAndPlaylistSchema);
 
 // Types
 

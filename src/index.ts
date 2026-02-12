@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import cors from 'cors';
 import express from 'express';
 import { logger } from '@/lib/logger';
 import { requestLogger } from '@/middleware/requestLogger';
@@ -12,12 +13,26 @@ import commentRoutes from '@/routes/commentRoutes';
 import authRoutes from './routes/authRoutes';
 import spotifyRoutes from '@/routes/spotifyRoutes';
 import aiRoutes from '@/routes/aiRoutes';
-import { globalErrorHandler } from '@/middleware/global-error-handling';
+import { globalErrorHandler } from '@/middleware/globalErrorHandling';
 import { authenticate } from '@/middleware/authMiddleware';
 import { endpoints } from 'endpoints';
+import {
+  authLimiter,
+  generalLimiter,
+  heavyLimiter,
+} from './middleware/rateLimiters';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
+
+app.use(
+  cors({
+    origin: process.env.CORS_ALLOWED_ORIGINS?.split(','),
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 // Middlewares
 app.use(requestLogger);
@@ -25,16 +40,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Public Routes
-app.use('/auth', authRoutes);
+app.use('/auth', authLimiter, authRoutes);
 
 // Protected Routes (require JWT token)
-app.use('/api/users', authenticate, userRoutes);
-app.use('/api/spotify', authenticate, spotifyRoutes);
-app.use('/api/ai', authenticate, aiRoutes);
-app.use('/api/follow-requests', authenticate, followRequestRoutes);
-app.use('/api/follows', authenticate, followRoutes);
-app.use('/api/playlists', authenticate, playlistRoutes);
-app.use('/api/comments', authenticate, commentRoutes);
+app.use('/api/users', authenticate, generalLimiter, userRoutes);
+app.use(
+  '/api/follow-requests',
+  authenticate,
+  generalLimiter,
+  followRequestRoutes
+);
+app.use('/api/follows', authenticate, generalLimiter, followRoutes);
+app.use('/api/playlists', authenticate, generalLimiter, playlistRoutes);
+app.use('/api/comments', authenticate, generalLimiter, commentRoutes);
+app.use('/api/spotify', authenticate, heavyLimiter, spotifyRoutes);
+app.use('/api/ai', authenticate, heavyLimiter, aiRoutes);
+
+app.set('trust proxy', 1);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -46,7 +68,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Root route
-app.get('/api', (req, res) => {
+app.get('/api', (_, res) => {
   res.status(200).json({
     success: true,
     message: 'Welcome to Playlist AI API',
@@ -54,7 +76,7 @@ app.get('/api', (req, res) => {
   });
 });
 
-app.use((req, res) => {
+app.use((_, res) => {
   res.status(404).json({
     success: false,
     message: 'Route not found',

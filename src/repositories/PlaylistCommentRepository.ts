@@ -1,3 +1,4 @@
+import { paginate, PaginatedResult, PaginationParams } from '@/lib/pagination';
 import { PlaylistComment } from '../../generated/prisma';
 import prisma from '../lib/prisma';
 import {
@@ -92,53 +93,55 @@ export class PlaylistCommentRepository {
   }
 
   public async findByPlaylistId(
-    playlistId: string
-  ): Promise<PlaylistCommentWithUserDTO[]> {
-    const comments = await this.prisma.playlistComment.findMany({
-      where: { playlistId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
+    playlistId: string,
+    params: PaginationParams<PlaylistCommentWithUserDTO>
+  ): Promise<PaginatedResult<PlaylistCommentWithUserDTO>> {
+    return paginate(
+      this.prisma.playlistComment,
+      {
+        where: { playlistId },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
           },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    return comments.map(comment => this.mapToDTOWithUser(comment));
+      params,
+      this.mapToDTOWithUser
+    );
   }
 
   public async findByUserId(
-    userId: string
-  ): Promise<PlaylistCommentWithUserAndPlaylistDTO[]> {
-    const comments = await this.prisma.playlistComment.findMany({
-      where: { userId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
+    userId: string,
+    params: PaginationParams<PlaylistCommentWithUserAndPlaylistDTO>
+  ): Promise<PaginatedResult<PlaylistCommentWithUserAndPlaylistDTO>> {
+    return paginate(
+      this.prisma.playlistComment,
+      {
+        where: { userId },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
           },
-        },
-        playlist: {
-          select: {
-            id: true,
-            name: true,
+          playlist: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    return comments.map(comment => this.mapToDTOWithUserAndPlaylist(comment));
+      params,
+      this.mapToDTOWithUserAndPlaylist
+    );
   }
 
   public async update(

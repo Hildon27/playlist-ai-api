@@ -3,6 +3,7 @@ import { FollowServiceImpl } from '@/services/Follow/FollowServiceImpl';
 import { NextFunction, Request, Response } from 'express';
 import { createLogger } from '@/lib/logger';
 import { AuthContext } from 'contexts/auth-context';
+import { findManyFollowsRequestSchema } from '@/models/follows';
 
 const logger = createLogger('FollowController');
 const followService = new FollowServiceImpl();
@@ -11,22 +12,24 @@ const followService = new FollowServiceImpl();
  * Find all user followers
  */
 export const findAllUserFollowers = async (
-  _: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const user = AuthContext.getLoggedUser();
 
-    const followers = await followService.findAllUserFollowers(user.id);
+    const params = findManyFollowsRequestSchema.parse(req.query);
+
+    const followers = await followService.findAllUserFollowers(user.id, params);
 
     logger.info(
-      { userId: user.id, count: followers.length },
+      { userId: user.id, count: followers.data.length },
       'Followers retrieved successfully'
     );
     res.status(200).json({
       success: true,
-      data: followers,
+      ...followers,
     });
   } catch (error) {
     logger.error({ error }, 'Error getting followers');
@@ -38,22 +41,24 @@ export const findAllUserFollowers = async (
  * Find all user followeds
  */
 export const findAllUserFolloweds = async (
-  _: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const user = AuthContext.getLoggedUser();
 
-    const followers = await followService.findAllUserFolloweds(user.id);
+    const params = findManyFollowsRequestSchema.parse(req.query);
+
+    const followers = await followService.findAllUserFolloweds(user.id, params);
 
     logger.info(
-      { userId: user.id, count: followers.length },
+      { userId: user.id, count: followers.data.length },
       'Followeds retrieved successfully'
     );
     res.status(200).json({
       success: true,
-      data: followers,
+      ...followers,
     });
   } catch (error) {
     logger.error({ error }, 'Error getting followeds');

@@ -6,6 +6,8 @@ import {
   updateUserPlaylistSchema,
   addMusicToPlaylistSchema,
   removeMusicFromPlaylistSchema,
+  findManyUserPlaylistsRequestSchema,
+  findManyPlaylistMusicsRequestSchema,
 } from '@/models/playlists';
 import {
   BadRequestError,
@@ -178,25 +180,23 @@ export class UserPlaylistController {
   /**
    * Get all playlists from a specific user
    */
-  public getPlaylistsByUserId = async (
+  public getLoggedUserPlaylists = async (
     req: Request,
     res: Response
   ): Promise<void> => {
-    try {
-      const { userId } = req.params;
-      if (!userId) {
-        throw new BadRequestError('ID do usuário é obrigatório');
-      }
-      const playlists =
-        await this.userPlaylistService.getPlaylistsByUserId(userId);
+    const user = AuthContext.getLoggedUser();
 
-      res.status(200).json({
-        success: true,
-        data: playlists,
-      });
-    } catch {
-      throw new BadRequestError('Erro ao buscar playlists do usuário');
-    }
+    const params = findManyUserPlaylistsRequestSchema.parse(req.query);
+
+    const playlists = await this.userPlaylistService.getPlaylistsByUserId(
+      user.id,
+      params
+    );
+
+    res.status(200).json({
+      success: true,
+      ...playlists,
+    });
   };
 
   /**
@@ -206,16 +206,14 @@ export class UserPlaylistController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    try {
-      const playlists = await this.userPlaylistService.getPublicPlaylists();
+    const params = findManyUserPlaylistsRequestSchema.parse(req.query);
 
-      res.status(200).json({
-        success: true,
-        data: playlists,
-      });
-    } catch {
-      throw new BadRequestError('Erro ao buscar playlists públicas');
-    }
+    const playlists = await this.userPlaylistService.getPublicPlaylists(params);
+
+    res.status(200).json({
+      success: true,
+      ...playlists,
+    });
   };
 
   /**
@@ -299,16 +297,19 @@ export class UserPlaylistController {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
 
+      const params = findManyPlaylistMusicsRequestSchema.parse(req.query);
+
       const user = AuthContext.getLoggedUser();
 
       const musics = await this.userPlaylistService.getPlaylistMusics(
         user.id,
-        id
+        id,
+        params
       );
 
       res.status(200).json({
         success: true,
-        data: musics,
+        ...musics,
       });
     } catch (error) {
       if (error instanceof ForbiddenError) {

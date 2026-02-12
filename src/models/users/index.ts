@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Privacity } from '../Enums';
+import { createPaginationParamsSchema } from '@/lib/pagination';
 
 // Schemas
 
@@ -31,6 +32,9 @@ export const updateUserSchema = createUserSchema
     password: true,
   })
   .partial();
+
+export const findManyUsersRequestSchema =
+  createPaginationParamsSchema(readUserSchema);
 
 // Types
 

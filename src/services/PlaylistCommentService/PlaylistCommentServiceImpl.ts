@@ -10,6 +10,7 @@ import {
 } from '@/models/comments';
 import { NotFoundError, ForbiddenError } from '@/models/Errors';
 import { createLogger } from '@/lib/logger';
+import { PaginatedResult, PaginationParams } from '@/lib/pagination';
 
 const logger = createLogger('CommentService');
 
@@ -93,20 +94,25 @@ export class PlaylistCommentServiceImpl implements PlaylistCommentService {
   }
 
   public async getCommentsByPlaylistId(
-    playlistId: string
-  ): Promise<PlaylistCommentWithUserDTO[]> {
+    playlistId: string,
+    params: PaginationParams<PlaylistCommentWithUserDTO>
+  ): Promise<PaginatedResult<PlaylistCommentWithUserDTO>> {
     const playlist = await this.userPlaylistRepository.findById(playlistId);
     if (!playlist) {
       throw new NotFoundError('Playlist não encontrada');
     }
 
-    return await this.playlistCommentRepository.findByPlaylistId(playlistId);
+    return await this.playlistCommentRepository.findByPlaylistId(
+      playlistId,
+      params
+    );
   }
 
   public async getCommentsByUserId(
-    userId: string
-  ): Promise<PlaylistCommentWithUserAndPlaylistDTO[]> {
-    return await this.playlistCommentRepository.findByUserId(userId);
+    userId: string,
+    params: PaginationParams<PlaylistCommentWithUserAndPlaylistDTO>
+  ): Promise<PaginatedResult<PlaylistCommentWithUserAndPlaylistDTO>> {
+    return await this.playlistCommentRepository.findByUserId(userId, params);
   }
 
   public async isCommentOwner(id: string, userId: string): Promise<boolean> {

@@ -1,5 +1,6 @@
 import { ApiError, ErrorCode } from '@/models/Errors';
 import {
+  findManyFollowRequestsSchema,
   followRequestBaseSchema,
   proccessFollowRequestSchema,
 } from '@/models/followRequests';
@@ -58,17 +59,20 @@ export const findSentFollowRequests = async (
   try {
     const user = AuthContext.getLoggedUser();
 
+    const params = findManyFollowRequestsSchema.parse(req.query);
+
     const followRequests = await followRequestService.findSentFollowRequests(
-      user.id
+      user.id,
+      params
     );
 
     logger.info(
-      { followerId: user.id, count: followRequests.length },
+      { followerId: user.id, count: followRequests.data.length },
       'Follow requests retrieved'
     );
     res.status(200).json({
       success: true,
-      data: followRequests,
+      ...followRequests,
     });
   } catch (error) {
     logger.error({ error }, 'Error getting follow requests');
@@ -87,16 +91,18 @@ export const findReceivedFollowRequests = async (
   try {
     const user = AuthContext.getLoggedUser();
 
+    const params = findManyFollowRequestsSchema.parse(req.query);
+
     const followRequests =
-      await followRequestService.findReceivedFollowRequests(user.id);
+      await followRequestService.findReceivedFollowRequests(user.id, params);
 
     logger.info(
-      { followedId: user.id, count: followRequests.length },
+      { followedId: user.id, count: followRequests.data.length },
       'Follow requests retrieved'
     );
     res.status(200).json({
       success: true,
-      data: followRequests,
+      ...followRequests,
     });
   } catch (error) {
     logger.error({ error }, 'Error getting follow requests');

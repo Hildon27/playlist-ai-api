@@ -1,3 +1,4 @@
+import { PaginatedResult, PaginationParams } from '@/lib/pagination';
 import {
   CreatePlaylistCommentDTO,
   UpdatePlaylistCommentDTO,
@@ -24,12 +25,14 @@ export interface PlaylistCommentService {
   getCommentById(id: string): Promise<PlaylistCommentWithUserDTO | null>;
 
   getCommentsByPlaylistId(
-    playlistId: string
-  ): Promise<PlaylistCommentWithUserDTO[]>;
+    playlistId: string,
+    params: PaginationParams<PlaylistCommentWithUserDTO>
+  ): Promise<PaginatedResult<PlaylistCommentWithUserDTO>>;
 
   getCommentsByUserId(
-    userId: string
-  ): Promise<PlaylistCommentWithUserAndPlaylistDTO[]>;
+    userId: string,
+    params: PaginationParams<PlaylistCommentWithUserAndPlaylistDTO>
+  ): Promise<PaginatedResult<PlaylistCommentWithUserAndPlaylistDTO>>;
 
   isCommentOwner(id: string, userId: string): Promise<boolean>;
 }

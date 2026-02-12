@@ -1,3 +1,4 @@
+import { PaginatedResult, PaginationParams } from '@/lib/pagination';
 import {
   CreateUserPlaylistDTO,
   UpdateUserPlaylistDTO,
@@ -28,9 +29,14 @@ export interface UserPlaylistService {
     id: string
   ): Promise<PlaylistWithMusicsDTO | null>;
 
-  getPlaylistsByUserId(userId: string): Promise<UserPlaylistDTO[]>;
+  getPlaylistsByUserId(
+    userId: string,
+    params: PaginationParams<UserPlaylistDTO>
+  ): Promise<PaginatedResult<UserPlaylistDTO>>;
 
-  getPublicPlaylists(): Promise<UserPlaylistDTO[]>;
+  getPublicPlaylists(
+    params: PaginationParams<UserPlaylistDTO>
+  ): Promise<PaginatedResult<UserPlaylistDTO>>;
 
   addMusicToPlaylist(
     userId: string,
@@ -44,7 +50,11 @@ export interface UserPlaylistService {
     musicId: string
   ): Promise<boolean>;
 
-  getPlaylistMusics(userId: string, playlistId: string): Promise<MusicDTO[]>;
+  getPlaylistMusics(
+    userId: string,
+    playlistId: string,
+    params: PaginationParams<MusicDTO>
+  ): Promise<PaginatedResult<MusicDTO>>;
 
   validatePlaylistOwnership(
     playlistId: string,

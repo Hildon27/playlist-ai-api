@@ -11,6 +11,7 @@ import {
 } from '@/models/playlists';
 import { createLogger } from '@/lib/logger';
 import { BadRequestError, NotFoundError } from '@/models/Errors';
+import { PaginatedResult, PaginationParams } from '@/lib/pagination';
 
 const logger = createLogger('PlaylistService');
 
@@ -97,13 +98,16 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
   }
 
   public async getPlaylistsByUserId(
-    userId: string
-  ): Promise<UserPlaylistDTO[]> {
-    return await this.userPlaylistRepository.findByUserId(userId);
+    userId: string,
+    params: PaginationParams<UserPlaylistDTO>
+  ): Promise<PaginatedResult<UserPlaylistDTO>> {
+    return await this.userPlaylistRepository.findByUserId(userId, params);
   }
 
-  public async getPublicPlaylists(): Promise<UserPlaylistDTO[]> {
-    return await this.userPlaylistRepository.findPublicPlaylists();
+  public async getPublicPlaylists(
+    params: PaginationParams<UserPlaylistDTO>
+  ): Promise<PaginatedResult<UserPlaylistDTO>> {
+    return await this.userPlaylistRepository.findPublicPlaylists(params);
   }
 
   public async addMusicToPlaylist(
@@ -158,8 +162,9 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
 
   public async getPlaylistMusics(
     userId: string,
-    playlistId: string
-  ): Promise<MusicDTO[]> {
+    playlistId: string,
+    params: PaginationParams<MusicDTO>
+  ): Promise<PaginatedResult<MusicDTO>> {
     const existingPlaylist =
       await this.userPlaylistRepository.findByIdAndUserId(playlistId, userId);
 
@@ -167,7 +172,10 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
       throw new NotFoundError('Playlist não encontrada');
     }
 
-    return await this.userPlaylistRepository.getPlaylistMusics(playlistId);
+    return await this.userPlaylistRepository.getPlaylistMusics(
+      playlistId,
+      params
+    );
   }
 
   public async validatePlaylistOwnership(

@@ -2,6 +2,10 @@ import { UserPlaylistServiceImpl } from '../UserPlaylistServiceImpl';
 import { UserPlaylistRepository } from '../../../repositories/UserPlaylistRepository';
 import { BadRequestError, NotFoundError } from '../../../models/Errors';
 import { Privacity } from '../../../models/Enums';
+import {
+  createPaginatedResultMock,
+  createPaginationMock,
+} from '@/__tests__/mocks/pagination';
 
 // Mock dependencies
 jest.mock('../../../repositories/UserPlaylistRepository');
@@ -264,19 +268,26 @@ describe('UserPlaylistService', () => {
 
   describe('getPlaylistsByUserId', () => {
     it('PLAYLIST-USER-01: should return user playlists', async () => {
+      const params = createPaginationMock();
+
       mockPlaylistRepository.findByUserId = jest
         .fn()
-        .mockResolvedValue([mockPlaylist, mockPrivatePlaylist]);
+        .mockResolvedValue(
+          createPaginatedResultMock([mockPlaylist, mockPrivatePlaylist])
+        );
 
-      const result = await playlistService.getPlaylistsByUserId(userId);
+      const result = await playlistService.getPlaylistsByUserId(userId, params);
 
-      expect(result).toHaveLength(2);
+      expect(result.data).toHaveLength(2);
+      expect(result.meta.page).toBe(1);
     });
 
     it('PLAYLIST-USER-02: should return empty array when user has no playlists', async () => {
+      const params = createPaginationMock();
+
       mockPlaylistRepository.findByUserId = jest.fn().mockResolvedValue([]);
 
-      const result = await playlistService.getPlaylistsByUserId(userId);
+      const result = await playlistService.getPlaylistsByUserId(userId, params);
 
       expect(result).toEqual([]);
     });
@@ -284,24 +295,29 @@ describe('UserPlaylistService', () => {
 
   describe('getPublicPlaylists', () => {
     it('PLAYLIST-PUBLIC-01: should return public playlists', async () => {
+      const params = createPaginationMock();
+
       mockPlaylistRepository.findPublicPlaylists = jest
         .fn()
-        .mockResolvedValue([mockPlaylist]);
+        .mockResolvedValue(createPaginatedResultMock([mockPlaylist]));
 
-      const result = await playlistService.getPublicPlaylists();
+      const result = await playlistService.getPublicPlaylists(params);
 
-      expect(result).toHaveLength(1);
-      expect(result[0]!.privacity).toBe(Privacity.PUBLIC);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]!.privacity).toBe(Privacity.PUBLIC);
+      expect(result.meta.page).toBe(1);
     });
 
     it('PLAYLIST-PUBLIC-02: should return empty array when no public playlists', async () => {
+      const params = createPaginationMock();
+
       mockPlaylistRepository.findPublicPlaylists = jest
         .fn()
-        .mockResolvedValue([]);
+        .mockResolvedValue(createPaginatedResultMock([]));
 
-      const result = await playlistService.getPublicPlaylists();
+      const result = await playlistService.getPublicPlaylists(params);
 
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
     });
   });
 
@@ -417,44 +433,54 @@ describe('UserPlaylistService', () => {
 
   describe('getPlaylistMusics', () => {
     it('PLAYLIST-GETM-01: should return playlist musics', async () => {
+      const params = createPaginationMock();
+
       mockPlaylistRepository.findByIdAndUserId = jest
         .fn()
         .mockResolvedValue(mockPlaylist);
       mockPlaylistRepository.getPlaylistMusics = jest
         .fn()
-        .mockResolvedValue(mockPlaylistWithMusics.musics);
+        .mockResolvedValue(
+          createPaginatedResultMock(mockPlaylistWithMusics.musics)
+        );
 
       const result = await playlistService.getPlaylistMusics(
         userId,
-        playlistId
+        playlistId,
+        params
       );
 
-      expect(result).toHaveLength(2);
+      expect(result.data).toHaveLength(2);
     });
 
     it('PLAYLIST-GETM-02: should return empty array for empty playlist', async () => {
+      const params = createPaginationMock();
+
       mockPlaylistRepository.findByIdAndUserId = jest
         .fn()
         .mockResolvedValue(mockPlaylist);
       mockPlaylistRepository.getPlaylistMusics = jest
         .fn()
-        .mockResolvedValue([]);
+        .mockResolvedValue(createPaginatedResultMock([]));
 
       const result = await playlistService.getPlaylistMusics(
         userId,
-        playlistId
+        playlistId,
+        params
       );
 
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
     });
 
     it('PLAYLIST-GETM-03: should throw NotFoundError for non-existent playlist', async () => {
+      const params = createPaginationMock();
+
       mockPlaylistRepository.findByIdAndUserId = jest
         .fn()
         .mockResolvedValue(null);
 
       await expect(
-        playlistService.getPlaylistMusics(userId, 'non-existent')
+        playlistService.getPlaylistMusics(userId, 'non-existent', params)
       ).rejects.toThrow(NotFoundError);
     });
   });

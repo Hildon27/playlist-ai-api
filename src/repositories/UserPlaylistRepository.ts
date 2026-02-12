@@ -13,6 +13,7 @@ import {
   AddMusicToPlaylistDTO,
   MusicDTO,
 } from '@/models/playlists';
+import { paginate, PaginatedResult, PaginationParams } from '@/lib/pagination';
 
 export class UserPlaylistRepository {
   private readonly prisma = prisma;
@@ -102,22 +103,27 @@ export class UserPlaylistRepository {
     };
   }
 
-  public async findByUserId(userId: string): Promise<UserPlaylistDTO[]> {
-    const playlists = await this.prisma.userPlaylist.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    return playlists.map(p => this.toResponse(p));
+  public async findByUserId(
+    userId: string,
+    params: PaginationParams<UserPlaylistDTO>
+  ): Promise<PaginatedResult<UserPlaylistDTO>> {
+    return paginate(
+      this.prisma.userPlaylist,
+      { where: { userId } },
+      params,
+      this.toResponse
+    );
   }
 
-  public async findPublicPlaylists(): Promise<UserPlaylistDTO[]> {
-    const playlists = await this.prisma.userPlaylist.findMany({
-      where: { privacity: 'public' },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    return playlists.map(p => this.toResponse(p));
+  public async findPublicPlaylists(
+    params: PaginationParams<UserPlaylistDTO>
+  ): Promise<PaginatedResult<UserPlaylistDTO>> {
+    return paginate(
+      this.prisma.userPlaylist,
+      { where: { privacity: 'public' } },
+      params,
+      this.toResponse
+    );
   }
 
   public async addMusicToPlaylist(
@@ -174,14 +180,16 @@ export class UserPlaylistRepository {
     }
   }
 
-  public async getPlaylistMusics(playlistId: string): Promise<MusicDTO[]> {
-    const musicPlaylists = await this.prisma.musicPlaylist.findMany({
-      where: { playlistId },
-      include: { music: true },
-      orderBy: { createdAt: 'asc' },
-    });
-
-    return musicPlaylists.map(mp => this.toMusicResponse(mp.music));
+  public async getPlaylistMusics(
+    playlistId: string,
+    params: PaginationParams<MusicDTO>
+  ): Promise<PaginatedResult<MusicDTO>> {
+    return await paginate(
+      this.prisma.musicPlaylist,
+      { where: { playlistId }, include: { music: true } },
+      params,
+      item => this.toMusicResponse(item.music)
+    );
   }
 
   private toModel(data: CreateUserPlaylistDTO | UpdateUserPlaylistDTO) {
