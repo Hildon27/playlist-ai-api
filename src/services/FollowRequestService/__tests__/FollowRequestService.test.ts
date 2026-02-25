@@ -213,60 +213,90 @@ describe('FollowRequestService', () => {
   });
 
   describe('findSentFollowRequests', () => {
+    const defaultParams = { page: 1, size: 10 };
+
     // FR-SENT-01: Usuário com requests enviados
     it('should return sent follow requests', async () => {
       const mockRequests = [mockFollowRequest];
+      const paginatedResult = {
+        data: mockRequests,
+        meta: { page: 1, size: 10, total: 1, totalPages: 1 },
+      };
       mockFollowRequestRepository.findSentFollowRequests.mockResolvedValue(
-        mockRequests
+        paginatedResult
       );
 
-      const result =
-        await followRequestService.findSentFollowRequests(followerId);
+      const result = await followRequestService.findSentFollowRequests(
+        followerId,
+        defaultParams
+      );
 
-      expect(result).toEqual(mockRequests);
+      expect(result.data).toEqual(mockRequests);
       expect(
         mockFollowRequestRepository.findSentFollowRequests
-      ).toHaveBeenCalledWith(followerId);
+      ).toHaveBeenCalledWith(followerId, defaultParams);
     });
 
     // FR-SENT-02: Usuário sem requests enviados
     it('should return empty array when no sent requests', async () => {
-      mockFollowRequestRepository.findSentFollowRequests.mockResolvedValue([]);
+      const paginatedResult = {
+        data: [],
+        meta: { page: 1, size: 10, total: 0, totalPages: 1 },
+      };
+      mockFollowRequestRepository.findSentFollowRequests.mockResolvedValue(
+        paginatedResult
+      );
 
-      const result =
-        await followRequestService.findSentFollowRequests(followerId);
+      const result = await followRequestService.findSentFollowRequests(
+        followerId,
+        defaultParams
+      );
 
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
     });
   });
 
   describe('findReceivedFollowRequests', () => {
+    const defaultParams = { page: 1, size: 10 };
+
     // FR-RECV-01: Usuário com requests recebidos
     it('should return received follow requests', async () => {
       const mockRequests = [mockFollowRequest];
+      const paginatedResult = {
+        data: mockRequests,
+        meta: { page: 1, size: 10, total: 1, totalPages: 1 },
+      };
       mockFollowRequestRepository.findReceivedFollowRequests.mockResolvedValue(
-        mockRequests
+        paginatedResult
       );
 
-      const result =
-        await followRequestService.findReceivedFollowRequests(followedId);
+      const result = await followRequestService.findReceivedFollowRequests(
+        followedId,
+        defaultParams
+      );
 
-      expect(result).toEqual(mockRequests);
+      expect(result.data).toEqual(mockRequests);
       expect(
         mockFollowRequestRepository.findReceivedFollowRequests
-      ).toHaveBeenCalledWith(followedId);
+      ).toHaveBeenCalledWith(followedId, defaultParams);
     });
 
     // FR-RECV-02: Usuário sem requests recebidos
     it('should return empty array when no received requests', async () => {
+      const paginatedResult = {
+        data: [],
+        meta: { page: 1, size: 10, total: 0, totalPages: 1 },
+      };
       mockFollowRequestRepository.findReceivedFollowRequests.mockResolvedValue(
-        []
+        paginatedResult
       );
 
-      const result =
-        await followRequestService.findReceivedFollowRequests(followedId);
+      const result = await followRequestService.findReceivedFollowRequests(
+        followedId,
+        defaultParams
+      );
 
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
     });
   });
 

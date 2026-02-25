@@ -239,28 +239,45 @@ describe('PlaylistCommentService', () => {
   });
 
   describe('getCommentsByPlaylistId', () => {
+    const defaultParams = { page: 1, size: 10 };
+
     // COMMENT-PLAYLIST-01: Listar comentários de playlist existente
     it('should return comments for existing playlist', async () => {
       const mockComments = [mockCommentWithUser];
+      const paginatedResult = {
+        data: mockComments,
+        meta: { page: 1, size: 10, total: 1, totalPages: 1 },
+      };
       mockPlaylistRepository.findById.mockResolvedValue(mockPlaylist);
-      mockCommentRepository.findByPlaylistId.mockResolvedValue(mockComments);
+      mockCommentRepository.findByPlaylistId.mockResolvedValue(paginatedResult);
 
-      const result = await commentService.getCommentsByPlaylistId(playlistId);
+      const result = await commentService.getCommentsByPlaylistId(
+        playlistId,
+        defaultParams
+      );
 
-      expect(result).toEqual(mockComments);
+      expect(result.data).toEqual(mockComments);
       expect(mockCommentRepository.findByPlaylistId).toHaveBeenCalledWith(
-        playlistId
+        playlistId,
+        defaultParams
       );
     });
 
     // COMMENT-PLAYLIST-02: Playlist sem comentários
     it('should return empty array when playlist has no comments', async () => {
+      const paginatedResult = {
+        data: [],
+        meta: { page: 1, size: 10, total: 0, totalPages: 1 },
+      };
       mockPlaylistRepository.findById.mockResolvedValue(mockPlaylist);
-      mockCommentRepository.findByPlaylistId.mockResolvedValue([]);
+      mockCommentRepository.findByPlaylistId.mockResolvedValue(paginatedResult);
 
-      const result = await commentService.getCommentsByPlaylistId(playlistId);
+      const result = await commentService.getCommentsByPlaylistId(
+        playlistId,
+        defaultParams
+      );
 
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
     });
 
     // COMMENT-PLAYLIST-03: Playlist não existe
@@ -268,30 +285,49 @@ describe('PlaylistCommentService', () => {
       mockPlaylistRepository.findById.mockResolvedValue(null);
 
       await expect(
-        commentService.getCommentsByPlaylistId('non-existent')
+        commentService.getCommentsByPlaylistId('non-existent', defaultParams)
       ).rejects.toThrow(NotFoundError);
     });
   });
 
   describe('getCommentsByUserId', () => {
+    const defaultParams = { page: 1, size: 10 };
+
     // COMMENT-USER-01: Listar comentários do usuário
     it('should return all comments by user', async () => {
       const mockComments = [mockCommentWithUserAndPlaylist];
-      mockCommentRepository.findByUserId.mockResolvedValue(mockComments);
+      const paginatedResult = {
+        data: mockComments,
+        meta: { page: 1, size: 10, total: 1, totalPages: 1 },
+      };
+      mockCommentRepository.findByUserId.mockResolvedValue(paginatedResult);
 
-      const result = await commentService.getCommentsByUserId(userId);
+      const result = await commentService.getCommentsByUserId(
+        userId,
+        defaultParams
+      );
 
-      expect(result).toEqual(mockComments);
-      expect(mockCommentRepository.findByUserId).toHaveBeenCalledWith(userId);
+      expect(result.data).toEqual(mockComments);
+      expect(mockCommentRepository.findByUserId).toHaveBeenCalledWith(
+        userId,
+        defaultParams
+      );
     });
 
     // COMMENT-USER-02: Usuário sem comentários
     it('should return empty array when user has no comments', async () => {
-      mockCommentRepository.findByUserId.mockResolvedValue([]);
+      const paginatedResult = {
+        data: [],
+        meta: { page: 1, size: 10, total: 0, totalPages: 1 },
+      };
+      mockCommentRepository.findByUserId.mockResolvedValue(paginatedResult);
 
-      const result = await commentService.getCommentsByUserId(userId);
+      const result = await commentService.getCommentsByUserId(
+        userId,
+        defaultParams
+      );
 
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
     });
   });
 
