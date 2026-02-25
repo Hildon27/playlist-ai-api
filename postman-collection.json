@@ -1025,7 +1025,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"seedTracks\": [\n    { \"name\": \"Bohemian Rhapsody\", \"artist\": \"Queen\" },\n    { \"name\": \"Stairway to Heaven\", \"artist\": \"Led Zeppelin\" },\n    { \"name\": \"Hotel California\", \"artist\": \"Eagles\" },\n    { \"name\": \"Comfortably Numb\", \"artist\": \"Pink Floyd\" },\n    { \"name\": \"November Rain\", \"artist\": \"Guns N' Roses\" }\n  ],\n  \"limit\": 20\n}"
+              "raw": "{\n  \"name\": \"My AI Playlist\",\n  \"seedTracks\": [\n    { \"name\": \"Bohemian Rhapsody\", \"artist\": \"Queen\" },\n    { \"name\": \"Stairway to Heaven\", \"artist\": \"Led Zeppelin\" },\n    { \"name\": \"Hotel California\", \"artist\": \"Eagles\" },\n    { \"name\": \"Comfortably Numb\", \"artist\": \"Pink Floyd\" },\n    { \"name\": \"November Rain\", \"artist\": \"Guns N' Roses\" }\n  ],\n  \"limit\": 20,\n  \"privacity\": \"public\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/ai/generate-playlist",
