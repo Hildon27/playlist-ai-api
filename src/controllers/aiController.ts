@@ -77,7 +77,7 @@ export const generatePlaylist = async (
         const added = await userPlaylistService.addMusicToPlaylist(
           user.id,
           savedPlaylist.id,
-          { externalId: track.spotifyId }
+          { externalId: track.spotifyId, albumCover: track.albumCover }
         );
         if (added) {
           addedTracks.push(track.spotifyId);

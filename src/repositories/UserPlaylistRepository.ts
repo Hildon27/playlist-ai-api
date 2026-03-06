@@ -135,9 +135,22 @@ export class UserPlaylistRepository {
         where: { externalId: musicData.externalId },
       });
 
-      music ??= await this.prisma.music.create({
-        data: { externalId: musicData.externalId },
-      });
+      if (music) {
+        // Update albumCover if provided and not already set
+        if (musicData.albumCover && !music.albumCover) {
+          music = await this.prisma.music.update({
+            where: { id: music.id },
+            data: { albumCover: musicData.albumCover },
+          });
+        }
+      } else {
+        music = await this.prisma.music.create({
+          data: {
+            externalId: musicData.externalId,
+            albumCover: musicData.albumCover ?? null,
+          },
+        });
+      }
 
       const existingMusicPlaylist = await this.prisma.musicPlaylist.findFirst({
         where: {
@@ -192,6 +205,54 @@ export class UserPlaylistRepository {
     );
   }
 
+  public async findCoverTrackIdsByPlaylistId(
+    playlistId: string,
+    limit = 4
+  ): Promise<string[]> {
+    const musicRelations = await this.prisma.musicPlaylist.findMany({
+      where: { playlistId },
+      include: { music: true },
+      orderBy: { createdAt: 'asc' },
+      take: limit,
+    });
+
+    return musicRelations
+      .map(relation => relation.music.albumCover)
+      .filter((cover): cover is string => !!cover);
+  }
+
+  public async findCoverTrackIdsByPlaylistIds(
+    playlistIds: string[],
+    limit = 4
+  ): Promise<Record<string, string[]>> {
+    if (playlistIds.length === 0) {
+      return {};
+    }
+
+    const musicRelations = await this.prisma.musicPlaylist.findMany({
+      where: { playlistId: { in: playlistIds } },
+      include: { music: true },
+      orderBy: [{ playlistId: 'asc' }, { createdAt: 'asc' }],
+    });
+
+    const coversByPlaylist: Record<string, string[]> = {};
+
+    for (const relation of musicRelations) {
+      const covers = coversByPlaylist[relation.playlistId] ?? [];
+
+      if (covers.length >= limit) {
+        continue;
+      }
+
+      if (relation.music.albumCover) {
+        covers.push(relation.music.albumCover);
+        coversByPlaylist[relation.playlistId] = covers;
+      }
+    }
+
+    return coversByPlaylist;
+  }
+
   private toModel(data: CreateUserPlaylistDTO | UpdateUserPlaylistDTO) {
     const model: any = { ...data };
 
@@ -222,6 +283,7 @@ export class UserPlaylistRepository {
     return {
       id: music.id,
       externalId: music.externalId,
+      albumCover: music.albumCover,
       createdAt: music.createdAt,
     };
   }

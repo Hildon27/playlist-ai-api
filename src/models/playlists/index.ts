@@ -7,6 +7,7 @@ import { createPaginationParamsSchema } from '@/lib/pagination';
 export const musicSchema = z.object({
   id: z.string().nonempty(),
   externalId: z.string().min(1, 'ID externo da música é obrigatório'),
+  albumCover: z.string().url().nullable().optional(),
   createdAt: z.date(),
 });
 
@@ -22,6 +23,7 @@ export const userPlaylistSchema = z.object({
   name: z.string().min(1, 'Nome da playlist é obrigatório'),
   privacity: z.enum(Privacity),
   aiMessage: z.string().nullable().optional(),
+  coverImages: z.array(z.string().url()).optional(),
   userId: z.string().min(1, 'ID do usuário é obrigatório'),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -46,6 +48,7 @@ export const updateUserPlaylistSchema = userPlaylistSchema
 
 export const addMusicToPlaylistSchema = z.object({
   externalId: z.string().min(1, 'ID externo da música é obrigatório'),
+  albumCover: z.string().url().nullable().optional(),
 });
 
 export const removeMusicFromPlaylistSchema = z.object({

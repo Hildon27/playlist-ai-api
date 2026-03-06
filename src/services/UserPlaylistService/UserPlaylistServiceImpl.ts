@@ -80,7 +80,7 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
       throw new NotFoundError('Playlist não encontrada');
     }
 
-    return existingPlaylist;
+    return await this.attachCoverImagesToPlaylist(existingPlaylist);
   }
 
   public async getPlaylistWithMusics(
@@ -94,20 +94,43 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
       throw new NotFoundError('Playlist não encontrada');
     }
 
-    return existingPlaylist;
+    // Get cover images from stored albumCover in musics
+    const coverImages = existingPlaylist.musics
+      .slice(0, 4)
+      .map(music => music.albumCover)
+      .filter((cover): cover is string => !!cover);
+
+    return {
+      ...existingPlaylist,
+      coverImages,
+    };
   }
 
   public async getPlaylistsByUserId(
     userId: string,
     params: PaginationParams<UserPlaylistDTO>
   ): Promise<PaginatedResult<UserPlaylistDTO>> {
-    return await this.userPlaylistRepository.findByUserId(userId, params);
+    const playlists = await this.userPlaylistRepository.findByUserId(
+      userId,
+      params
+    );
+
+    return {
+      ...playlists,
+      data: await this.attachCoverImagesToPlaylists(playlists.data),
+    };
   }
 
   public async getPublicPlaylists(
     params: PaginationParams<UserPlaylistDTO>
   ): Promise<PaginatedResult<UserPlaylistDTO>> {
-    return await this.userPlaylistRepository.findPublicPlaylists(params);
+    const playlists =
+      await this.userPlaylistRepository.findPublicPlaylists(params);
+
+    return {
+      ...playlists,
+      data: await this.attachCoverImagesToPlaylists(playlists.data),
+    };
   }
 
   public async addMusicToPlaylist(
@@ -201,5 +224,46 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
     }
 
     return false;
+  }
+
+  private async attachCoverImagesToPlaylist(
+    playlist: UserPlaylistDTO
+  ): Promise<UserPlaylistDTO> {
+    // Get cover images directly from database (already stored in Music.albumCover)
+    const coverImages =
+      await this.userPlaylistRepository.findCoverTrackIdsByPlaylistId(
+        playlist.id,
+        4
+      );
+
+    return {
+      ...playlist,
+      coverImages,
+    };
+  }
+
+  private async attachCoverImagesToPlaylists(
+    playlists: UserPlaylistDTO[]
+  ): Promise<UserPlaylistDTO[]> {
+    if (playlists.length === 0) {
+      return playlists;
+    }
+
+    const playlistIds = playlists.map(playlist => playlist.id);
+    // Get cover images directly from database (already stored in Music.albumCover)
+    const coversByPlaylist =
+      await this.userPlaylistRepository.findCoverTrackIdsByPlaylistIds(
+        playlistIds,
+        4
+      );
+
+    return playlists.map(playlist => {
+      const coverImages = coversByPlaylist[playlist.id] ?? [];
+
+      return {
+        ...playlist,
+        coverImages,
+      };
+    });
   }
 }

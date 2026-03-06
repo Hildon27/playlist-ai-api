@@ -61,6 +61,7 @@ model UserPlaylist {
 model Music {
   id          String    @id @default(uuid())
   externalId  String
+  albumCover  String?
   createdAt   DateTime  @default(now())
 
   playlists   MusicPlaylist[]

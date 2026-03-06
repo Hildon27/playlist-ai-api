@@ -20,6 +20,11 @@ const getClient = (): GoogleGenerativeAI => {
   return genAI;
 };
 
+const MAX_RETRIES = 3;
+const BASE_DELAY_MS = 2000;
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export interface MusicSuggestion {
   name: string;
   artist: string;
@@ -44,7 +49,7 @@ export const generateMusicRecommendations = async (
   );
 
   const client = getClient();
-  const model = client.getGenerativeModel({ model: 'gemini-3-flash-preview' });
+  const model = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   const seedList = seedTracks
     .map((t, i) => `${i + 1}. "${t.name}" - ${t.artist}`)
@@ -80,39 +85,59 @@ Formato obrigatório:
 
 Retorne exatamente ${limit} músicas únicas que NÃO estejam na lista original.`;
 
-  try {
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response.text();
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const result = await model.generateContent(prompt);
+      const response = result.response;
+      const text = response.text();
 
-    geminiLogger.debug({ rawResponse: text }, 'Gemini raw response');
+      geminiLogger.debug({ rawResponse: text }, 'Gemini raw response');
 
-    // Parse JSON from response (handle potential markdown code blocks)
-    let jsonStr = text.trim();
-    if (jsonStr.startsWith('```json')) {
-      jsonStr = jsonStr.slice(7);
+      // Parse JSON from response (handle potential markdown code blocks)
+      let jsonStr = text.trim();
+      if (jsonStr.startsWith('```json')) {
+        jsonStr = jsonStr.slice(7);
+      }
+      if (jsonStr.startsWith('```')) {
+        jsonStr = jsonStr.slice(3);
+      }
+      if (jsonStr.endsWith('```')) {
+        jsonStr = jsonStr.slice(0, -3);
+      }
+      jsonStr = jsonStr.trim();
+
+      const parsed = JSON.parse(jsonStr) as MusicRecommendationResponse;
+
+      geminiLogger.info(
+        { suggestionsCount: parsed.suggestions.length },
+        'Music recommendations generated successfully'
+      );
+
+      return {
+        message: parsed.message,
+        suggestions: parsed.suggestions,
+      };
+    } catch (error: unknown) {
+      const status = (error as { status?: number }).status;
+      const isRetryable = status === 429 || status === 503;
+
+      if (isRetryable && attempt < MAX_RETRIES) {
+        const delay = BASE_DELAY_MS * Math.pow(2, attempt - 1);
+        geminiLogger.warn(
+          { attempt, maxRetries: MAX_RETRIES, delay, status },
+          `Retryable error (${status}), retrying in ${delay}ms...`
+        );
+        await sleep(delay);
+        continue;
+      }
+
+      geminiLogger.error(
+        { error, attempt },
+        'Failed to generate recommendations'
+      );
+      throw new Error('Failed to generate music recommendations from AI');
     }
-    if (jsonStr.startsWith('```')) {
-      jsonStr = jsonStr.slice(3);
-    }
-    if (jsonStr.endsWith('```')) {
-      jsonStr = jsonStr.slice(0, -3);
-    }
-    jsonStr = jsonStr.trim();
-
-    const parsed = JSON.parse(jsonStr) as MusicRecommendationResponse;
-
-    geminiLogger.info(
-      { suggestionsCount: parsed.suggestions.length },
-      'Music recommendations generated successfully'
-    );
-
-    return {
-      message: parsed.message,
-      suggestions: parsed.suggestions,
-    };
-  } catch (error) {
-    geminiLogger.error({ error }, 'Failed to generate recommendations');
-    throw new Error('Failed to generate music recommendations from AI');
   }
+
+  throw new Error('Failed to generate music recommendations from AI');
 };
