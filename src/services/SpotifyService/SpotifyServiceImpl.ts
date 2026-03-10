@@ -60,6 +60,7 @@ export class SpotifyServiceImpl implements SpotifyService {
 
   /**
    * Validate multiple track IDs
+   * Falls back to individual /tracks/{id} if batch fails (e.g., 403 Forbidden)
    */
   async validateTracks(
     data: ValidateTracksDTO
@@ -74,28 +75,60 @@ export class SpotifyServiceImpl implements SpotifyService {
     // Spotify API allows up to 50 IDs per request
     const ids = trackIds.slice(0, 50).join(',');
 
-    const response = await spotifyFetch<{ tracks: (SpotifyTrack | null)[] }>(
-      `/tracks?ids=${ids}`
-    );
+    try {
+      // Try the batch /tracks endpoint first
+      const response = await spotifyFetch<{ tracks: (SpotifyTrack | null)[] }>(
+        `/tracks?ids=${ids}`
+      );
 
-    const valid: TrackDTO[] = [];
-    const invalidIds: string[] = [];
+      const valid: TrackDTO[] = [];
+      const invalidIds: string[] = [];
 
-    trackIds.forEach((id, index) => {
-      const track = response.tracks[index];
-      if (track) {
-        valid.push(mapTrackToDTO(track));
-      } else {
-        invalidIds.push(id);
+      trackIds.forEach((id, index) => {
+        const track = response.tracks[index];
+        if (track) {
+          valid.push(mapTrackToDTO(track));
+        } else {
+          invalidIds.push(id);
+        }
+      });
+
+      spotifyLogger.info(
+        { validCount: valid.length, invalidCount: invalidIds.length },
+        'Track validation completed via /tracks'
+      );
+
+      return { valid, invalidIds };
+    } catch (error) {
+      spotifyLogger.warn(
+        { error },
+        '/tracks batch endpoint failed, falling back to individual requests'
+      );
+
+      // Fallback: fetch each track individually
+      const valid: TrackDTO[] = [];
+      const invalidIds: string[] = [];
+
+      for (const trackId of trackIds.slice(0, 50)) {
+        try {
+          const track = await this.getTrack(trackId);
+          if (track) {
+            valid.push(track);
+          } else {
+            invalidIds.push(trackId);
+          }
+        } catch {
+          invalidIds.push(trackId);
+        }
       }
-    });
 
-    spotifyLogger.info(
-      { validCount: valid.length, invalidCount: invalidIds.length },
-      'Track validation completed'
-    );
+      spotifyLogger.info(
+        { validCount: valid.length, invalidCount: invalidIds.length },
+        'Track validation completed via individual requests'
+      );
 
-    return { valid, invalidIds };
+      return { valid, invalidIds };
+    }
   }
 
   /**
