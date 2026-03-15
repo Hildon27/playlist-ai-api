@@ -33,6 +33,16 @@ describe('FollowRequestService', () => {
   const followedId = 'followed-uuid-456';
   const followRequestId = 'request-uuid-789';
 
+  const mockFollower = {
+    id: followerId,
+    firstName: 'Follower',
+    lastName: 'Mock',
+    email: 'follower@test.com',
+    privacity: Privacity.PUBLIC,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
   const mockFollowed = {
     id: followedId,
     firstName: 'Jane',
@@ -52,7 +62,10 @@ describe('FollowRequestService', () => {
     id: followRequestId,
     followerId,
     followedId,
+    follower: mockFollower,
+    followed: mockFollowed,
     status: FollowRequestStatus.PENDING,
+    
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -178,6 +191,8 @@ describe('FollowRequestService', () => {
         id: 'follow-id',
         followerId,
         followedId,
+        follower: mockFollower,
+        followed: mockFollowed,
         createdAt: new Date(),
       });
 
@@ -387,6 +402,8 @@ describe('FollowRequestService', () => {
         id: 'follow-id',
         followerId,
         followedId,
+        follower: mockFollower,
+        followed: mockFollowed,
         createdAt: new Date(),
       });
 

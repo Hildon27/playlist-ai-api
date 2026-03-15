@@ -1,6 +1,7 @@
 import z from 'zod';
 import { FollowRequestProcessingAction, FollowRequestStatus } from '../Enums';
 import { createPaginationParamsSchema } from '@/lib/pagination';
+import { userSchema } from '../users';
 
 // Schemas
 
@@ -8,6 +9,18 @@ export const followRequestSchema = z.object({
   id: z.string().nonempty(),
   followerId: z.string().nonempty('Follower ID can not be empty'),
   followedId: z.string().nonempty('Followed ID can not be empty'),
+  follower: userSchema.pick({
+    id: true,
+    firstName: true,
+    lastName: true,
+    email: true,
+  }),
+  followed: userSchema.pick({
+    id: true,
+    firstName: true,
+    lastName: true,
+    email: true,
+  }),
   status: z.enum(FollowRequestStatus),
   createdAt: z.date(),
   updatedAt: z.date(),

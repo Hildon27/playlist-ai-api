@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   getLoggedUserData,
-  getAllUsers,
+  getAllPublicUsers,
   updateUser,
   deleteUser,
 } from '../controllers/userController';
@@ -12,7 +12,7 @@ const router = express.Router();
 router.get('/me', getLoggedUserData);
 
 // Get all users
-router.get('/', getAllUsers);
+router.get('/', getAllPublicUsers);
 
 // Update user
 router.put('/me', updateUser);

@@ -1,9 +1,14 @@
 import { UserService } from './UserService';
 import { UserRepository } from '@/repositories/UserRepository';
 import { ApiError, ErrorCode } from '@/models/Errors';
-import { UpdateUserDTO, UserResponseDTO } from '@/models/users';
+import {
+  UpdateUserDTO,
+  UserResponseDTO,
+  UserResponseWithFollowInfoDTO,
+} from '@/models/users';
 import { createLogger } from '@/lib/logger';
 import { PaginatedResult, PaginationParams } from '@/lib/pagination';
+import { Privacity } from '@/models/Enums';
 
 const logger = createLogger('UserService');
 
@@ -32,6 +37,18 @@ export class UserServiceImpl implements UserService {
     params: PaginationParams<UserResponseDTO>
   ): Promise<PaginatedResult<UserResponseDTO>> {
     return await this.userRepository.findAll(params);
+  }
+
+  public async findAllPublicWithFollowInfo(
+    params: PaginationParams<UserResponseDTO>,
+    loggedUserId: string
+  ): Promise<PaginatedResult<UserResponseWithFollowInfoDTO>> {
+    return await this.userRepository.findAllWithFollowInfo(
+      params,
+      loggedUserId,
+      [loggedUserId],
+      [Privacity.PUBLIC]
+    );
   }
 
   public async update(

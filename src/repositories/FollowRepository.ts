@@ -14,6 +14,14 @@ export class FollowRepository {
         followerId,
         followedId,
       },
+      include: {
+        follower: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        followed: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+      },
     });
 
     return follow;
@@ -23,6 +31,14 @@ export class FollowRepository {
     const follow = await this.prisma.follow.findFirst({
       where: {
         id: followId,
+      },
+      include: {
+        follower: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        followed: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
       },
     });
 
@@ -38,6 +54,14 @@ export class FollowRepository {
         followerId,
         followedId,
       },
+      include: {
+        follower: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        followed: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+      },
     });
 
     return follow ?? null;
@@ -51,6 +75,14 @@ export class FollowRepository {
       this.prisma.follow,
       {
         where: { followedId },
+        include: {
+          follower: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
+          followed: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
+        },
       },
       params
     );
@@ -64,6 +96,14 @@ export class FollowRepository {
       this.prisma.follow,
       {
         where: { followerId },
+        include: {
+          follower: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
+          followed: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
+        },
       },
       params
     );

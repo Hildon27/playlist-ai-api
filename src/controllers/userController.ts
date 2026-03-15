@@ -46,12 +46,17 @@ export const getLoggedUserData = async (_: Request, res: Response) => {
 /**
  * Get all users
  */
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllPublicUsers = async (req: Request, res: Response) => {
   logger.info('Getting all users');
 
   const params = findManyUsersRequestSchema.parse(req.query);
 
-  const paginatedUsers = await userService.findAll(params);
+  const loggedUser = AuthContext.getLoggedUser();
+
+  const paginatedUsers = await userService.findAllPublicWithFollowInfo(
+    params,
+    loggedUser.id
+  );
 
   logger.info(
     { count: paginatedUsers.meta.total },
