@@ -55,57 +55,75 @@ O projeto segue uma arquitetura baseada em camadas:
 
 ## Como Rodar o Projeto
 
-### 1. Pré-requisitos
+### Pré-requisitos
 
 - [Node.js](https://nodejs.org/) (v18+ recomendado)
 - [Docker](https://www.docker.com/) e [Docker Compose](https://docs.docker.com/compose/)
 - [npm](https://www.npmjs.com/) ou [yarn](https://yarnpkg.com/)
 
-### 2. Clonar o repositório
+### Instalação e Configuração
 
-```sh
-git clone https://github.com/Hildon27/playlist-ai-api
-cd playlist-ai-api
-```
+1. Clonar o repositório
 
-### 3. Configurar variáveis de ambiente
+    ```sh
+    git clone https://github.com/Hildon27/playlist-ai-api
+    cd playlist-ai-api
+    ```
 
-Copie o arquivo `.env.example` para `.env` e ajuste as variáveis conforme necessário:
+2. Configurar variáveis de ambiente
 
-```sh
-cp .env.example .env
-```
+    Copie o arquivo `.env.example` para `.env` e ajuste as variáveis conforme necessário:
 
-> **Obs:** Para rodar com Docker Compose, a variável `DATABASE_URL` já está configurada para usar o PostgreSQL do container.
+    ```sh
+    cp .env.example .env
+    ```
 
-### 4. Subir o banco de dados com Docker Compose
+    Certifique-se de configurar as chaves da [Spotify Web API](https://developer.spotify.com/documentation/web-api) e do [Gemini](https://ai.google.dev/) ou OpenAI no arquivo `.env`.
 
-```sh
-docker-compose up -d
-```
+    > **Obs:** Para rodar com Docker Compose, a variável `DATABASE_URL` já está configurada para usar o PostgreSQL do container.
 
-Isso irá iniciar um container PostgreSQL acessível na porta 5432.
+### Opção 1: Execução Total via Docker (API e Banco de Dados)
 
-### 5. Instalar dependências
+Esta opção automatiza todo o processo, subindo a aplicação e o banco de dados em containers.
 
-```sh
-npm install
-```
+1. Suba os serviços:
 
-### 6. Rodar as migrações e gerar o client Prisma
+   ```sh
+   docker-compose up -d
+   ```
 
-```sh
-npm run migrate:deploy
-npm run prisma:generate
-```
+A API estará disponível em `http://localhost:3000/api`.
 
-### 7. Rodar o projeto em modo desenvolvimento
+### Opção 2: Execução Híbrida (Banco no Docker e API Manual)
 
-```sh
-npm run dev
-```
+Ideal para desenvolvimento, onde o banco de dados roda em container e a API roda diretamente na sua máquina para facilitar o debug.
 
-A API estará disponível em [http://localhost:3000/api](http://localhost:3000/api).
+1. Inicie apenas o banco de dados:
+
+   ```sh
+   docker-compose up -d db
+   ```
+
+2. Instale as dependências locais:
+
+   ```sh
+   npm install
+   ```
+
+3. Execute as migrações e gere o client do [Prisma ORM](https://www.prisma.io/):
+
+   ```sh
+   npm run migrate:deploy
+   npm run prisma:generate
+   ```
+
+4. Inicie a API em modo de desenvolvimento:
+
+   ```sh
+   npm run dev
+   ```
+
+A API estará disponível em `http://localhost:3000/api`.
 
 ## Testando a API
 
