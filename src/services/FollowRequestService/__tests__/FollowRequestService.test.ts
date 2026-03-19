@@ -65,7 +65,7 @@ describe('FollowRequestService', () => {
     follower: mockFollower,
     followed: mockFollowed,
     status: FollowRequestStatus.PENDING,
-    
+
     createdAt: new Date(),
     updatedAt: new Date(),
   };

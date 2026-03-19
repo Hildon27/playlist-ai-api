@@ -214,7 +214,7 @@ describe('UserPlaylistService', () => {
 
   describe('getPlaylistById', () => {
     it('PLAYLIST-GET-01: should return playlist when found', async () => {
-      mockPlaylistRepository.findByIdAndUserId = jest
+      mockPlaylistRepository.findById = jest
         .fn()
         .mockResolvedValue(mockPlaylist);
 
@@ -246,7 +246,7 @@ describe('UserPlaylistService', () => {
 
   describe('getPlaylistWithMusics', () => {
     it('PLAYLIST-MUSICS-01: should return playlist with musics', async () => {
-      mockPlaylistRepository.findByIdAndUserIdWithMusics = jest
+      mockPlaylistRepository.findByIdWithMusics = jest
         .fn()
         .mockResolvedValue(mockPlaylistWithMusics);
 
@@ -267,7 +267,7 @@ describe('UserPlaylistService', () => {
 
     it('PLAYLIST-MUSICS-02: should return playlist with empty musics array', async () => {
       const emptyPlaylist = { ...mockPlaylist, musics: [] };
-      mockPlaylistRepository.findByIdAndUserIdWithMusics = jest
+      mockPlaylistRepository.findByIdWithMusics = jest
         .fn()
         .mockResolvedValue(emptyPlaylist);
 
@@ -280,7 +280,7 @@ describe('UserPlaylistService', () => {
     });
 
     it('PLAYLIST-MUSICS-03: should throw NotFoundError for non-existent playlist', async () => {
-      mockPlaylistRepository.findByIdAndUserIdWithMusics = jest
+      mockPlaylistRepository.findByIdWithMusics = jest
         .fn()
         .mockResolvedValue(null);
 

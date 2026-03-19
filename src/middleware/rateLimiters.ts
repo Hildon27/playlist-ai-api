@@ -22,7 +22,7 @@ export const generalLimiter = rateLimit({
  */
 export const heavyLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // 30 requests per IP per window
+  max: 300, // 30 requests per IP per window
   message: {
     success: false,
     message: 'AI/Spotify limit reached. Try again in 15 minutes.',

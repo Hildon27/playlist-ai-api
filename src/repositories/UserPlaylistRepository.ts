@@ -79,12 +79,11 @@ export class UserPlaylistRepository {
     return playlist ? this.toResponse(playlist) : null;
   }
 
-  public async findByIdAndUserIdWithMusics(
-    id: string,
-    userId: string
+  public async findByIdWithMusics(
+    id: string
   ): Promise<PlaylistWithMusicsDTO | null> {
     const playlist = await this.prisma.userPlaylist.findUnique({
-      where: { id, userId },
+      where: { id },
       include: {
         musics: {
           include: {

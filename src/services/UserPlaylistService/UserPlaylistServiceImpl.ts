@@ -73,10 +73,15 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
     userId: string,
     id: string
   ): Promise<UserPlaylistDTO | null> {
-    const existingPlaylist =
-      await this.userPlaylistRepository.findByIdAndUserId(id, userId);
+    const existingPlaylist = await this.userPlaylistRepository.findById(id);
 
     if (!existingPlaylist) {
+      throw new NotFoundError('Playlist não encontrada');
+    }
+
+    const isPrivatePlaylist = existingPlaylist.privacity === Privacity.PRIVATE;
+
+    if (isPrivatePlaylist && existingPlaylist.userId !== userId) {
       throw new NotFoundError('Playlist não encontrada');
     }
 
@@ -88,9 +93,15 @@ export class UserPlaylistServiceImpl implements UserPlaylistService {
     id: string
   ): Promise<PlaylistWithMusicsDTO | null> {
     const existingPlaylist =
-      await this.userPlaylistRepository.findByIdAndUserIdWithMusics(id, userId);
+      await this.userPlaylistRepository.findByIdWithMusics(id);
 
     if (!existingPlaylist) {
+      throw new NotFoundError('Playlist não encontrada');
+    }
+
+    const isPrivatePlaylist = existingPlaylist.privacity === Privacity.PRIVATE;
+
+    if (isPrivatePlaylist && existingPlaylist.userId !== userId) {
       throw new NotFoundError('Playlist não encontrada');
     }
 
