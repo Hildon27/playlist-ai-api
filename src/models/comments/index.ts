@@ -1,3 +1,4 @@
+import { createPaginationParamsSchema } from '@/lib/pagination';
 import { z } from 'zod';
 
 // Schemas
@@ -16,16 +17,9 @@ export const createPlaylistCommentSchema = z.object({
     .string()
     .min(1, 'Conteúdo do comentário é obrigatório')
     .max(500, 'Comentário deve ter no máximo 500 caracteres'),
-  playlistId: z.string().min(1, 'ID da playlist é obrigatório'),
-  userId: z.string().min(1, 'ID do usuário é obrigatório'),
 });
 
-export const updatePlaylistCommentSchema = z.object({
-  content: z
-    .string()
-    .min(1, 'Conteúdo do comentário é obrigatório')
-    .max(500, 'Comentário deve ter no máximo 500 caracteres'),
-});
+export const updatePlaylistCommentSchema = createPlaylistCommentSchema;
 
 export const playlistCommentWithUserSchema = playlistCommentSchema.extend({
   user: z.object({
@@ -42,6 +36,12 @@ export const playlistCommentWithUserAndPlaylistSchema =
       name: z.string(),
     }),
   });
+
+export const findManyPlaylistCommentsRequestSchema =
+  createPaginationParamsSchema(playlistCommentSchema);
+
+export const findManyCommentsWithUserAndPlaylistRequestSchema =
+  createPaginationParamsSchema(playlistCommentWithUserAndPlaylistSchema);
 
 // Types
 

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Privacity } from '../Enums';
+import { createPaginationParamsSchema } from '@/lib/pagination';
 
 // Schemas
 
@@ -32,8 +33,17 @@ export const updateUserSchema = createUserSchema
   })
   .partial();
 
+export const findManyUsersRequestSchema =
+  createPaginationParamsSchema(readUserSchema);
+
 // Types
 
 export type UserResponseDTO = z.infer<typeof readUserSchema>;
 export type CreateUserDTO = z.infer<typeof createUserSchema>;
 export type UpdateUserDTO = z.infer<typeof updateUserSchema>;
+
+export type UserResponseWithFollowInfoDTO = UserResponseDTO & {
+  followedByLoggedUser?: boolean;
+  followRequestPending?: boolean;
+  followRequestId?: string | undefined;
+};

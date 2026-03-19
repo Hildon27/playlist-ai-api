@@ -15,5 +15,19 @@ services:
       timeout: 5s
       retries: 5
 
+  api:
+    build: .
+    container_name: playlist-ai-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-postgres}
+    ports:
+      - '3000:3000'
+    command: sh -c "npx prisma migrate deploy && node dist/index.js"
+
 volumes:
   postgres_data:

@@ -1,9 +1,15 @@
+import { PaginatedResult, PaginationParams } from '@/lib/pagination';
 import { CreateUserDTO, UserResponseDTO } from '@/models/users';
 
 export interface UserService {
-  create(data: CreateUserDTO): Promise<UserResponseDTO>;
+  findAllPublicWithFollowInfo(
+    params: PaginationParams<UserResponseDTO>,
+    loggedUserId: string
+  ): Promise<PaginatedResult<UserResponseDTO>>;
+  findAll(
+    params: PaginationParams<UserResponseDTO>
+  ): Promise<PaginatedResult<UserResponseDTO>>;
   findById(id: string): Promise<UserResponseDTO | null>;
-  findAll(): Promise<UserResponseDTO[]>;
   update(
     id: string,
     data: Partial<CreateUserDTO>

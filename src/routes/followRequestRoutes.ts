@@ -1,7 +1,7 @@
 import {
   cancelFollowRequest,
-  findAllByFollowedId,
-  findAllByFollowerId,
+  findSentFollowRequests,
+  findReceivedFollowRequests,
   processFollowRequest,
   requestToFollowUser,
 } from '@/controllers/followRequestController';
@@ -12,11 +12,11 @@ const router = express.Router();
 // Request to follow a existent user
 router.post('/register', requestToFollowUser);
 
-// Find all requests by follower ID
-router.get('/by-follower/:id', findAllByFollowerId);
+// Find all follow requests sent by logged user
+router.get('/sent', findSentFollowRequests);
 
-// Find all requests by follower ID
-router.get('/by-followed/:id', findAllByFollowedId);
+// Find all follow requests received by the logged-in user.
+router.get('/received', findReceivedFollowRequests);
 
 // Cancel a follow request by ID
 router.delete('/:id', cancelFollowRequest);

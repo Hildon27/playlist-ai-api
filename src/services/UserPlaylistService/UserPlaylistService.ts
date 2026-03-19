@@ -1,3 +1,4 @@
+import { PaginatedResult, PaginationParams } from '@/lib/pagination';
 import {
   CreateUserPlaylistDTO,
   UpdateUserPlaylistDTO,
@@ -8,33 +9,52 @@ import {
 } from '@/models/playlists';
 
 export interface UserPlaylistService {
-  createPlaylist(data: CreateUserPlaylistDTO): Promise<UserPlaylistDTO>;
+  createPlaylist(
+    userId: string,
+    data: CreateUserPlaylistDTO
+  ): Promise<UserPlaylistDTO>;
 
   updatePlaylist(
+    userId: string,
     id: string,
     data: UpdateUserPlaylistDTO
   ): Promise<UserPlaylistDTO | null>;
-  deletePlaylist(id: string): Promise<boolean>;
 
-  getPlaylistById(id: string): Promise<UserPlaylistDTO | null>;
+  deletePlaylist(userId: string, id: string): Promise<boolean>;
 
-  getPlaylistWithMusics(id: string): Promise<PlaylistWithMusicsDTO | null>;
+  getPlaylistById(userId: string, id: string): Promise<UserPlaylistDTO | null>;
 
-  getPlaylistsByUserId(userId: string): Promise<UserPlaylistDTO[]>;
+  getPlaylistWithMusics(
+    userId: string,
+    id: string
+  ): Promise<PlaylistWithMusicsDTO | null>;
 
-  getPublicPlaylists(): Promise<UserPlaylistDTO[]>;
+  getPlaylistsByUserId(
+    userId: string,
+    params: PaginationParams<UserPlaylistDTO>
+  ): Promise<PaginatedResult<UserPlaylistDTO>>;
+
+  getPublicPlaylists(
+    params: PaginationParams<UserPlaylistDTO>
+  ): Promise<PaginatedResult<UserPlaylistDTO>>;
 
   addMusicToPlaylist(
+    userId: string,
     playlistId: string,
     musicData: AddMusicToPlaylistDTO
   ): Promise<boolean>;
 
   removeMusicFromPlaylist(
+    userId: string,
     playlistId: string,
     musicId: string
   ): Promise<boolean>;
 
-  getPlaylistMusics(playlistId: string): Promise<MusicDTO[]>;
+  getPlaylistMusics(
+    userId: string,
+    playlistId: string,
+    params: PaginationParams<MusicDTO>
+  ): Promise<PaginatedResult<MusicDTO>>;
 
   validatePlaylistOwnership(
     playlistId: string,

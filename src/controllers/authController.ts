@@ -1,0 +1,65 @@
+import { NextFunction, Request, Response } from 'express';
+import { createUserSchema } from '@/models/users';
+import { createLogger } from '@/lib/logger';
+import { AuthServiceImpl } from '@/services/AuthService/AuthServiceImpl';
+
+const logger = createLogger('AuthController');
+const authService = new AuthServiceImpl();
+
+/**
+ * Handles user registration.
+ * Creates a new user account with the provided details.
+ *
+ * @param req - Express request object containing user data in the body
+ * @param res - Express response object
+ * @param next - Express next function for error handling
+ * @returns JSON response with created user on success
+ */
+export const register = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    logger.info({ email: req.body.email }, 'Registering new user');
+    const userData = createUserSchema.parse(req.body);
+    const user = await authService.register(userData);
+
+    logger.info({ userId: user.id }, 'User registered successfully');
+    res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      data: user,
+    });
+  } catch (error) {
+    logger.error({ error, email: req.body.email }, 'Error registering user');
+    next(error);
+  }
+};
+
+/**
+ * Handles user authentication and login.
+ * Validates email and password, then returns a JWT token on success.
+ *
+ * @param req - Express request object containing email and password in the body
+ * @param res - Express response object
+ * @returns JSON response with token on success, or error message on failure
+ */
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email, password } = req.body;
+
+  try {
+    logger.info({ email }, 'User login attempt');
+    const { token } = await authService.authenticate(email, password);
+
+    logger.info({ email }, 'User logged in successfully');
+    res.status(200).json({ message: 'Login successful', token });
+  } catch (error) {
+    logger.warn({ email }, 'Login failed');
+    next(error);
+  }
+};

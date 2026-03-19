@@ -16,6 +16,7 @@ export enum ErrorCode {
   USER_UPDATE_FAILED = 1003,
   USER_DELETE_FAILED = 1004,
   USER_FETCH_FAILED = 1005,
+  INVALID_CREDENTIALS = 1006,
 
   // Validation errors (2000-2999)
   VALIDATION_USER_ID_REQUIRED = 2000,
@@ -83,6 +84,11 @@ export const errorDictionary: Record<ErrorCode, ErrorResponse> = {
     code: ErrorCode.USER_FETCH_FAILED,
     message: 'Failed to fetch user data',
     status: 500,
+  },
+  [ErrorCode.INVALID_CREDENTIALS]: {
+    code: ErrorCode.INVALID_CREDENTIALS,
+    message: 'Invalid email or password',
+    status: 401,
   },
 
   // Validation errors

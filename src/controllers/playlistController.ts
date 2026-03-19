@@ -6,12 +6,18 @@ import {
   updateUserPlaylistSchema,
   addMusicToPlaylistSchema,
   removeMusicFromPlaylistSchema,
+  findManyUserPlaylistsRequestSchema,
+  findManyPlaylistMusicsRequestSchema,
 } from '@/models/playlists';
 import {
   BadRequestError,
   NotFoundError,
   ForbiddenError,
 } from '@/models/Errors';
+import { createLogger } from '@/lib/logger';
+import { AuthContext } from 'contexts/auth-context';
+
+const logger = createLogger('PlaylistController');
 
 export class UserPlaylistController {
   private readonly userPlaylistService: UserPlaylistServiceImpl;
@@ -30,16 +36,25 @@ export class UserPlaylistController {
     res: Response
   ): Promise<void> => {
     try {
-      const validatedData = createUserPlaylistSchema.parse(req.body);
-      const playlist =
-        await this.userPlaylistService.createPlaylist(validatedData);
+      logger.info({ userId: req.body.userId }, 'Creating new playlist');
 
+      const validatedData = createUserPlaylistSchema.parse(req.body);
+
+      const user = AuthContext.getLoggedUser();
+
+      const playlist = await this.userPlaylistService.createPlaylist(
+        user.id,
+        validatedData
+      );
+
+      logger.info({ playlistId: playlist.id }, 'Playlist created successfully');
       res.status(201).json({
         success: true,
         data: playlist,
         message: 'Playlist criada com sucesso',
       });
     } catch {
+      logger.error('Error creating playlist');
       throw new BadRequestError('Dados inválidos para criação da playlist');
     }
   };
@@ -53,23 +68,22 @@ export class UserPlaylistController {
   ): Promise<void> => {
     try {
       const { id } = req.params;
+      logger.info({ playlistId: id }, 'Updating playlist');
       if (!id) {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
 
       const validatedData = updateUserPlaylistSchema.parse(req.body);
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
       const playlist = await this.userPlaylistService.updatePlaylist(
+        user.id,
         id,
         validatedData
       );
 
+      logger.info({ playlistId: id }, 'Playlist updated successfully');
       res.status(200).json({
         success: true,
         data: playlist,
@@ -79,6 +93,7 @@ export class UserPlaylistController {
       if (error instanceof NotFoundError || error instanceof ForbiddenError) {
         throw error;
       }
+      logger.error({ error }, 'Error updating playlist');
       throw new BadRequestError('Dados inválidos para atualização da playlist');
     }
   };
@@ -92,22 +107,23 @@ export class UserPlaylistController {
   ): Promise<void> => {
     try {
       const { id } = req.params;
+      logger.info({ playlistId: id }, 'Deleting playlist');
       if (!id) {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
-      const deleted = await this.userPlaylistService.deletePlaylist(id);
+      const deleted = await this.userPlaylistService.deletePlaylist(
+        user.id,
+        id
+      );
 
       if (!deleted) {
         throw new BadRequestError('Não foi possível excluir a playlist');
       }
 
+      logger.info({ playlistId: id }, 'Playlist deleted successfully');
       res.status(200).json({
         success: true,
         message: 'Playlist excluída com sucesso',
@@ -116,6 +132,7 @@ export class UserPlaylistController {
       if (error instanceof NotFoundError || error instanceof ForbiddenError) {
         throw error;
       }
+      logger.error({ error }, 'Error deleting playlist');
       throw new BadRequestError('Erro ao excluir playlist');
     }
   };
@@ -129,22 +146,25 @@ export class UserPlaylistController {
   ): Promise<void> => {
     try {
       const { id } = req.params;
+      logger.info({ playlistId: id }, 'Getting playlist by ID');
       if (!id) {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
       const { includeMusics } = req.query;
 
+      const user = AuthContext.getLoggedUser();
+
       let playlist;
       if (includeMusics === 'true') {
-        playlist = await this.userPlaylistService.getPlaylistWithMusics(id);
+        playlist = await this.userPlaylistService.getPlaylistWithMusics(
+          user.id,
+          id
+        );
       } else {
-        playlist = await this.userPlaylistService.getPlaylistById(id);
+        playlist = await this.userPlaylistService.getPlaylistById(user.id, id);
       }
 
-      if (!playlist) {
-        throw new NotFoundError('Playlist não encontrada');
-      }
-
+      logger.info({ playlistId: id }, 'Playlist retrieved successfully');
       res.status(200).json({
         success: true,
         data: playlist,
@@ -160,25 +180,23 @@ export class UserPlaylistController {
   /**
    * Get all playlists from a specific user
    */
-  public getPlaylistsByUserId = async (
+  public getLoggedUserPlaylists = async (
     req: Request,
     res: Response
   ): Promise<void> => {
-    try {
-      const { userId } = req.params;
-      if (!userId) {
-        throw new BadRequestError('ID do usuário é obrigatório');
-      }
-      const playlists =
-        await this.userPlaylistService.getPlaylistsByUserId(userId);
+    const user = AuthContext.getLoggedUser();
 
-      res.status(200).json({
-        success: true,
-        data: playlists,
-      });
-    } catch {
-      throw new BadRequestError('Erro ao buscar playlists do usuário');
-    }
+    const params = findManyUserPlaylistsRequestSchema.parse(req.query);
+
+    const playlists = await this.userPlaylistService.getPlaylistsByUserId(
+      user.id,
+      params
+    );
+
+    res.status(200).json({
+      success: true,
+      ...playlists,
+    });
   };
 
   /**
@@ -188,16 +206,14 @@ export class UserPlaylistController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    try {
-      const playlists = await this.userPlaylistService.getPublicPlaylists();
+    const params = findManyUserPlaylistsRequestSchema.parse(req.query);
 
-      res.status(200).json({
-        success: true,
-        data: playlists,
-      });
-    } catch {
-      throw new BadRequestError('Erro ao buscar playlists públicas');
-    }
+    const playlists = await this.userPlaylistService.getPublicPlaylists(params);
+
+    res.status(200).json({
+      success: true,
+      ...playlists,
+    });
   };
 
   /**
@@ -214,22 +230,13 @@ export class UserPlaylistController {
       }
       const validatedData = addMusicToPlaylistSchema.parse(req.body);
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
-      const added = await this.userPlaylistService.addMusicToPlaylist(
+      await this.userPlaylistService.addMusicToPlaylist(
+        user.id,
         id,
         validatedData
       );
-
-      if (!added) {
-        throw new BadRequestError(
-          'Música já existe na playlist ou erro ao adicionar'
-        );
-      }
 
       res.status(200).json({
         success: true,
@@ -257,20 +264,13 @@ export class UserPlaylistController {
       }
       const validatedData = removeMusicFromPlaylistSchema.parse(req.body);
 
-      const existingPlaylist =
-        await this.userPlaylistService.getPlaylistById(id);
-      if (!existingPlaylist) {
-        throw new NotFoundError('Playlist não encontrada');
-      }
+      const user = AuthContext.getLoggedUser();
 
-      const removed = await this.userPlaylistService.removeMusicFromPlaylist(
+      await this.userPlaylistService.removeMusicFromPlaylist(
+        user.id,
         id,
         validatedData.musicId
       );
-
-      if (!removed) {
-        throw new BadRequestError('Erro ao remover música da playlist');
-      }
 
       res.status(200).json({
         success: true,
@@ -297,11 +297,19 @@ export class UserPlaylistController {
         throw new BadRequestError('ID da playlist é obrigatório');
       }
 
-      const musics = await this.userPlaylistService.getPlaylistMusics(id);
+      const params = findManyPlaylistMusicsRequestSchema.parse(req.query);
+
+      const user = AuthContext.getLoggedUser();
+
+      const musics = await this.userPlaylistService.getPlaylistMusics(
+        user.id,
+        id,
+        params
+      );
 
       res.status(200).json({
         success: true,
-        data: musics,
+        ...musics,
       });
     } catch (error) {
       if (error instanceof ForbiddenError) {

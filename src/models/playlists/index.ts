@@ -1,11 +1,13 @@
 import { z } from 'zod';
 import { Privacity } from '../Enums';
+import { createPaginationParamsSchema } from '@/lib/pagination';
 
 // Schemas
 
 export const musicSchema = z.object({
   id: z.string().nonempty(),
   externalId: z.string().min(1, 'ID externo da música é obrigatório'),
+  albumCover: z.string().url().nullable().optional(),
   createdAt: z.date(),
 });
 
@@ -20,6 +22,8 @@ export const userPlaylistSchema = z.object({
   id: z.string().nonempty(),
   name: z.string().min(1, 'Nome da playlist é obrigatório'),
   privacity: z.enum(Privacity),
+  aiMessage: z.string().nullable().optional(),
+  coverImages: z.array(z.string().url()).optional(),
   userId: z.string().min(1, 'ID do usuário é obrigatório'),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -32,7 +36,7 @@ export const playlistWithMusicsSchema = userPlaylistSchema.extend({
 export const createUserPlaylistSchema = userPlaylistSchema.pick({
   name: true,
   privacity: true,
-  userId: true,
+  aiMessage: true,
 });
 
 export const updateUserPlaylistSchema = userPlaylistSchema
@@ -44,11 +48,18 @@ export const updateUserPlaylistSchema = userPlaylistSchema
 
 export const addMusicToPlaylistSchema = z.object({
   externalId: z.string().min(1, 'ID externo da música é obrigatório'),
+  albumCover: z.string().url().nullable().optional(),
 });
 
 export const removeMusicFromPlaylistSchema = z.object({
   musicId: z.string().min(1, 'ID da música é obrigatório'),
 });
+
+export const findManyUserPlaylistsRequestSchema =
+  createPaginationParamsSchema(userPlaylistSchema);
+
+export const findManyPlaylistMusicsRequestSchema =
+  createPaginationParamsSchema(musicSchema);
 
 // Types
 

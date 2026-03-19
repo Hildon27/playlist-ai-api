@@ -2,6 +2,7 @@ import { FollowRequestDto } from '@/models/followRequests';
 import prisma from '../lib/prisma';
 import { FollowRequest } from '../../generated/prisma';
 import { FollowRequestStatus } from '@/models/Enums';
+import { paginate, PaginatedResult, PaginationParams } from '@/lib/pagination';
 
 export class FollowRequestRepository {
   private readonly prisma = prisma;
@@ -16,6 +17,14 @@ export class FollowRequestRepository {
         followedId,
         status: FollowRequestStatus.PENDING,
       },
+      include: {
+        follower: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        followed: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+      },
     });
 
     return this.toResponse(followRequest);
@@ -25,8 +34,14 @@ export class FollowRequestRepository {
     followRequestId: string
   ): Promise<FollowRequestDto | null> {
     const followRequest = await this.prisma.followRequest.findFirst({
-      where: {
-        id: followRequestId,
+      where: { id: followRequestId },
+      include: {
+        follower: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        followed: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
       },
     });
 
@@ -40,19 +55,61 @@ export class FollowRequestRepository {
     const followRequest = await this.prisma.followRequest.findFirst({
       where: { followerId, followedId },
       orderBy: { createdAt: 'desc' },
+      include: {
+        follower: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        followed: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+      },
     });
 
     return followRequest ? this.toResponse(followRequest) : null;
   }
 
-  public async findAllByFollowerId(
-    followerId: string
-  ): Promise<FollowRequestDto[]> {
-    const followRequests = await this.prisma.followRequest.findMany({
-      where: { followerId },
-    });
+  public async findSentFollowRequests(
+    userId: string,
+    params: PaginationParams<FollowRequestDto>
+  ): Promise<PaginatedResult<FollowRequestDto>> {
+    return paginate(
+      this.prisma.followRequest,
+      {
+        where: { followerId: userId, status: FollowRequestStatus.PENDING },
+        include: {
+          follower: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
+          followed: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
+        },
+      },
+      params,
+      this.toResponse
+    );
+  }
 
-    return followRequests.map(v => this.toResponse(v));
+  public async findReceivedFollowRequests(
+    userId: string,
+    params: PaginationParams<FollowRequestDto>
+  ): Promise<PaginatedResult<FollowRequestDto>> {
+    return paginate(
+      this.prisma.followRequest,
+      {
+        where: { followedId: userId, status: FollowRequestStatus.PENDING },
+        include: {
+          follower: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
+          followed: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
+        },
+      },
+      params,
+      this.toResponse
+    );
   }
 
   public async updateFollowRequestStatus(
@@ -60,37 +117,28 @@ export class FollowRequestRepository {
     newStatus: FollowRequestStatus
   ): Promise<FollowRequestDto> {
     const updatedFollowRequest = await this.prisma.followRequest.update({
-      data: {
-        status: newStatus,
-        updatedAt: new Date(),
-      },
-      where: {
-        id: followRequestId,
+      data: { status: newStatus, updatedAt: new Date() },
+      where: { id: followRequestId },
+      include: {
+        follower: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        followed: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
       },
     });
 
     return this.toResponse(updatedFollowRequest);
   }
 
-  public async findAllByFollowedId(
-    followedId: string
-  ): Promise<FollowRequestDto[]> {
-    const followRequests = await this.prisma.followRequest.findMany({
-      where: { followedId },
-    });
-
-    return followRequests.map(v => this.toResponse(v));
-  }
-
   public async delete(followRequestId: string): Promise<void> {
-    await this.prisma.followRequest.delete({
-      where: {
-        id: followRequestId,
-      },
-    });
+    await this.prisma.followRequest.delete({ where: { id: followRequestId } });
   }
 
-  private toResponse(followRequest: FollowRequest): FollowRequestDto {
+  private toResponse(
+    followRequest: FollowRequest & { follower: any; followed: any }
+  ): FollowRequestDto {
     return {
       id: followRequest.id,
       followerId: followRequest.followerId,
@@ -98,6 +146,8 @@ export class FollowRequestRepository {
       status: followRequest.status as FollowRequestStatus,
       createdAt: followRequest.createdAt,
       updatedAt: followRequest.updatedAt,
+      follower: followRequest.follower,
+      followed: followRequest.followed,
     };
   }
 }

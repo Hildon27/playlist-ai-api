@@ -1,49 +1,28 @@
 import { ApiError, ErrorCode } from '@/models/Errors';
-import { createUserSchema, updateUserSchema } from '@/models/users';
+import { findManyUsersRequestSchema, updateUserSchema } from '@/models/users';
 import { UserServiceImpl } from '@/services/UserService/UserServiceImpl';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
+import { createLogger } from '@/lib/logger';
+import { AuthContext } from 'contexts/auth-context';
 
+const logger = createLogger('UserController');
 const userService = new UserServiceImpl();
 
 /**
- * Create a new user
+ * Get logged user data
  */
-export const createUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getLoggedUserData = async (_: Request, res: Response) => {
   try {
-    const userData = createUserSchema.parse(req.body);
+    const loggedUser = AuthContext.getLoggedUser();
 
-    const user = await userService.create(userData);
-
-    res.status(201).json({
-      success: true,
-      data: user,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * Get user by ID
- */
-export const getUserById = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-
-    if (!id || id.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
-
-    const user = await userService.findById(id);
+    const user = await userService.findById(loggedUser.id);
 
     if (!user) {
+      logger.warn('User not found');
       throw new ApiError(ErrorCode.USER_NOT_FOUND);
     }
 
+    logger.info({ userId: user.id }, 'User found successfully');
     res.status(200).json({
       success: true,
       data: user,
@@ -67,49 +46,48 @@ export const getUserById = async (req: Request, res: Response) => {
 /**
  * Get all users
  */
-export const getAllUsers = async (req: Request, res: Response) => {
-  try {
-    const users = await userService.findAll();
+export const getAllPublicUsers = async (req: Request, res: Response) => {
+  logger.info('Getting all users');
 
-    res.status(200).json({
-      success: true,
-      data: users,
-    });
-  } catch (error) {
-    if (error instanceof ApiError) {
-      res.status(error.status).json({
-        success: false,
-        error: error.message,
-        code: error.code,
-      });
-    } else {
-      res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-      });
-    }
-  }
+  const params = findManyUsersRequestSchema.parse(req.query);
+
+  const loggedUser = AuthContext.getLoggedUser();
+
+  const paginatedUsers = await userService.findAllPublicWithFollowInfo(
+    params,
+    loggedUser.id
+  );
+
+  logger.info(
+    { count: paginatedUsers.meta.total },
+    'Users retrieved successfully'
+  );
+
+  res.status(200).json({
+    success: true,
+    ...paginatedUsers,
+  });
 };
 
 /**
- * Update user
+ * Update logged user account
  */
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-
-    if (!id || id.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
+    logger.info('Updating user');
 
     const userData = updateUserSchema.parse(req.body);
 
-    const user = await userService.update(id, userData);
+    const loggedUser = AuthContext.getLoggedUser();
+
+    const user = await userService.update(loggedUser.id, userData);
 
     if (!user) {
+      logger.warn('User not found for update');
       throw new ApiError(ErrorCode.USER_NOT_FOUND);
     }
 
+    logger.info('User updated successfully');
     res.status(200).json({
       success: true,
       data: user,
@@ -131,18 +109,17 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 /**
- * Delete user
+ * Delete logged user account
  */
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (_: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    logger.info('Deleting user');
 
-    if (!id || id.trim() === '') {
-      throw new ApiError(ErrorCode.VALIDATION_USER_ID_REQUIRED);
-    }
+    const loggedUser = AuthContext.getLoggedUser();
 
-    await userService.delete(id);
+    await userService.delete(loggedUser.id);
 
+    logger.info('User deleted successfully');
     res.status(200).json({
       success: true,
       message: 'User deleted successfully',
