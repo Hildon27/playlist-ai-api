@@ -65,22 +65,22 @@ O projeto segue uma arquitetura baseada em camadas:
 
 1. Clonar o repositório
 
-    ```sh
-    git clone https://github.com/Hildon27/playlist-ai-api
-    cd playlist-ai-api
-    ```
+   ```sh
+   git clone https://github.com/Hildon27/playlist-ai-api
+   cd playlist-ai-api
+   ```
 
 2. Configurar variáveis de ambiente
 
-    Copie o arquivo `.env.example` para `.env` e ajuste as variáveis conforme necessário:
+   Copie o arquivo `.env.example` para `.env` e ajuste as variáveis conforme necessário:
 
-    ```sh
-    cp .env.example .env
-    ```
+   ```sh
+   cp .env.example .env
+   ```
 
-    Certifique-se de configurar as chaves da [Spotify Web API](https://developer.spotify.com/documentation/web-api) e do [Gemini](https://ai.google.dev/) ou OpenAI no arquivo `.env`.
+   Certifique-se de configurar as chaves da [Spotify Web API](https://developer.spotify.com/documentation/web-api) e do [Gemini](https://ai.google.dev/) ou OpenAI no arquivo `.env`.
 
-    > **Obs:** Para rodar com Docker Compose, a variável `DATABASE_URL` já está configurada para usar o PostgreSQL do container.
+   > **Obs:** Para rodar com Docker Compose, a variável `DATABASE_URL` já está configurada para usar o PostgreSQL do container.
 
 ### Opção 1: Execução Total via Docker (API e Banco de Dados)
 
